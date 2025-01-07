@@ -1,5 +1,7 @@
 body {
   background-color: rgb(202, 218, 209);
+  padding-bottom: 60px; /* Adjust this based on the height of your navbar */
+
 }
 
 h1 {
@@ -21,4 +23,17 @@ color: #ffffff;
 .bg-3 {
 background-color: #ffffff; /* White */
 color: #555555;
+}
+
+/* Targeting anchor links inside the navbar with higher specificity */
+#bottom-navbar .container-fluid a.nav-link {
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease-in-out;
+}
+
+/* Hover effect with !important */
+#bottom-navbar .container-fluid a.nav-link:hover {
+  color: #ffc107 !important; /* Force the hover color */
 }

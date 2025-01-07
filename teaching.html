@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+	 <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+	    <!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+	<script src="scripts/main.js"></script>
+
+    <!-- Google fonts -->
+	<link href='https://fonts.googleapis.com/css?family=Angkor' rel='stylesheet'>
+
+	<link rel="shortcut icon" type="image/png" href="images/favicon_a.png"/>
+
+	<title>
+		Teaching
+	</title>
+	
+
+	<link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+
+	<p>
+		<h1>Andy Huchala</h1><br>
+		<a href="index.html" alt="Home">Home</a>
+	</p>
+	<p style="border: 2px solid powderblue;padding: 15px;">Teaching</p>
+
+	I'm currently teaching Math 251 (Calculus I) in Winter 2025 at the University of Oregon. Below are other courses I've taught at UO:
+    - 251 (Calculus I) Fall 2024
+    - Stats (TA) Spring 2023
+    - Bio Calc Fall 2023
+
+
+<script>
+    fetch('navbar.html')
+        .then(response => response.text())
+        .then(data => {
+        document.body.insertAdjacentHTML('beforeend', data);
+        })
+        .catch(error => console.error('Error loading navbar:', error));
+</script>
+</body>
+</html>
