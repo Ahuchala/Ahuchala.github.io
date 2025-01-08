@@ -4,52 +4,61 @@ body {
   font-family: 'Montserrat', sans-serif;
   line-height: 1.6;
   color: #333;
+  background: #f9f9f9;
 }
 
 /* Header */
 header {
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  background: linear-gradient(135deg, #5e60ce, #48bfe3); /* Softer blue-purple gradient */
   color: white;
   text-align: center;
   padding: 50px 20px;
 }
 
 header .header-content h1 {
-  font-size: 2.5rem;
+  font-size: 3rem;
   margin: 0;
-}
-
-header .header-content p {
-  font-size: 1.2rem;
-  margin-top: 10px;
+  font-weight: bold;
 }
 
 /* Navigation */
 .navbar {
-  background: #333;
+  background: #31395a; /* Darker, less intense color */
   padding: 10px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .navbar ul {
   list-style: none;
   display: flex;
   justify-content: center;
+  align-items: center;
   margin: 0;
   padding: 0;
 }
 
 .navbar li {
-  margin: 0 15px;
+  margin: 0 20px;
 }
 
 .navbar a {
   text-decoration: none;
   color: white;
   font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px; /* Subtle rounding */
+  transition: background-color 0.2s ease, color 0.4s ease;
 }
 
 .navbar a:hover {
-  text-decoration: underline;
+  background: rgba(255, 255, 255, 0.15); /* Subtle hover background */
+  color: #6a80d3; /* Subtle, cooler purple shade */
+}
+
+.navbar a:active {
+  background: rgba(255, 255, 255, 0.15); /* Consistent with hover */
+  color: #6a80d3;
+  transition: none; /* Removes fade-in effect */
 }
 
 /* Intro Section */
@@ -60,7 +69,15 @@ header .header-content p {
 }
 
 .intro h2 {
-  font-size: 2rem;
+  font-size: 2.5rem;
+  color: #31395a;
+  font-weight: 600;
+}
+
+.intro p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-top: 10px;
 }
 
 /* Featured Section */
@@ -71,6 +88,7 @@ header .header-content p {
 
 .featured h2 {
   margin-bottom: 20px;
+  color: #31395a;
 }
 
 .featured-item img {
@@ -81,12 +99,13 @@ header .header-content p {
 
 .featured-item p {
   margin-top: 10px;
+  color: #555;
 }
 
 /* Grid Section */
 .grid-section {
   padding: 50px 20px;
-  background: #f9f9f9;
+  background: #ffffff;
 }
 
 .grid-container {
@@ -100,21 +119,33 @@ header .header-content p {
   max-width: 100%;
   height: auto;
   border-radius: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.grid-item img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.grid-item p {
+  margin-top: 10px;
+  color: #31395a;
 }
 
 /* Footer */
 footer {
   text-align: center;
   padding: 15px;
-  background: #2b2d42;
+  background: #31395a; /* Matches navbar */
   color: white;
 }
 
 footer a {
-  color: #ff9a8b;
+  color: #6a80d3; /* Subtle matching purple */
   text-decoration: none;
 }
 
 footer a:hover {
   text-decoration: underline;
+  color: #9ca7e8; /* Lighter shade on hover */
 }

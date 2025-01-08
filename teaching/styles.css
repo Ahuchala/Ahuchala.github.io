@@ -1,3 +1,5 @@
+
+
 .timeline {
     border-left: 2px solid #2b2d42; /* Vertical line for the timeline */
     padding-left: 40px; /* Space for the dots and text */
@@ -64,4 +66,29 @@
     max-width: 800px; /* Center the section and limit its width */
     margin: 0 auto; /* Center it horizontally */
     padding: 20px; /* Add padding for breathing room */
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #31395a; /* Matches navbar background */
+    color: white;
+    font-size: 0.9rem; /* Slightly smaller text for subtlety */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Light top shadow for definition */
+}
+
+footer p {
+    margin: 0;
+}
+
+footer a {
+    color: #6a80d3; /* Matching hover purple from navbar */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #9ca7e8; /* Lighter hover shade for consistency */
+    text-decoration: underline;
 }
