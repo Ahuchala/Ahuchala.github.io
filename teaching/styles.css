@@ -1,0 +1,67 @@
+.timeline {
+    border-left: 2px solid #2b2d42; /* Vertical line for the timeline */
+    padding-left: 40px; /* Space for the dots and text */
+    margin: 0 auto; /* Center the timeline */
+    max-width: 800px; /* Optional: Limit the width for better readability */
+    list-style: none; /* Remove default bullets */
+}
+
+.timeline-item {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.timeline-item h2 {
+    font-size: 1.2rem;
+    margin: 0; /* Remove extra margin */
+    font-weight: bold;
+    line-height: 1.4; /* Ensure proper spacing between lines */
+}
+
+.timeline-item p {
+    margin: 5px 0 0; /* Small margin between title and description */
+    line-height: 1.4;
+}
+
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -25px; /* Shift dot closer to the text */
+    top: 6px; /* Align dot with the first line of text */
+    width: 12px;
+    height: 12px;
+    background: #2b2d42; /* Dot color */
+    border-radius: 50%; /* Make it a circle */
+    border: 2px solid #f7f7f7; /* Outline matches the background */
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+}
+
+.timeline-item h2, .timeline-item p {
+    margin-left: 10px; /* Space text slightly away from the vertical line */
+}
+
+/* Styling for the section title */
+.timeline-title {
+    text-align: center; /* Center-align the title */
+    font-size: 2rem; /* Make it prominent */
+    font-weight: bold; /* Ensure it stands out */
+    margin-bottom: 20px; /* Add space between the title and the timeline */
+    color: #2b2d42; /* Match the timeline color scheme */
+}
+
+/* Styling for any description under the title */
+.timeline-description {
+    text-align: center; /* Align text with the title */
+    font-size: 1.2rem; /* Slightly smaller than the title */
+    font-weight: 400; /* Regular weight for readability */
+    color: #555555; /* Softer color for contrast */
+    margin-bottom: 40px; /* Add spacing before the timeline */
+    line-height: 1.6; /* Improve readability */
+}
+
+/* Align the entire timeline and its text */
+.timeline-wrapper {
+    max-width: 800px; /* Center the section and limit its width */
+    margin: 0 auto; /* Center it horizontally */
+    padding: 20px; /* Add padding for breathing room */
+}

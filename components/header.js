@@ -11,9 +11,9 @@ export function header() {
             <ul>
                 <li> <a href="/index.html">Home</a></li>
                 <li><a href="/gallery">Gallery</a></li>
-                <li><a href="/oeis">OEIS</a></li>
                 <li><a href="/research">Math Research</a></li>
                 <li><a href="/teaching">Teaching</a></li>
+                <li><a href="/oeis">OEIS</a></li>
             </ul>
         </nav>
     `;
