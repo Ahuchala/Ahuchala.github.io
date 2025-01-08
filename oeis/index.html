@@ -1,346 +1,40 @@
 <!DOCTYPE html>
-
 <html lang="en-US">
 <head>
-	<!-- Required meta tags -->
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<!-- Bootstrap CSS -->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-	<!-- jQuery library -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-	<!-- Latest compiled JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-	<script src="scripts/main.js"></script>
-
-	<!-- Google fonts -->
-	<link href='https://fonts.googleapis.com/css?family=Angkor' rel='stylesheet'>
-
-	<link rel="shortcut icon" type="image/png" href="../images/favicon_a.png"/>
-
-	<title>
-		OEIS Stuff
-	</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OEIS Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="/styles.css">
 	
-
-	<link rel="stylesheet" href="styles.css">
-
 </head>
 <body>
+    <div id="header"></div>
+    <script src="/scripts/main.js" type="module"></script>
+	
+    
+    <main>
+        <section>
+            <h2>Knight's Domination</h2>
+            <div class="gallery-grid" id="knight-gallery"></div>
+        </section>
 
-	<p>
-		<h1>Andy Huchala</h1><br>
-		<a href="../index.html" alt="Home">Home</a>
-	</p>
-	<p style="border: 2px solid powderblue;padding: 15px;"><a href = "http://oeis.org/" alt="OEIS Link">The Online Encyclopedia of Integer Sequences</a> is an online database of integer-valued sequences that anyone can contribute to. It's got a lot of interesting problem statements, many with only partial solutions. I've compiled a short list of problems I've been interested in, with graphics included if possible.
-	</p>
+        <section>
+            <h2>Barnes-Wall Lattices</h2>
+            <div class="gallery-grid" id="barnes-wall-gallery"></div>
+        </section>
+    </main>
 
-	<div class="container bg-1">
-		<div class="row">
-			<p style="border: 2px solid powderblue;padding: 5px;"><a href="https://oeis.org/A261752" alt="Knight's Domination">A261752 (Knight's Domination):</a> "Minimum number of knights on an n X n chessboard such that every square is attacked."</p>
-			
-			<!-- <p>Appears to be pretty well modeled by  1/8*n^2 + 5/4*n-4.<p> -->
-			<div class="col-sm-4">
-				<h3 style="color:navy"> Examples of optimal tilings:</h3>				
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=4<p>
-				<a href="../images/gallery/knights/knight4.png"><img src="../images/gallery/knights/knight4.png" alt="Knight's Domination 4" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=5<p>
-				<a href="../images/gallery/knights/knight5.png"><img src="../images/gallery/knights/knight5.png" alt="Knight's Domination 5" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=6<p>
-				<a href="../images/gallery/knights/knight6.png"><img src="../images/gallery/knights/knight6.png" alt="Knight's Domination 6" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=7<p>
-				<a href="../images/gallery/knights/knight7.png"><img src="../images/gallery/knights/knight7.png" alt="Knight's Domination 7" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=8<p>
-				<a href="../images/gallery/knights/knight8.png"><img src="../images/gallery/knights/knight8.png" alt="Knight's Domination 8" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=9<p>
-				<a href="../images/gallery/knights/knight9.png"><img src="../images/gallery/knights/knight9.png" alt="Knight's Domination 9" width="90" height="90"></a>
-			</div>
-		</div>
+    <footer>
+        <p>&copy; 2025 Andy Huchala. <a href="/index.html">Home</a></p>
+    </footer>
 
+    <div id="image-modal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modal-img" alt="Gallery Image">
+    </div>
 
-		<div class="row">
-			<!-- <p>Appears to be pretty well modeled by  1/8*n^2 + 5/4*n-4.<p> -->
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=10<p>
-				<a href="../images/gallery/knights/knight10.png"><img src="../images/gallery/knights/knight10.png" alt="Knight's Domination 10" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=11<p>
-				<a href="../images/gallery/knights/knight11.png"><img src="../images/gallery/knights/knight11.png" alt="Knight's Domination 11" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=12<p>
-				<a href="../images/gallery/knights/knight12.png"><img src="../images/gallery/knights/knight12.png" alt="Knight's Domination 12" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=13<p>
-				<a href="../images/gallery/knights/knight13.png"><img src="../images/gallery/knights/knight13.png" alt="Knight's Domination 13" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=14<p>
-				<a href="../images/gallery/knights/knight14.png"><img src="../images/gallery/knights/knight14.png" alt="Knight's Domination 14" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=15<p>
-				<a href="../images/gallery/knights/knight15.png"><img src="../images/gallery/knights/knight15.png" alt="Knight's Domination 15" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=16<p>
-				<a href="../images/gallery/knights/knight16.png"><img src="../images/gallery/knights/knight16.png" alt="Knight's Domination 16" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=17<p>
-				<a href="../images/gallery/knights/knight17.png"><img src="../images/gallery/knights/knight17.png" alt="Knight's Domination 17" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=18<p>
-				<a href="../images/gallery/knights/knight18.png"><img src="../images/gallery/knights/knight18.png" alt="Knight's Domination 18" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=19<p>
-				<a href="../images/gallery/knights/knight19.png"><img src="../images/gallery/knights/knight19.png" alt="Knight's Domination 19" width="90" height="90"></a>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=20<p>
-				<a href="../images/gallery/knights/knight20.png"><img src="../images/gallery/knights/knight20.png" alt="Knight's Domination 20" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=21<p>
-				<a href="../images/gallery/knights/knight21.png"><img src="../images/gallery/knights/knight21.png" alt="Knight's Domination 21" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=22<p>
-				<a href="../images/gallery/knights/knight22.png"><img src="../images/gallery/knights/knight22.png" alt="Knight's Domination 22" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=23<p>
-				<a href="../images/gallery/knights/knight23.png"><img src="../images/gallery/knights/knight23.png" alt="Knight's Domination 23" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=24<p>
-				<a href="../images/gallery/knights/knight24.png"><img src="../images/gallery/knights/knight24.png" alt="Knight's Domination 24" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=25<p>
-				<a href="../images/gallery/knights/knight25.png"><img src="../images/gallery/knights/knight25.png" alt="Knight's Domination 25" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=26<p>
-				<a href="../images/gallery/knights/knight26.png"><img src="../images/gallery/knights/knight26.png" alt="Knight's Domination 26" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=27<p>
-				<a href="../images/gallery/knights/knight27.png"><img src="../images/gallery/knights/knight27.png" alt="Knight's Domination 27" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=28<p>
-				<a href="../images/gallery/knights/knight28.png"><img src="../images/gallery/knights/knight28.png" alt="Knight's Domination 28" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=29<p>
-				<a href="../images/gallery/knights/knight29.png"><img src="../images/gallery/knights/knight29.png" alt="Knight's Domination 29" width="90" height="90"></a>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=30<p>
-				<a href="../images/gallery/knights/knight30.png"><img src="../images/gallery/knights/knight30.png" alt="Knight's Domination 30" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=31<p>
-				<a href="../images/gallery/knights/knight31.PNG"><img src="../images/gallery/knights/knight31.PNG" alt="Knight's Domination 31" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=32<p>
-				<a href="../images/gallery/knights/knight32.png"><img src="../images/gallery/knights/knight32.png" alt="Knight's Domination 32" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<!-- <p style="text-align: center;">n=33<p>
-				<a href="../images/gallery/knights/knight33.png"><img src="../images/gallery/knights/knight33.png" alt="Knight's Domination 33" width="90" height="90"></a> -->
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=34<p>
-				<a href="../images/gallery/knights/knight34.png"><img src="../images/gallery/knights/knight34.png" alt="Knight's Domination 34" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<!-- <p style="text-align: center;">n=35<p>
-				<a href="../images/gallery/knights/knight35.png"><img src="../images/gallery/knights/knight35.png" alt="Knight's Domination 35" width="90" height="90"></a> -->
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=36<p>
-				<a href="../images/gallery/knights/knight36.png"><img src="../images/gallery/knights/knight36.png" alt="Knight's Domination 36" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<!-- <p style="text-align: center;">n=37<p>
-				<a href="../images/gallery/knights/knight37.png"><img src="../images/gallery/knights/knight37.png" alt="Knight's Domination 37" width="90" height="90"></a> -->
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=38<p>
-				<a href="../images/gallery/knights/knight38.png"><img src="../images/gallery/knights/knight38.png" alt="Knight's Domination 38" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<!-- <p style="text-align: center;">n=39<p>
-				<a href="../images/gallery/knights/knight39.png"><img src="../images/gallery/knights/knight39.png" alt="Knight's Domination 39" width="90" height="90"></a> -->
-			</div>
-		</div>
-
-		<div class="row">
-			<!-- <p>Appears to be pretty well modeled by  1/8*n^2 + 5/4*n-4.<p> -->
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=40<p>
-				<a href="../images/gallery/knights/knight40.png"><img src="../images/gallery/knights/knight40.png" alt="Knight's Domination 40" width="90" height="90"></a>
-			</div>
-			<!-- <div class="col-sm-1">
-				<p style="text-align: center;">n=41<p>
-				<a href="../images/gallery/knights/knight41.png"><img src="../images/gallery/knights/knight41.png" alt="Knight's Domination 41" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=42<p>
-				<a href="../images/gallery/knights/knight42.png"><img src="../images/gallery/knights/knight42.png" alt="Knight's Domination 42" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=43<p>
-				<a href="../images/gallery/knights/knight43.png"><img src="../images/gallery/knights/knight43.png" alt="Knight's Domination 43" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=44<p>
-				<a href="../images/gallery/knights/knight44.png"><img src="../images/gallery/knights/knight44.png" alt="Knight's Domination 44" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=45<p>
-				<a href="../images/gallery/knights/knight45.png"><img src="../images/gallery/knights/knight45.png" alt="Knight's Domination 45" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=46<p>
-				<a href="../images/gallery/knights/knight46.png"><img src="../images/gallery/knights/knight46.png" alt="Knight's Domination 46" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=47<p>
-				<a href="../images/gallery/knights/knight47.png"><img src="../images/gallery/knights/knight47.png" alt="Knight's Domination 47" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=48<p>
-				<a href="../images/gallery/knights/knight48.png"><img src="../images/gallery/knights/knight48.png" alt="Knight's Domination 48" width="90" height="90"></a>
-			</div>
-			<div class="col-sm-1">
-				<p style="text-align: center;">n=49<p>
-				<a href="../images/gallery/knights/knight49.png"><img src="../images/gallery/knights/knight49.png" alt="Knight's Domination 49" width="90" height="90"></a>
-			</div> -->
-		</div>
-
-		<div class="row">
-			<p style="border: 2px solid powderblue;padding: 5px;"><a href="https://oeis.org/A004670" alt="BW 32">A004670 </a><a href="https://oeis.org/wiki/Index_to_OEIS:_Section_Ba#BW" alt="BW OEIS Link">(and friends):</a> "Theta series of Barnes-Wall lattices in dimension 2^n."</p>
-			<p> <!-- Examples of optimal tilings: --></p>
-			<!-- maybe a thing on multiple barnes wall lattices> -->
-
-			<div class="col-md-1">
-				<p style="text-align: center;">Dimension (OEIS)<p>
-			</div>
-			<div class="col-md-2">
-				<p style="text-align: center;">4 <a href="https://oeis.org/A004011" alt="BW 4">(A004011)</a><p>
-			</div>
-			<div class="col-md-2">
-				<p style="text-align: center;">8 <a href="https://oeis.org/A004009" alt="BW 8">(A004009)</a><p>
-			</div>
-			<div class="col-md-2">
-				<p style="text-align: center;">16 <a href="https://oeis.org/A008409" alt="BW 16">(A008409)</a><p>
-			</div>
-			<div class="col-md-2">
-				<p style="text-align: center;">32 <a href="https://oeis.org/A004670" alt="BW 32">(A004670)</a><p>
-			</div>
-			<div class="col-md-2">
-				<p style="text-align: center;">64 <a href="https://oeis.org/A103936" alt="BW 64">(A103936)</a><p>
-			</div>
-			<!-- <div class="col-md-2">
-				<p style="text-align: center;">128 (A100004)<p>
-			</div> -->
-		</div>
-
-		<!-- <div class="row">
-			<div class="col-md-1">
-			<p style="text-align: center;">Theta Series q-expansion:<p>
-			</div>
-			<div class="col-md-2">
-				<p style="text-align: center;">4 (A004011)<p>
-			</div>
-			<div class="col-md-2">
-				<p style="text-align: center;">8 (A004009)<p>
-			</div>
-			<div class="col-md-2">
-				<p style="text-align: center;">16 (A008409)<p>
-			</div>
-			<div class="col-md-2">
-				<p style="text-align: center;">32 (A004670)<p>
-			</div>
-			<div class="col-md-2">
-				<p style="text-align: center;">64 (A103936)<p>
-			</div>
-			<!-- <div class="col-md-2"> -->
-				<!-- <p style="text-align: center;">\[E_4^{16}-3840 E_4^{13} \Delta + 4942080 E_4^{10} \Delta^2 - 2416128000 E_4^7 \Delta^3 + 364791398400 E_4^4 \Delta^4 - 8259045949440 E_4 \Delta^5\] <p> -->
-			<!-- </div> -->
-		<!-- </div> -->
-
-		<div class="row">
-			<div class="col-md-1">
-				<p style="text-align: center;">Theta Series plot:<p>
-			</div>
-			<div class="col-md-2">
-				<a href="../images/gallery/theta_4.png"><img src="../images/gallery/theta_4.png" alt="Theta Series 4" width="180" height="180"></a>
-			</div>
-			<div class="col-md-2">
-				<a href="../images/gallery/theta_8.png"><img src="../images/gallery/theta_8.png" alt="Theta Series 8" width="180" height="180"></a>
-			</div>
-			<div class="col-md-2">
-				<a href="../images/gallery/Theta_16.png"><img src="../images/gallery/Theta_16.png" alt="Theta Series 16" width="180" height="180"></a>
-			</div>
-			<div class="col-md-2">
-				<a href="../images/gallery/Theta32_gimp.png"><img src="../images/gallery/Theta32_gimp.png" alt="Theta Series 32" width="180" height="180"></a>
-			</div>
-			<div class="col-md-2">
-				<a href="../images/gallery/theta_64.png"><img src="../images/gallery/theta_64.png" alt="Theta Series 64" width="180" height="180"></a>
-			</div>
-			<!-- <div class="col-md-2">
-				<a href="../images/gallery/theta_128.png"><img src="../images/gallery/theta_128.png" alt="Theta Series 128" width="180" height="180"></a>
-			</div> -->
-		</div>
-	</div>
-
-	<p style="border: 2px solid powderblue;padding: 15px;">Other OEIS Problems I Find Interesting But Don't Have Any Graphics For</p>
-	<div class="container bg-1">
-		<div class="row">
-			<p style="border: 2px solid powderblue;padding: 5px;"><a href="https://oeis.org/A181746" alt="E8 Reps">A181746</a>: "List of dimensions for which there exist several non-isomorphic irreducible representations of E8.."</p>
-			<p style="border: 2px solid powderblue;padding: 5px;"><a href="https://oeis.org/A343266" alt="E6 Reps">A343266</a> (proposed): "List of dimensions for which there exist 8 or more non-isomorphic irreducible representations of E6."</p>
-			<!-- 	Very few terms are known, yet the sequence is infinite. -->		
-		</div>
-	</div>
-
-	<script>
-		fetch('navbar.html')
-		  .then(response => response.text())
-		  .then(data => {
-			document.body.insertAdjacentHTML('beforeend', data);
-		  })
-		  .catch(error => console.error('Error loading navbar:', error));
-	  </script>
-
+    <script src="scripts.js"></script>
 </body>
 </html>
