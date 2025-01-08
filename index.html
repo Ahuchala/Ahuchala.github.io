@@ -2,114 +2,82 @@
 <html lang="en-US">
 
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-    <!-- Latest compiled JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-    <script src="scripts/main.js"></script>
-
-    <!-- Google fonts -->
-    <link href='https://fonts.googleapis.com/css?family=Angkor' rel='stylesheet'>
-
-    <link rel="shortcut icon" type="image/png" href="images/favicon_a.png"/>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Andy Huchala</title>
 
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- External Stylesheet -->
     <link rel="stylesheet" href="styles.css">
 
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/png" href="images/favicon_a.png">
 </head>
 
 <body>
-
-    <header class="text-center py-5">
-        <h1 class="display-4 text-primary">Andy Huchala</h1>
-        <p class="lead text-secondary">Welcome to my homepage, explore my work and interests!</p>
+    <header>
+        <div class="header-content">
+            <h1>Andy Huchala</h1>
+            <p>Where Mathematics Meets Art</p>
+        </div>
     </header>
 
-    <!-- Intro Section with Border Style -->
-    <section class="container mb-4">
-        <div class="p-3 border border-info rounded">
-            <h3>Homepage</h3>
-            <p>Welcome to my personal website where I showcase my research, teaching, art, and more!</p>
-        </div>
-    </section>
+    <nav class="navbar">
+        <ul>
+            <li><a href="/gallery">Gallery</a></li>
+            <li><a href="/oeis">OEIS</a></li>
+            <li><a href="/research">Math Research</a></li>
+            <li><a href="/teaching">Teaching</a></li>
+        </ul>
+    </nav>
 
-    <!-- Main Content with Grid Layout -->
-    <div class="container">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3">
-                <ul class="list-group">
-                    <li class="list-group-item"><a href="gallery.html" class="text-dark">Gallery</a></li>
-                    <li class="list-group-item"><a href="oeis.html" class="text-dark">OEIS</a></li>
-                    <li class="list-group-item"><a href="math.html" class="text-dark">Math Research</a></li>
-                    <li class="list-group-item"><a href="teaching.html" class="text-dark">Teaching</a></li>
-                    <li class="list-group-item"><a href="#" class="text-dark">Art Stuff</a></li>
-                </ul>
+    <main>
+        <!-- Intro Section -->
+        <section class="intro">
+            <h2>Welcome!</h2>
+            <p>Explore my research, teaching, art, and more!</p>
+        </section>
+
+        <!-- Featured Content Section -->
+        <section id="gallery" class="featured">
+            <h2>Featured Work</h2>
+            <div class="featured-item">
+                <img src="images/gallery/museum_small.PNG" alt="Museum Submission">
+                <p>Displayed in the Jordan Schnitzer Museum of Art in 2021.</p>
             </div>
+        </section>
 
-            <!-- Main Content Area with Image -->
-            <div class="col-md-9">
-                <div class="mb-4">
-                    <img src="images/gallery/museum_small.PNG" alt="Museum Submission" class="img-fluid rounded shadow-sm">
-                    <p class="mt-2">Displayed in the Jordan Schnitzer Museum of Art in 2021.</p>
+        <!-- Image Grid Section -->
+        <section class="grid-section">
+            <h2>Explore More</h2>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <img src="images/gallery/broken.png" alt="Race Condition">
+                    <p>Race Condition</p>
+                </div>
+                <div class="grid-item">
+                    <img src="images/gallery/knight31.PNG" alt="Knight's Domination">
+                    <p>Knight's Domination</p>
+                </div>
+                <div class="grid-item">
+                    <img src="images/Thumbnails/sand23_360.png" alt="Sand Pile">
+                    <p>Sand Pile</p>
+                </div>
+                <div class="grid-item">
+                    <img src="images/gallery/cracked.PNG" alt="Cracked Glass">
+                    <p>Cracked Glass</p>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <!-- Image Grid Section -->
-    <section class="container bg-light py-4 rounded">
-        <div class="row text-center">
-            <div class="col-md-3">
-                <a href="gallery.html" class="d-block mb-2">
-                    <img src="images/gallery/broken.png" alt="Race Condition" class="img-fluid rounded">
-                </a>
-                <p>Race Condition</p>
-            </div>
+    <footer>
+        <p>&copy; 2025 Andy Huchala | Math and Art</p>
+    </footer>
 
-            <div class="col-md-3">
-                <a href="oeis.html" class="d-block mb-2">
-                    <img src="images/gallery/knight31.PNG" alt="Knight's Domination" class="img-fluid rounded">
-                </a>
-                <p>Knight's Domination</p>
-            </div>
-
-            <div class="col-md-3">
-                <a href="math.html" class="d-block mb-2">
-                    <img src="images/Thumbnails/sand23_360.png" alt="Sand Pile" class="img-fluid rounded">
-                </a>
-                <p>Sand Pile</p>
-            </div>
-
-            <div class="col-md-3">
-                <a href="#" class="d-block mb-2">
-                    <img src="images/gallery/cracked.PNG" alt="Cracked Glass" class="img-fluid rounded">
-                </a>
-                <p>Cracked Glass</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- JavaScript to dynamically load navbar -->
-    <script>
-        fetch('navbar.html')
-            .then(response => response.text())
-            .then(data => {
-                document.body.insertAdjacentHTML('beforeend', data);
-            })
-            .catch(error => console.error('Error loading navbar:', error));
-    </script>
-
+    <script src="scripts.js"></script>
 </body>
 
 </html>
