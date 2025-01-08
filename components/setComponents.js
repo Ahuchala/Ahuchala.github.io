@@ -1,7 +1,10 @@
+import { footer } from "./footer.js";
 import { header } from "./header.js";
 
+
 const components = {
-    "#header": header
+    "#header": header,
+    "#footer": footer
 };
 
 export function setComponents() {

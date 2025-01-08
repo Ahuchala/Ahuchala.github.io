@@ -105,7 +105,16 @@ header .header-content p {
 /* Footer */
 footer {
   text-align: center;
-  padding: 20px;
-  background: #333;
+  padding: 15px;
+  background: #2b2d42;
   color: white;
+}
+
+footer a {
+  color: #ff9a8b;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
 }
