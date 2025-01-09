@@ -170,3 +170,59 @@ document.addEventListener("DOMContentLoaded", () => {
         oeisGrid.appendChild(sequenceDiv);
     });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const authoredSequences = [
+        { id: "A351664", name: "Discriminants of imaginary quadratic fields with class number 26 (negated)." },
+        { id: "A351665", name: "Discriminants of imaginary quadratic fields with class number 27 (negated)." },
+        { id: "A351666", name: "Discriminants of imaginary quadratic fields with class number 28 (negated)." },
+        { id: "A351667", name: "Discriminants of imaginary quadratic fields with class number 29 (negated)." },
+        { id: "A351668", name: "Discriminants of imaginary quadratic fields with class number 30 (negated)." },
+        { id: "A351669", name: "Discriminants of imaginary quadratic fields with class number 31 (negated)." },
+        { id: "A351670", name: "Discriminants of imaginary quadratic fields with class number 32 (negated)." },
+        { id: "A351671", name: "Discriminants of imaginary quadratic fields with class number 33 (negated)." },
+        { id: "A351672", name: "Discriminants of imaginary quadratic fields with class number 34 (negated)." },
+        { id: "A351673", name: "Discriminants of imaginary quadratic fields with class number 35 (negated)." },
+        { id: "A351674", name: "Discriminants of imaginary quadratic fields with class number 36 (negated)." },
+        { id: "A351675", name: "Discriminants of imaginary quadratic fields with class number 37 (negated)." },
+        { id: "A351676", name: "Discriminants of imaginary quadratic fields with class number 38 (negated)." },
+        { id: "A351677", name: "Discriminants of imaginary quadratic fields with class number 39 (negated)." },
+        { id: "A351678", name: "Discriminants of imaginary quadratic fields with class number 40 (negated)." },
+        { id: "A351679", name: "Discriminants of imaginary quadratic fields with class number 41 (negated)." },
+        { id: "A351680", name: "Discriminants of imaginary quadratic fields with class number 42 (negated)." },
+        { id: "A362875", name: "Theta series of 15-dimensional lattice Kappa_15." },
+        { id: "A362876", name: "Theta series of 16-dimensional lattice Kappa_16." },
+        { id: "A362877", name: "Theta series of 17-dimensional lattice Kappa_17." },
+        { id: "A362878", name: "Theta series of 18-dimensional lattice Kappa_18." },
+        { id: "A362879", name: "Theta series of 19-dimensional lattice Kappa_19." },
+        { id: "A362880", name: "Theta series of 20-dimensional lattice Kappa_20." },
+        { id: "A363147", name: "Primes q == 1 (mod 4) such that there is at least one equivalence class of quaternary quadratic forms of discriminant q not representing 2." },
+        { id: "A363148", name: "a(n) gives the number of equivalence classes of quaternary quadratic forms of discriminant A363147(n) not representing 2." },
+        { id: "A339248", name: "List of dimensions for which there exist several non-isomorphic irreducible representations of G2." },
+        { id: "A339249", name: "List of dimensions for which there exist several non-isomorphic irreducible representations of F4." },
+        { id: "A339250", name: "List of dimensions for which there exist several non-isomorphic irreducible representations of E6." },
+        { id: "A339251", name: "List of dimensions for which there exist several non-isomorphic irreducible representations of E7." },
+        { id: "A343266", name: "List of dimensions for which there exist 8 or more non-isomorphic irreducible representations of E6." },
+        { id: "A345657", name: "Theta series of the canonical laminated lattice LAMBDA_26." },
+        { id: "A345658", name: "Theta series of the canonical laminated lattice LAMBDA_27." },
+        { id: "A345659", name: "Theta series of the canonical laminated lattice LAMBDA_28." },
+        { id: "A345660", name: "Theta series of the canonical laminated lattice LAMBDA_29." },
+        { id: "A345661", name: "Theta series of the canonical laminated lattice LAMBDA_30." },
+        { id: "A345662", name: "Theta series of the canonical laminated lattice LAMBDA_31." },
+        { id: "A352095", name: "Dimension of the space of Siegel cusp forms of genus 3 and weight 2n." },
+    ];
+
+    const sequenceGrid = document.querySelector(".sequence-grid");
+
+    authoredSequences.forEach(sequence => {
+        const card = document.createElement("div");
+        card.className = "sequence-card";
+        card.innerHTML = `
+            <a href="https://oeis.org/${sequence.id}" target="_blank">
+                <h3>${sequence.id}</h3>
+                <p>${sequence.name}</p>
+            </a>
+        `;
+        sequenceGrid.appendChild(card);
+    });
+});
