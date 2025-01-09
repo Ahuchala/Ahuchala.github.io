@@ -1,16 +1,6 @@
-/* General Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* General Reset
 
-/* body {
-    font-family: 'Montserrat', sans-serif;
-    color: #333;
-    line-height: 1.6;
-    background-color: #f4f4f9;
-} */
+
 
 
 /* Gallery Section */
@@ -70,21 +60,4 @@
 
 .modal .close:hover {
     color: #ff9a8b;
-}
-
-/* Footer */
-footer {
-    text-align: center;
-    padding: 15px;
-    background: #2b2d42;
-    color: white;
-}
-
-footer a {
-    color: #ff9a8b;
-    text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
 }

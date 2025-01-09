@@ -1,14 +1,20 @@
 /* General Reset */
+:root {
+  --primary-dark: #31395a;
+  --secondary-light: #6a80d3;
+  --hover-light: #9ca7e8;
+  --body-bg: #f4f4f4;
+}
+
 body {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
   line-height: 1.6;
   color: #333;
-  background: #f4f4f4; /* Consistent white background */
+  background: var(--body-bg);
   overflow-x: hidden;
 }
 
-/* Header */
 header {
   background: linear-gradient(135deg, #5e60ce, #48bfe3);
   color: white;
@@ -22,9 +28,8 @@ header .header-content h1 {
   font-weight: bold;
 }
 
-/* Navigation */
 .navbar {
-  background: #31395a; /* Darker, less intense color */
+  background: var(--primary-dark);
   padding: 10px 0;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -33,7 +38,6 @@ header .header-content h1 {
   list-style: none;
   display: flex;
   justify-content: center;
-  align-items: center;
   margin: 0;
   padding: 0;
 }
@@ -47,31 +51,33 @@ header .header-content h1 {
   color: white;
   font-weight: bold;
   padding: 5px 10px;
-  border-radius: 5px; /* Subtle rounding */
+  border-radius: 5px;
   transition: background-color 0.2s ease, color 0.4s ease;
 }
 
 .navbar a:hover {
-  background: rgba(255, 255, 255, 0.15); /* Subtle hover background */
-  color: #6a80d3; /* Subtle, cooler purple shade */
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--secondary-light);
 }
 
-.navbar a:active {
-  background: rgba(255, 255, 255, 0.15); /* Consistent with hover */
-  color: #6a80d3;
-  transition: none; /* Removes fade-in effect */
+main {
+  padding: 20px;
 }
 
-/* Intro Section */
+h2 {
+  text-align: center;
+  margin-top: 40px;
+  color: var(--primary-dark);
+}
+
 .intro {
   text-align: center;
   padding: 50px 20px;
-  background: #f4f4f4;
 }
 
 .intro h2 {
   font-size: 2.5rem;
-  color: #31395a;
+  color: var(--primary-dark);
   font-weight: 600;
 }
 
@@ -81,99 +87,72 @@ header .header-content h1 {
   margin-top: 10px;
 }
 
-/* Featured Section */
-.featured {
+.featured, .grid-section {
   text-align: center;
   padding: 40px 20px;
+  background: var(--body-bg);
 }
 
-.featured h2 {
+.featured h2, .grid-section h2 {
   margin-bottom: 20px;
-  color: #31395a;
+  color: var(--primary-dark);
 }
 
-.featured-item img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 10px;
-}
-
-.featured-item p {
-  margin-top: 10px;
-  color: #555;
-}
-
-/* Grid Section */
-.grid-section {
-  padding: 50px 20px;
-  background: #f4f4f4;
-}
-
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  text-align: center;
-}
-
-.grid-item img {
+.featured-item img, .grid-item img {
   max-width: 100%;
   height: auto;
   border-radius: 10px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.grid-item img:hover {
+.featured-item p, .grid-item p {
+  margin-top: 10px;
+  color: #555;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.grid-item img:hover, .clickable:hover {
   transform: scale(1.03);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.grid-item p {
-  margin-top: 10px;
-  color: #31395a;
-}
-
-/* Footer */
 footer {
   text-align: center;
   padding: 15px;
-  background: #31395a; /* Matches navbar */
+  background: var(--primary-dark);
   color: white;
 }
 
 footer a {
-  color: #6a80d3; /* Subtle matching purple */
+  color: var(--secondary-light);
   text-decoration: none;
 }
 
 footer a:hover {
   text-decoration: underline;
-  color: #9ca7e8; /* Lighter shade on hover */
+  color: var(--hover-light);
 }
-/* Close button for modal */
+
 #image-modal .close {
   position: absolute;
-  top: 20px;
-  right: 30px;
+  top: 10px;
+  right: 20px;
   font-size: 30px;
   font-weight: bold;
   color: white;
   cursor: pointer;
-  z-index: 1001; /* Ensure it appears above content */
+  z-index: 1001;
 }
 
 #image-modal .close:hover {
-  color: #ff6f61; /* Subtle red hover effect */
+  color: #ff6f61;
 }
 
-/* Fix cursor for clickable thumbnails */
 .clickable {
   cursor: pointer;
 }
-
-/* Hover effects for clickable thumbnails */
-.clickable:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
