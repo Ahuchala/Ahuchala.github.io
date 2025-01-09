@@ -5,28 +5,13 @@
     box-sizing: border-box;
 }
 
-body {
+/* body {
     font-family: 'Montserrat', sans-serif;
     color: #333;
     line-height: 1.6;
     background-color: #f4f4f9;
-}
+} */
 
-/* Header */
-header {
-    text-align: center;
-    padding: 20px;
-    background: #2b2d42;
-    color: white;
-}
-
-header h1 {
-    font-size: 2.5rem;
-}
-
-header p {
-    font-size: 1.2rem;
-}
 
 /* Gallery Section */
 .gallery {

@@ -4,13 +4,13 @@ body {
   font-family: 'Montserrat', sans-serif;
   line-height: 1.6;
   color: #333;
-  background: #f9f9f9;
+  background: #f4f4f4; /* Consistent white background */
   overflow-x: hidden;
 }
 
 /* Header */
 header {
-  background: linear-gradient(135deg, #5e60ce, #48bfe3); /* Softer blue-purple gradient */
+  background: linear-gradient(135deg, #5e60ce, #48bfe3);
   color: white;
   text-align: center;
   padding: 50px 20px;
@@ -106,7 +106,7 @@ header .header-content h1 {
 /* Grid Section */
 .grid-section {
   padding: 50px 20px;
-  background: #ffffff;
+  background: #f4f4f4;
 }
 
 .grid-container {
@@ -150,3 +150,30 @@ footer a:hover {
   text-decoration: underline;
   color: #9ca7e8; /* Lighter shade on hover */
 }
+/* Close button for modal */
+#image-modal .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  z-index: 1001; /* Ensure it appears above content */
+}
+
+#image-modal .close:hover {
+  color: #ff6f61; /* Subtle red hover effect */
+}
+
+/* Fix cursor for clickable thumbnails */
+.clickable {
+  cursor: pointer;
+}
+
+/* Hover effects for clickable thumbnails */
+.clickable:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
