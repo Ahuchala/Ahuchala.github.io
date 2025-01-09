@@ -3,40 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OEIS Gallery</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Knights & Barnes-Wall Lattice Theta Series</title>
+    <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="styles.css">
-	<link rel="stylesheet" href="/styles.css">
-	
-	    <!-- Favicon -->
-		<link rel="shortcut icon" type="image/png" href="/images/favicon_a.png">
+    <link rel="shortcut icon" type="image/png" href="/images/favicon_a.png">
 </head>
 <body>
     <div id="header"></div>
     <script src="/scripts/main.js" type="module"></script>
-	
-    
+
     <main>
+        <!-- Knights Gallery -->
         <section>
-            <h2>Knight's Domination</h2>
+            <h2>Knights Domination</h2>
             <div class="gallery-grid" id="knight-gallery"></div>
         </section>
 
+        <!-- Barnes-Wall Lattice Theta Series -->
         <section>
-            <h2>Barnes-Wall Lattices</h2>
-            <div class="gallery-grid" id="barnes-wall-gallery"></div>
+            <h2>Barnes-Wall Lattice Theta Series</h2>
+            <div class="gallery-grid" id="theta-gallery"></div>
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2025 Andy Huchala. <a href="/index.html">Home</a></p>
-    </footer>
-
+    <!-- Modal -->
     <div id="image-modal" class="modal">
         <span class="close">&times;</span>
-        <img class="modal-content" id="modal-img" alt="Gallery Image">
+        <img class="modal-content" id="modal-img">
     </div>
 
+    <section id="oeis-edits">
+        <h2>OEIS Sequences I've Worked On Recently</h2>
+        <p>Many of these didn't amount to contributions, but I was at least (usually) able to verify the listed terms.</p>
+        <div class="oeis-grid"></div>
+    </section>
+    
+    <div id="footer"></div>
+    <script src="/scripts/main.js" type="module"></script>
     <script src="scripts.js"></script>
+    
+    
 </body>
 </html>
