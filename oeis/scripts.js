@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
         { n: 4, file: 'theta_4.png' },
         { n: 8, file: 'theta_8.png' },
         { n: 16, file: 'theta_16.png' },
+        { n: 32, file: 'theta_32.png' },
         { n: 64, file: 'theta_64.png' },
         { n: 128, file: 'theta_128.png' }
     ];
