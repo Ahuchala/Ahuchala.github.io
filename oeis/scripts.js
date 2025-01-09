@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
         { id: "A251419", name: "Domination number of the n-triangle grid graph TG_n having n vertices along each side." },
         { id: "A251532", name: "Independence number of the n-triangular honeycomb obtuse knight graph." },
         { id: "A251534", name: "Domination number of the n-triangular honeycomb obtuse knight graph." },
-        { id: "A261752", name: "Minimum number of knights on an n X n chessboard such that every square is attacked." },
+        // { id: "A261752", name: "Minimum number of knights on an n X n chessboard such that every square is attacked." },
         { id: "A264041", name: "a(n) is the maximum number of diagonals that can be placed in an n X n grid made up of 1 X 1 unit squares when diagonals are placed in the unit squares in such a way that no two diagonals may cross or intersect at an endpoint." },
         { id: "A269706", name: "Size of a minimum dominating set (domination number) in an n X n X n grid." },
         { id: "A272651", name: "The no-3-in-line problem: maximal number of points from an n X n square grid so that no three lie on a line." },
