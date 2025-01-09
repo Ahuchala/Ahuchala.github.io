@@ -218,6 +218,30 @@ h2 {
   color: #ff9a8b;
 }
 
+
+/* Title above the thumbnails */
+.thumbnail-title {
+  text-align: center;
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 8px; /* Space between the title and the thumbnail */
+  font-weight: bold;
+}
+
+/* Title above the modal image */
+.modal-title {
+  position: absolute;
+  top: 10%; /* Adjust position to be above the image */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+
 /* Faded Row Effect */
 .faded-row {
   position: relative;
