@@ -1,119 +1,78 @@
-
-
-.timeline {
-    border-left: 2px solid #2b2d42; /* Vertical line for the timeline */
-    padding-left: 40px; /* Space for the dots and text */
-    margin: 0 auto; /* Center the timeline */
-    max-width: 800px; /* Optional: Limit the width for better readability */
-    list-style: none; /* Remove default bullets */
-}
-
-.timeline-item {
-    margin-bottom: 20px;
-    position: relative;
-}
-
-.timeline-item h2 {
-    font-size: 1.2rem;
-    margin: 0; /* Remove extra margin */
-    font-weight: bold;
-    line-height: 1.4; /* Ensure proper spacing between lines */
-}
-
-.timeline-item p {
-    margin: 5px 0 0; /* Small margin between title and description */
-    line-height: 1.4;
-}
-
-.timeline-item::before {
-    content: "";
-    position: absolute;
-    left: -25px; /* Shift dot closer to the text */
-    top: 6px; /* Align dot with the first line of text */
-    width: 12px;
-    height: 12px;
-    background: #2b2d42; /* Dot color */
-    border-radius: 50%; /* Make it a circle */
-    border: 2px solid #f7f7f7; /* Outline matches the background */
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
-}
-
-.timeline-item h2, .timeline-item p {
-    margin-left: 10px; /* Space text slightly away from the vertical line */
-}
-
-/* Styling for the section title */
-.timeline-title {
-    text-align: center; /* Center-align the title */
-    font-size: 2rem; /* Make it prominent */
-    font-weight: bold; /* Ensure it stands out */
-    margin-bottom: 20px; /* Add space between the title and the timeline */
-    color: #2b2d42; /* Match the timeline color scheme */
-}
-
-/* Styling for any description under the title */
-.timeline-description {
-    text-align: center; /* Align text with the title */
-    font-size: 1.2rem; /* Slightly smaller than the title */
-    font-weight: 400; /* Regular weight for readability */
-    color: #555555; /* Softer color for contrast */
-    margin-bottom: 40px; /* Add spacing before the timeline */
-    line-height: 1.6; /* Improve readability */
-}
-
-/* Align the entire timeline and its text */
+/* General Timeline Wrapper */
 .timeline-wrapper {
-    max-width: 800px; /* Center the section and limit its width */
-    margin: 0 auto; /* Center it horizontally */
+    max-width: 800px; /* Limit width for better readability */
+    margin: 0 auto; /* Center the timeline section */
     padding: 20px; /* Add padding for breathing room */
 }
 
-/* Footer */
-footer {
-    text-align: center;
-    padding: 20px;
-    background: #31395a; /* Matches navbar background */
-    color: white;
-    font-size: 0.9rem; /* Slightly smaller text for subtlety */
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Light top shadow for definition */
-}
-
-footer p {
-    margin: 0;
-}
-
-footer a {
-    color: #6a80d3; /* Matching hover purple from navbar */
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-footer a:hover {
-    color: #9ca7e8; /* Lighter hover shade for consistency */
-    text-decoration: underline;
-}
-
+/* Timeline Section */
 .timeline {
+    border-left: 2px solid #2b2d42; /* Vertical line for the timeline */
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 20px; /* Space between items */
+    list-style: none; /* Remove default bullets */
+    padding-left: 40px; /* Space for dots and text */
 }
 
+/* Timeline Items */
 .timeline-item {
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    background: #f9f9f9; /* Item background */
+    border: 1px solid #ddd; /* Border for individual items */
+    border-radius: 5px; /* Rounded corners */
+    padding: 15px; /* Inner padding */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
+/* Timeline Item Dot */
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -25px; /* Align dot with the timeline */
+    top: 6px; /* Align with the first line of text */
+    width: 12px;
+    height: 12px;
+    background: #2b2d42; /* Dot color */
+    border-radius: 50%; /* Make it circular */
+    border: 2px solid #f7f7f7; /* Outline matches background */
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Timeline Item Title */
 .timeline-item h2 {
-    margin: 0 0 10px;
-    color: #31395a;
+    margin: 0 0 10px; /* Add spacing below the title */
+    font-size: 1.2rem; /* Title font size */
+    font-weight: bold; /* Bold title */
+    color: #31395a; /* Title color */
+    line-height: 1.4; /* Ensure proper spacing */
+    margin-left: 10px; /* Offset text slightly from the timeline */
 }
 
+/* Timeline Item Description */
 .timeline-item p {
-    margin: 0;
-    color: #555;
-    font-size: 1rem;
+    margin: 0; /* Remove unnecessary spacing */
+    font-size: 1rem; /* Description font size */
+    color: #555; /* Softer color for readability */
+    line-height: 1.4; /* Line spacing */
+    margin-left: 10px; /* Offset text slightly from the timeline */
+}
+
+/* Section Title */
+.timeline-title {
+    text-align: center; /* Center-align the section title */
+    font-size: 2rem; /* Prominent font size */
+    font-weight: bold; /* Bold title */
+    margin-bottom: 20px; /* Spacing below the title */
+    color: #2b2d42; /* Match the timeline color scheme */
+}
+
+/* Section Description */
+.timeline-description {
+    text-align: center; /* Align with the title */
+    font-size: 1.2rem; /* Slightly smaller font size */
+    font-weight: 400; /* Regular weight for readability */
+    color: #555555; /* Softer color for contrast */
+    margin-bottom: 40px; /* Spacing before the timeline */
+    line-height: 1.6; /* Improve readability */
 }

@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Populate gallery with thumbnails
     images.forEach(({ thumbnail, full, alt }) => {
         const imgElement = document.createElement('img');
+
         imgElement.src = thumbnail;
         imgElement.alt = alt;
         imgElement.dataset.fullImage = full;
