@@ -229,3 +229,59 @@ document.addEventListener("DOMContentLoaded", () => {
         sequenceGrid.appendChild(card);
     });
 });
+document.addEventListener("DOMContentLoaded", () => {
+    const maxVisibleRows = 2; // Number of rows initially visible
+
+    const applyToggle = (grid, button) => {
+        const items = Array.from(grid.children);
+        const columns = parseInt(
+            getComputedStyle(grid).gridTemplateColumns.split(" ").length,
+            10
+        );
+
+        // Apply visibility and fade
+        items.forEach((item, index) => {
+            if (index >= columns * maxVisibleRows) {
+                item.classList.add("hidden");
+            } else if (index >= columns) {
+                item.classList.add("faded-row");
+            }
+        });
+
+        let isExpanded = false;
+        button.addEventListener("click", () => {
+            isExpanded = !isExpanded;
+
+            items.forEach((item, index) => {
+                if (index >= columns * maxVisibleRows) {
+                    item.classList.toggle("hidden", !isExpanded);
+                }
+                if (index >= columns && index < columns * maxVisibleRows) {
+                    item.classList.toggle("faded-row", !isExpanded);
+                }
+            });
+
+            button.innerHTML = isExpanded ? "Show Less &#9650;" : "Show More &#9660;";
+        });
+    };
+
+    const addToggleButton = (grid, container) => {
+        const buttonWrapper = document.createElement("div");
+        buttonWrapper.classList.add("toggle-button");
+        const button = document.createElement("button");
+        button.innerHTML = "Show More &#9660;";
+        buttonWrapper.appendChild(button);
+        container.appendChild(buttonWrapper);
+        applyToggle(grid, button);
+    };
+
+    // Apply to Knight's Domination grid
+    const knightGrid = document.getElementById("knight-gallery");
+    if (knightGrid) addToggleButton(knightGrid, knightGrid.parentElement);
+
+    // Apply to other grids
+    const oeisGrid = document.querySelector(".oeis-grid");
+    const sequenceGrid = document.querySelector(".sequence-grid");
+    if (oeisGrid) addToggleButton(oeisGrid, oeisGrid.parentElement);
+    if (sequenceGrid) addToggleButton(sequenceGrid, sequenceGrid.parentElement);
+});

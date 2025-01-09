@@ -16,52 +16,75 @@
     <link rel="shortcut icon" type="image/png" href="/images/favicon_a.png">
 </head>
 <body>
+    <!-- Header -->
     <div id="header"></div>
-
-    
-    <script src="/scripts.js" type="module"></script>
     <script src="/scripts/main.js" type="module"></script>
     <script src="scripts.js"></script>
 
-
     <main>
+        <!-- Introduction -->
+        <section class="intro">
+            <p style="text-align: center;">
+                The Online Encyclopedia of Integer Sequences is an online database of integer-valued sequences that anyone can contribute to. 
+                It's got a lot of interesting problem statements, many with only partial solutions. I've compiled a list of some problems I've been interested in, 
+                with graphics included if possible.
+            </p>
+        </section>
+
         <!-- Knights Gallery -->
         <section>
-            <h2>Knights Domination</h2>
+            <h2 style="text-align: center;">A261752 (Knight's Domination)</h2>
+            <p style="text-align: center;">"Minimum number of knights on an n X n chessboard such that every square is attacked."</p>
             <div class="gallery-grid" id="knight-gallery"></div>
         </section>
 
         <!-- Barnes-Wall Lattice Theta Series -->
         <section>
-            <h2>Barnes-Wall Lattice Theta Series</h2>
+            <h2 style="text-align: center;">A004670 (and friends): Barnes-Wall Lattice Theta Series</h2>
+            <p style="text-align: center;">"Theta series of Barnes-Wall lattices in dimension 2^n."</p>
             <div class="gallery-grid" id="theta-gallery"></div>
         </section>
+
+        <!-- OEIS Edits -->
+<section id="oeis-edits">
+    <h2>OEIS Sequences I've Worked On Recently</h2>
+    <p>Many of these didn't amount to contributions, but I was at least (usually) able to verify the listed terms.</p>
+    <div class="oeis-grid"></div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Authored Sequences -->
+<section id="authored-sequences">
+    <h2>OEIS Sequences Authored</h2>
+    <p>Below is a list of OEIS sequences that I have authored. Click on a sequence to view its entry on the OEIS website.</p>
+    <div class="sequence-grid"></div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Other Favorites -->
+<section id="other-favorites">
+    <h2>Other OEIS Sequences Near and Dear to My Heart</h2>
+    <div class="sequence-grid">
+        <div class="sequence-card">
+            <a href="https://oeis.org/A181746" target="_blank">
+                <h3>A181746</h3>
+                <p>List of dimensions for which there exist several non-isomorphic irreducible representations of E8.</p>
+            </a>
+        </div>
+        <div class="sequence-card">
+            <a href="https://oeis.org/A343266" target="_blank">
+                <h3>A343266 (proposed)</h3>
+                <p>List of dimensions for which there exist 8 or more non-isomorphic irreducible representations of E6.</p>
+            </a>
+        </div>
+    </div>
+</section>
+
     </main>
 
-    <!-- Modal -->
-    <div id="image-modal" class="modal">
-        <span class="close">&times;</span>
-        <img class="modal-content" id="modal-img">
-    </div>
-
-    <section id="oeis-edits">
-        <h2>OEIS Sequences I've Worked On Recently</h2>
-        <p>Many of these didn't amount to contributions, but I was at least (usually) able to verify the listed terms.</p>
-        <div class="oeis-grid"></div>
-    </section>
-
-    <section id="authored-sequences">
-        <h2>OEIS Sequences Authored</h2>
-        <p>Below is a list of OEIS sequences that I have authored. Click on a sequence to view its entry on the OEIS website.</p>
-        <div class="sequence-grid">
-            <!-- Sequence cards -->
-        </div>
-    </section>
-    
-    
+    <!-- Footer -->
     <div id="footer"></div>
-
-    
-    
 </body>
 </html>
