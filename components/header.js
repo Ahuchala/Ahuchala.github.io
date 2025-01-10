@@ -15,5 +15,6 @@ export function header() {
                 <li><a href="/oeis">OEIS</a></li>
             </ul>
         </nav>
+        <div class="gradient-below"></div>
     `;
 }
