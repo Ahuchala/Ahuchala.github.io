@@ -21,6 +21,7 @@ body {
 p {
   margin-block-start: 0px;
   margin-block-end: 0px;
+  margin-bottom: 14px;
 }
 
 /* Header */
@@ -37,22 +38,19 @@ header .header-content h1 {
   font-weight: bold;
 }
 
-.body-text span
-{
-    display: inline-block;
-    text-align: justify;
+.body-text span {
+  display: inline-block;
+  text-align: justify;
 }
 
-.center-if-needed
-{
-    text-align: center;
+.center-if-needed {
+  text-align: center;
 }
 
-.center-content
-{
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
+.center-content {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
 }
 
 /* Navigation Bar */
@@ -63,7 +61,6 @@ header .header-content h1 {
   position: relative; /* Enables use of ::after for the gradient */
 }
 
-/* Gradient Below Navbar */
 .navbar::after {
   content: '';
   position: absolute;
@@ -74,7 +71,6 @@ header .header-content h1 {
   background: linear-gradient(135deg, #5e60ce, #48bfe3); /* Matches the header gradient */
   z-index: -1; /* Places the gradient below the navbar content */
 }
-
 
 .navbar ul {
   list-style: none;
@@ -223,11 +219,44 @@ h2 {
   align-items: center;
 }
 
-.modal img {
+.modal-content {
+  display: flex;
+  flex-direction: row; /* Aligns the image and text side-by-side */
+  background-color: white; /* Modal content background */
+  padding: 20px;
+  border-radius: 8px;
   max-width: 90%;
   max-height: 90%;
-  border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  gap: 20px; /* Space between the image and text */
+}
+
+.modal img {
+  max-width: 40%; /* Restrict the image width */
+  max-height: 80vh; /* Prevent overflow */
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.modal-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 60%; /* Adjust width as per layout */
+  color: var(--text-color);
+}
+
+.modal-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: var(--primary-dark);
+}
+
+.modal-description {
+  font-size: 1.2rem;
+  color: var(--secondary-text);
+  line-height: 1.6;
 }
 
 .modal .close {
@@ -245,7 +274,6 @@ h2 {
   color: #ff9a8b;
 }
 
-
 /* Title above the thumbnails */
 .thumbnail-title {
   text-align: center;
@@ -255,128 +283,45 @@ h2 {
   font-weight: bold;
 }
 
-/* Title above the modal image */
-.modal-title {
-  position: absolute;
-  top: 10%; /* Adjust position to be above the image */
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.5rem;
-  color: white;
-  font-weight: bold;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  text-align: center;
-}
-
-
-/* Faded Row Effect */
-.faded-row {
-  position: relative;
-  z-index: 0;
-}
-
-.faded-row::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.1) 100%
-  );
-  z-index: 1;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.faded-row:hover::after {
-  opacity: 0;
-}
-
-/* Hidden Items */
-.hidden {
-  display: none;
-}
-
-/* Toggle Button */
-.toggle-button {
-  text-align: center;
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-}
-
-.toggle-button button {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  color: #2b2d42;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.toggle-button button:hover {
-  background: var(--secondary-light);
-  color: white;
-}
-
-
-
 /* Footer */
 footer {
   text-align: center;
   padding: 16px; /* Matches the navbar height */
   background: var(--primary-dark); /* Solid dark blue section */
   color: white;
-  position: relative;
 }
-
-/* Gradient Above Footer */
-footer .gradient-above {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 8px; /* Updated gradient height */
-  background: linear-gradient(135deg, #5e60ce, #48bfe3); /* Matches the header gradient */
-}
-
-/* Footer Content */
-footer .footer-content {
-  position: relative;
-  z-index: 1;
-}
-
-/* Gradient Below Footer */
-footer .gradient-below {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 8px; /* Updated gradient height */
-  background: linear-gradient(135deg, #5e60ce, #48bfe3); /* Matches the header gradient */
-}
-
-/* Footer Links */
-footer a {
-  color: var(--secondary-light);
-  text-decoration: none;
-}
-
-footer a:hover {
-  text-decoration: underline;
-  color: var(--hover-light);
-}
-
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .section {
     padding: 20px;
   }
+
+  .modal-content {
+    display: flex;
+    flex-direction: row; /* Aligns the image and text side-by-side */
+    gap: 20px; /* Space between the image and text */
+    background-color: white; /* Modal content background */
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 90%;
+    max-height: 90%;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal img {
+    max-width: 40%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  
+  .modal-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 60%;
+    color: var(--text-color);
+  }
+  
 }
