@@ -18,6 +18,11 @@ body {
   overflow-x: hidden;
 }
 
+p {
+  margin-block-start: 0px;
+  margin-block-end: 0px;
+}
+
 /* Header */
 header {
   background: linear-gradient(135deg, #5e60ce, #48bfe3);
@@ -30,6 +35,24 @@ header .header-content h1 {
   font-size: 3rem;
   margin: 0;
   font-weight: bold;
+}
+
+.body-text span
+{
+    display: inline-block;
+    text-align: justify;
+}
+
+.center-if-needed
+{
+    text-align: center;
+}
+
+.center-content
+{
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
 }
 
 /* Navigation Bar */
@@ -145,6 +168,10 @@ h2 {
 
 .resource-list a:hover {
   text-decoration: underline;
+}
+
+.featured p {
+  max-width: 800px;
 }
 
 /* Featured & Grid Sections */
@@ -303,34 +330,36 @@ h2 {
 /* Footer */
 footer {
   text-align: center;
-  padding: 0.1px; /* Matches the navbar height */
+  padding: 16px; /* Matches the navbar height */
   background: var(--primary-dark); /* Solid dark blue section */
   color: white;
-  position: relative; /* Enables use of ::before and ::after for gradients */
+  position: relative;
 }
 
 /* Gradient Above Footer */
-footer::before {
-  content: '';
+footer .gradient-above {
   position: absolute;
-  top: -8px; /* Position the gradient above the footer */
+  top: 0;
   left: 0;
   width: 100%;
   height: 8px; /* Updated gradient height */
   background: linear-gradient(135deg, #5e60ce, #48bfe3); /* Matches the header gradient */
-  z-index: -1; /* Places the gradient below the footer content */
+}
+
+/* Footer Content */
+footer .footer-content {
+  position: relative;
+  z-index: 1;
 }
 
 /* Gradient Below Footer */
-footer::after {
-  content: '';
+footer .gradient-below {
   position: absolute;
-  top: 100%; /* Position the gradient below the footer */
+  bottom: 0;
   left: 0;
   width: 100%;
   height: 8px; /* Updated gradient height */
   background: linear-gradient(135deg, #5e60ce, #48bfe3); /* Matches the header gradient */
-  z-index: -1; /* Places the gradient below the footer content */
 }
 
 /* Footer Links */
