@@ -14,7 +14,8 @@ export function header() {
                 <li><a href="/teaching">Teaching</a></li>
                 <li><a href="/oeis">OEIS</a></li>
             </ul>
+            <div class="gradient-below"></div>
         </nav>
-        <div class="gradient-below"></div>
+        
     `;
 }

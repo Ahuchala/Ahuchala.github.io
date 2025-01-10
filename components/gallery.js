@@ -42,7 +42,12 @@ resulting fractal structure.
         full: '/images/gallery/char2,5.png', 
         alt: 'Char2,5', 
         title: 'Character (2,5)', 
-        description: 'The character formula of the Lie algebra SU(3) with highest weight (2,5) plotted in Sage.' 
+        description: 
+        /* html */`
+        <p>
+        The character formula of the Lie algebra SU(3) with highest weight (2,5) plotted in Sage. I've since written <a href="https://cruzgodar.com/applets/complex-maps/?glsl-textarea=su3_character%285%252C2%252Cz%29">an implementation for Cruz's website</a> which can generate this image and many others.
+    </p>
+        `
     },
     { 
         thumbnail: '/images/thumbnails/julia.webp', 
@@ -113,5 +118,16 @@ resulting fractal structure.
         alt: 'Sand 3k', 
         title: 'Sand 3k', 
         description: 'A 3,000 x 3,000 sandpile that was also a little bit too big for its bounding box.' 
+    },
+    { 
+        thumbnail: '/images/thumbnails/inverse_wp.webp', 
+        full: '/images/gallery/inverse_wp.png', 
+        alt: 'Weierstrass Inverse', 
+        title: 'Weierstrass', 
+        description: 
+        /* html */`
+        <p>I implemented the weierstrass p-function and its inverse on <a href="cgodar.com">Cruz's website</a>. Computing the p-function was straightforward enough, but the inverse required a lot of thinking outside the box. There was a region (|z|>1) which converged nicely, but for small moduli I decided to use gradient descent to approximate an inverse. Comparing the composition of the p-function and its inverse to the identity map produced this image. 
+    </p>
+        `
     }
 ];
