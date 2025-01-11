@@ -57,24 +57,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Barnes-Wall Lattice Theta Series
     const thetaImages = [
-        { n: 4, file: 'theta_4.png' },
-        { n: 8, file: 'theta_8.png' },
-        { n: 16, file: 'theta_16.png' },
-        { n: 32, file: 'theta_32.png' },
-        { n: 64, file: 'theta_64.png' },
-        { n: 128, file: 'theta_128.png' }
+        { n: 4, file: 'theta_4.png', title: 'A004011: n = 4' },
+        { n: 8, file: 'theta_8.png', title: 'A004009: n = 8' },
+        { n: 16, file: 'theta_16.png', title: 'A008409: n = 16' },
+        { n: 32, file: 'theta_32.png', title: 'A004670: n = 32' },
+        { n: 64, file: 'theta_64.png', title: 'A103936: n = 64' },
+        { n: 128, file: 'theta_128.png', title: 'A100004: n = 128'}
     ];
+    
     const thetaPath = '/images/gallery/';
     const thetaThumbnailPath = '/images/thumbnails/';
 
-    thetaImages.forEach(({ n, file }) => {
-        const label = `Theta Series n = ${n}`;
+    thetaImages.forEach(({ n, file, title }) => {
         const imageUrl = {
             full: `${thetaPath}${file}`,
             thumbnail: `${thetaThumbnailPath}${file.replace('.png', '.webp')}`
         };
-        addGalleryItem(label, imageUrl, thetaGallery, true);
+        addGalleryItem(title, imageUrl, thetaGallery, true);
     });
+    
 
     // Modal functionality
     closeModal.addEventListener('click', () => {

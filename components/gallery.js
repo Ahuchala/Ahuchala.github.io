@@ -162,5 +162,16 @@ resulting fractal structure.
         <p>Apparently when I created this I believe it was a plot of the weierstrass p function when g_2=0, g_3=-9/16. I have yet to verify this.
     </p>
         `
+    },
+    { 
+        thumbnail: '/images/thumbnails/theta_4.webp', 
+        full: '/images/gallery/theta_4.png', 
+        alt: 'Theta 4', 
+        title: 'Theta 4', 
+        description: 
+        /* html */`
+        <p>A plot of the <a href=" A004011">theta function of the Barnes-Wall lattice in dimension 4</a>. A theta function counts the number of points in a lattice of squared length n from the origin. For example, on a 2D square lattice, there is one point of square norm zero (the origin), four points of square norm 1 (corresponding to the four cardinal directions), four points of square norm 2 (explicitly (1,1), (1,-1), (-1,1), (-1,-1), and so .) <a href="https://oeis.org/A004018">The theta function of a 2D square lattice</a> is 1 + 4*q + 4*q^2 + ....
+    </p>
+        `
     }
 ];
