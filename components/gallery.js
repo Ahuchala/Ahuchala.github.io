@@ -13,7 +13,7 @@ const images = [
         title: 'Museum Submission', 
         description: 
         /* html */`
-        <p>A 9,000 by 9,000 abelian sandpile with millions of grains. This, along with a zoomed in version, was originally submitted to the Jordan Schnitzer Museum of Art in 2020 and was displayed in their virtual gallery until the museum was able to resume in-person operation in 2021. Also currently on display in gate A of the Eugene airport. It was also <a href="https://www.girlsangle.org/page/bulletin-archive/GABv15n01E.pdf">published in Girls\' Angle magazine</a>, a magazine aimed to increase engagement of girls in math.</p>
+        <p>A 9,000 by 9,000 abelian sandpile with millions of grains. This, along with a zoomed in version, was originally submitted to the Jordan Schnitzer Museum of Art in 2020 and was <a href="https://mpembed.com/show/?m=FGvT8EzPQpy&mpu=885">displayed in their virtual gallery</a> until the museum was able to resume in-person operation in 2021. Also currently on display in gate A of the Eugene airport. It was also <a href="https://www.girlsangle.org/page/bulletin-archive/GABv15n01E.pdf">published in Girls\' Angle magazine</a>, a magazine aimed to increase engagement of girls in math.</p>
         
         <p><em>Original Caption: This piece attempts to capture the spirit of the infinite and print it on a single page. It uses what's called an Abelian Sandpile model, which is a fractal that colors "grains of sand" by their slope. A fractal is a kind of
 mathematical picture with a repeated motif no matter how far in or out you zoom. The Abelian Sandpile model achieves this by stacking a large number of grains of sand in the center of a grid, and then "topples" it onto
@@ -21,6 +21,17 @@ the adjacent 4 tiles. The taller the pile of sand at the start, the more times y
 resulting fractal structure.
     </em>
         </p>
+        `
+    },
+    { 
+        thumbnail: '/images/thumbnails/billion_center.webp', 
+        full: '/images/gallery/billion_center.png', 
+        alt: 'Billion Center', 
+        title: 'Billion Center', 
+        description: 
+        /* html */`
+        <p>When toppling a billion (actually 2^30) grains of sand, the center of an abelian sandpile revealed an interesting mandala-like pattern at high zoom and resolution. This image was <a href="https://mpembed.com/show/?m=FGvT8EzPQpy&mpu=885">also displayed in the JSMA virtual gallery</a> and <a href="https://www.girlsangle.org/page/bulletin-archive/GABv15n01E.pdf">appeared in Girls\' Angle magazine</a>.
+    </p>
         `
     },
     { 
@@ -75,7 +86,7 @@ resulting fractal structure.
         full: '/images/gallery/inverse_constant.png', 
         alt: 'Inverse Constant', 
         title: 'Inverse Constant', 
-        description: 'Some kind of elliptic function, maybe a Weierstrass function?' 
+        description: 'This appears to be one over the weierstrass function of z, but the angle tau is unknown to me.' 
     },
     { 
         thumbnail: '/images/thumbnails/ising.webp', 
@@ -127,6 +138,28 @@ resulting fractal structure.
         description: 
         /* html */`
         <p>I implemented the weierstrass p-function and its inverse on <a href="cgodar.com">Cruz's website</a>. Computing the p-function was straightforward enough, but the inverse required a lot of thinking outside the box. There was a region (|z|>1) which converged nicely, but for small moduli I decided to use gradient descent to approximate an inverse. Comparing the composition of the p-function and its inverse to the identity map produced this image. 
+    </p>
+        `
+    },
+    { 
+        thumbnail: '/images/thumbnails/colormap2.webp', 
+        full: '/images/gallery/colormap2.png', 
+        alt: 'Knight\'s Domination', 
+        title: 'Knight\'s Domination', 
+        description: 
+        /* html */`
+        <p>In undergrad I investigated <a href="https://oeis.org/A261752">OEIS A261752: Minimum number of knights on an n X n chessboard such that every square is attacked</a> and its generalizations to m x n boards. This is a colormap of that data, i.e. the domination number of the i x j knight graph is encoded as the color of pixel (i,j).
+    </p>
+        `
+    },
+    { 
+        thumbnail: '/images/thumbnails/lattice_weierstrass.webp', 
+        full: '/images/gallery/lattice_weierstrass.png', 
+        alt: 'Weierstrass Lattice', 
+        title: 'Weierstrass Lattice', 
+        description: 
+        /* html */`
+        <p>Apparently when I created this I believe it was a plot of the weierstrass p function when g_2=0, g_3=-9/16. I have yet to verify this.
     </p>
         `
     }
