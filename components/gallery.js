@@ -56,7 +56,7 @@ resulting fractal structure.
         description: 
         /* html */`
         <p>
-        The character formula of the Lie algebra SU(3) with highest weight (2,5) plotted in Sage. I've since written <a href="https://cruzgodar.com/applets/complex-maps/?glsl-textarea=su3_character%285%252C2%252Cz%29">an implementation for Cruz's website</a> which can generate this image and many others.
+        The character formula of the Lie algebra SU(3) with highest weight (2,5) plotted in Sage. I've since written <a href="https://cruzgodar.com/applets/complex-maps/?glsl-textarea=su3_character%285%252C2%252Cz%29">an implementation in glsl on Cruz's website</a> which can generate this image and many others.
     </p>
         `
     },
@@ -72,7 +72,12 @@ resulting fractal structure.
         full: '/images/gallery/creepymagnet.png', 
         alt: 'Creepy Magnet', 
         title: 'Creepy Magnet', 
-        description: 'An Ising model approaching the critical point that looked a little spooky.' 
+        description: 
+        /* html */`
+        <p>
+        The Ising model is a way to simulate ferromagnetism by looking at points on a rectangular grid and labeling them as either up or down, and then setting rules for them to try to agree with their neighbors dictated by temperature. A higher temperature means higher randomness (hence less correlation among neighbors), and as the metal cools, it reaches a critical point where it tends to spontaneously pick a preference towards having all atoms pointing in a particular direction. As this particular simulation approached its critical point it appeared to have a preference for spookiness.
+    </p>
+        `
     },
     { 
         thumbnail: '/images/thumbnails/husky.webp', 
@@ -159,7 +164,7 @@ resulting fractal structure.
         title: 'Weierstrass Lattice', 
         description: 
         /* html */`
-        <p>A plot of the weierstrass p function when g_2=0, g_3=-9/16 (i.e. a plot of -p(z,1,rho) where rho = e^(2*pi*i/3)).
+        <p>A plot of the weierstrass p function when g_2=0, g_3=-9/16 (i.e. a plot of -p(z,1,rho) where rho = e^(2*pi*i/3)). This image is from Sage, but I've <a href="https://cruzgodar.com/applets/complex-maps/?glsl-textarea=-wp%28z%252Crho%29">implemented it in glsl on Cruz's website</a> as well (just click generate!).
     </p>
         `
     },
@@ -171,6 +176,19 @@ resulting fractal structure.
         description: 
         /* html */`
         <p>A plot of the <a href=" A004011">theta function of the Barnes-Wall lattice in dimension 4</a>. A theta function counts the number of points in a lattice of squared length n from the origin. For example, on a 2D square lattice, there is one point of square norm zero (the origin), four points of square norm 1 (corresponding to the four cardinal directions), four points of square norm 2 (explicitly (1,1), (1,-1), (-1,1), (-1,-1), and so on.) <a href="https://oeis.org/A004018">The theta function of a 2D square lattice</a> is 1 + 4*q + 4*q^2 + ....
+    </p>
+        `
+    },
+    { 
+        thumbnail: '/images/thumbnails/graphene.webp', 
+        full: '/images/gallery/graphene.png', 
+        alt: 'Graphene', 
+        title: 'Graphene', 
+        description: 
+        /* html */`
+        <p>A bonus image from a scope when I worked at the graphene lab at UW. Initially I was tasked with performing mechanical exfoliation (glorified scotch-taping) to procure possible viable samples of graphene, purifying the silicon wafer of tape residue (the blue-whiteish streaks in the picture), and then manually searching for graphene (the purple shape at the very center of the screen). Eventually I moved on to helping the lab develop computer vision software to automatically search for graphene.
+    </p>
+    <p>This particular specimen was probably too close to the surrounding thicker clumps of carbon to be extracted for the solid state physicists to use as a superconductor, but I thought the image was neat.
     </p>
         `
     }
