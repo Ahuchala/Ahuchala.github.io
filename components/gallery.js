@@ -159,7 +159,7 @@ resulting fractal structure.
         title: 'Weierstrass Lattice', 
         description: 
         /* html */`
-        <p>Apparently when I created this I believe it was a plot of the weierstrass p function when g_2=0, g_3=-9/16. I have yet to verify this.
+        <p>A plot of the weierstrass p function when g_2=0, g_3=-9/16 (i.e. a plot of -p(z,1,rho) where rho = e^(2*pi*i/3)).
     </p>
         `
     },
