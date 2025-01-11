@@ -100,7 +100,7 @@ resulting fractal structure.
         full: '/images/gallery/cracked.PNG', 
         alt: 'Cracked', 
         title: 'Cracked Glass', 
-        description: 'Another race condition in an abelian sandpile implementation, this one cause an asymmetry in toppling. It terminated early and produced this image which bizarrely looks like a cracked screen. The bands of color are from coloring pile height mod 4 (since some piles remained taller).' 
+        description: 'Another race condition in an abelian sandpile implementation, this one caused an asymmetry in toppling. It terminated early and produced this image which bizarrely looks like a cracked screen. The bands of color are from coloring pile height mod 4 (since some piles still remained taller than 4).' 
     },
     { 
         thumbnail: '/images/thumbnails/julia_3.webp', 
