@@ -1,4 +1,4 @@
-const oeisSequences = [
+const editedSequences = [
     { id: "A000755", name: "No-3-in-line problem on n X n grid: total number of ways of placing 2n points on n X n grid so no 3 are in a line. No symmetries are taken into account." },
     { id: "A000983", name: "Size of minimal binary covering code of length n and covering radius 1." },
     { id: "A001197", name: "Zarankiewicz's problem k_2(n)." },
@@ -92,3 +92,9 @@ const authoredSequences = [
     { id: "A345662", name: "Theta series of the canonical laminated lattice LAMBDA_31." },
     { id: "A352095", name: "Dimension of the space of Siegel cusp forms of genus 3 and weight 2n." },
 ];
+
+const favoriteSequences = [
+    { id: "A181746", name: "List of dimensions for which there exist several non-isomorphic irreducible representations of E8." },
+    { id: "A343266", name: "List of dimensions for which there exist 8 or more non-isomorphic irreducible representations of E6." }
+];
+

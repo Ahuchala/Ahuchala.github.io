@@ -75,38 +75,13 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         addGalleryItem(title, imageUrl, thetaGallery, true);
     });
-    
-
-    // Modal functionality
-    closeModal.addEventListener('click', () => {
-        modal.style.display = 'none';
-        modalImg.src = '';
-    });
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-            modalImg.src = '';
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.style.display === 'block') {
-            modal.style.display = 'none';
-            modalImg.src = '';
-        }
-    });
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    const oeisGrid = document.querySelector('.oeis-grid');
-     // const oeisSequences = [
+    const oeisGrid = document.querySelector('.oeis-edits');
+     // const editedSequences = [
         // { id: "A000755", name: "No-3-in-line problem on n X n grid: total number of ways of placing 2n points on n X n grid so no 3 are in a line. No symmetries are taken into account." },...
-    
-    
-    
-
-    oeisSequences.forEach(sequence => {
+    editedSequences.forEach(sequence => {
         const sequenceDiv = document.createElement('div');
         sequenceDiv.classList.add('oeis-sequence');
 
@@ -125,75 +100,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const sequenceGrid = document.querySelector(".sequence-grid");
+    const oeisGrid = document.querySelector('.oeis-authored');
 
     authoredSequences.forEach(sequence => {
-        const card = document.createElement("div");
-        card.className = "sequence-card";
-        card.innerHTML = `
-            <a href="https://oeis.org/${sequence.id}" target="_blank">
-                <h3>${sequence.id}</h3>
-                <p>${sequence.name}</p>
-            </a>
+        const sequenceDiv = document.createElement('div');
+        sequenceDiv.classList.add('oeis-sequence');
+
+        sequenceDiv.innerHTML = `
+            <div class="sequence-id">${sequence.id}</div>
+            <div class="sequence-name">${sequence.name}</div>
         `;
-        sequenceGrid.appendChild(card);
+
+        sequenceDiv.addEventListener('click', () => {
+            window.open(`https://oeis.org/${sequence.id}`, '_blank');
+        });
+
+        oeisGrid.appendChild(sequenceDiv);
     });
 });
+
 document.addEventListener("DOMContentLoaded", () => {
-    const maxVisibleRows = 2; // Number of rows initially visible
-    // const authoredSequences = [
-    //     { id: "A351664", name: "Discriminants of imaginary quadratic fields with class number 26 (negated)." },...
-    
-    const applyToggle = (grid, button) => {
-        const items = Array.from(grid.children);
-        const columns = parseInt(
-            getComputedStyle(grid).gridTemplateColumns.split(" ").length,
-            10
-        );
 
-        // Apply visibility and fade
-        items.forEach((item, index) => {
-            if (index >= columns * maxVisibleRows) {
-                item.classList.add("hidden");
-            } else if (index >= columns) {
-                item.classList.add("faded-row");
-            }
+    const oeisGrid = document.querySelector('.oeis-favorite');
+
+    favoriteSequences.forEach(sequence => {
+        const sequenceDiv = document.createElement('div');
+        sequenceDiv.classList.add('oeis-sequence');
+
+        sequenceDiv.innerHTML = `
+            <div class="sequence-id">${sequence.id}</div>
+            <div class="sequence-name">${sequence.name}</div>
+        `;
+
+        sequenceDiv.addEventListener('click', () => {
+            window.open(`https://oeis.org/${sequence.id}`, '_blank');
         });
 
-        let isExpanded = false;
-        button.addEventListener("click", () => {
-            isExpanded = !isExpanded;
-
-            items.forEach((item, index) => {
-                if (index >= columns * maxVisibleRows) {
-                    item.classList.toggle("hidden", !isExpanded);
-                }
-                if (index >= columns && index < columns * maxVisibleRows) {
-                    item.classList.toggle("faded-row", !isExpanded);
-                }
-            });
-
-            button.innerHTML = isExpanded ? "Show Less &#9650;" : "Show More &#9660;";
-        });
-    };
-
-    const addToggleButton = (grid, container) => {
-        const buttonWrapper = document.createElement("div");
-        buttonWrapper.classList.add("toggle-button");
-        const button = document.createElement("button");
-        button.innerHTML = "Show More &#9660;";
-        buttonWrapper.appendChild(button);
-        container.appendChild(buttonWrapper);
-        applyToggle(grid, button);
-    };
-
-    // Apply to Knight's Domination grid
-    const knightGrid = document.getElementById("knight-gallery");
-    if (knightGrid) addToggleButton(knightGrid, knightGrid.parentElement);
-
-    // Apply to other grids
-    const oeisGrid = document.querySelector(".oeis-grid");
-    const sequenceGrid = document.querySelector(".sequence-grid");
-    if (oeisGrid) addToggleButton(oeisGrid, oeisGrid.parentElement);
-    if (sequenceGrid) addToggleButton(sequenceGrid, sequenceGrid.parentElement);
+        oeisGrid.appendChild(sequenceDiv);
+    });
 });
