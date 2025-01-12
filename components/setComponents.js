@@ -11,4 +11,4 @@ export function setComponents() {
     for (const [queryString, getHTML] of Object.entries(components)) {
         document.querySelector(queryString).innerHTML = getHTML();
     }
-}
+};

@@ -1,39 +1,36 @@
 document.addEventListener("DOMContentLoaded", () => {
     const knightGallery = document.getElementById('knight-gallery');
     const thetaGallery = document.getElementById('theta-gallery');
-    const modal = document.getElementById('image-modal');
-    const modalImg = document.getElementById('modal-img');
-    const closeModal = document.querySelector('.close');
 
-    // Function to add image or blank space
-    const addGalleryItem = (label, imageUrl, gallery, hasImage) => {
-        const wrapper = document.createElement('div');
-        wrapper.classList.add('gallery-item');
+    // Function to add gallery items
+    const addGalleryItem = (label, imageUrl, gallery, hasImage, title = '', description = '') => {
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('gallery-item');
 
-        const labelElement = document.createElement('p');
-        labelElement.textContent = label;
-        wrapper.appendChild(labelElement);
+    const labelElement = document.createElement('p');
+    labelElement.textContent = label;
+    wrapper.appendChild(labelElement);
 
-        if (hasImage) {
-            const img = new Image();
-            img.src = imageUrl.thumbnail;
-            img.alt = label;
-            img.dataset.fullImage = imageUrl.full;
-            wrapper.appendChild(img);
+    if (hasImage) {
+        const img = new Image();
+        img.src = imageUrl.thumbnail || ''; // Ensure thumbnail is defined
+        img.alt = label;
+        img.classList.add('clickable');
+        img.dataset.fullImage = imageUrl.full || ''; // Ensure full image path is defined
+        img.dataset.title = title;
+        img.dataset.description = description;
 
-            img.addEventListener('click', () => {
-                modal.style.display = 'block';
-                modalImg.src = img.dataset.fullImage;
-                modalImg.alt = label;
-            });
-        } else {
-            const placeholder = document.createElement('div');
-            placeholder.classList.add('placeholder');
-            wrapper.appendChild(placeholder);
-        }
+        wrapper.appendChild(img);
+    } else {
+        const placeholder = document.createElement('div');
+        placeholder.classList.add('placeholder');
+        wrapper.appendChild(placeholder);
+    }
 
-        gallery.appendChild(wrapper);
-    };
+    gallery.appendChild(wrapper);
+};
+
+    
 
     // Knights Gallery
     const knights = Array.from({ length: 37 }, (_, i) => i + 4); // 4 to 45
@@ -41,101 +38,72 @@ document.addEventListener("DOMContentLoaded", () => {
         4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
         20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 36, 38, 40
     ];
-    const knightPath = '/images/gallery/knights/';
-    const knightThumbnailPath = '/images/thumbnails/knight';
-    const knightExtension = '.png';
+    // Knights Gallery
+// Knights Gallery
+const knightPath = '/images/gallery/'; // Full-size images in /images/gallery/
+const knightThumbnailPath = '/images/thumbnails/'; // Thumbnails in /images/thumbnails/
+const knightExtension = '.png';
 
-    knights.forEach((n) => {
-        const label = `n = ${n}`;
-        const hasImage = existingKnights.includes(n);
-        const imageUrl = {
-            full: `${knightPath}knight${n}${knightExtension}`,
-            thumbnail: `${knightThumbnailPath}${n}.webp`
-        };
-        addGalleryItem(label, imageUrl, knightGallery, hasImage);
-    });
+knights.forEach((n) => {
+    const label = `n = ${n}`;
+    const hasImage = existingKnights.includes(n);
+    const imageUrl = {
+        full: `${knightPath}knight${n}${knightExtension}`, // Full image in gallery/
+        thumbnail: `${knightThumbnailPath}knight${n}.webp` // Thumbnail in thumbnails/
+    };
+    const title = `Knight's Domination for n = ${n}`;
+    const description = `This is a minimal covering of an ${n} x ${n} board by knights.`;
+    addGalleryItem(label, imageUrl, knightGallery, hasImage, title, description);
+});
+
 
     // Barnes-Wall Lattice Theta Series
     const thetaImages = [
-        { n: 4, file: 'theta_4.png', title: 'A004011: n = 4' },
-        { n: 8, file: 'theta_8.png', title: 'A004009: n = 8' },
-        { n: 16, file: 'theta_16.png', title: 'A008409: n = 16' },
-        { n: 32, file: 'theta_32.png', title: 'A004670: n = 32' },
-        { n: 64, file: 'theta_64.png', title: 'A103936: n = 64' },
-        { n: 128, file: 'theta_128.png', title: 'A100004: n = 128'}
+        { n: 4, file: 'theta_4.png', title: 'A004011: n = 4', description: 'Theta series for n = 4.' },
+        { n: 8, file: 'theta_8.png', title: 'A004009: n = 8', description: 'Theta series for n = 8.' },
+        { n: 16, file: 'theta_16.png', title: 'A008409: n = 16', description: 'Theta series for n = 16.' },
+        { n: 32, file: 'theta_32.png', title: 'A004670: n = 32', description: 'Theta series for n = 32.' },
+        { n: 64, file: 'theta_64.png', title: 'A103936: n = 64', description: 'Theta series for n = 64.' },
+        { n: 128, file: 'theta_128.png', title: 'A100004: n = 128', description: 'Theta series for n = 128.' }
     ];
-    
+
     const thetaPath = '/images/gallery/';
     const thetaThumbnailPath = '/images/thumbnails/';
 
-    thetaImages.forEach(({ n, file, title }) => {
+    thetaImages.forEach(({ n, file, title, description }) => {
         const imageUrl = {
             full: `${thetaPath}${file}`,
             thumbnail: `${thetaThumbnailPath}${file.replace('.png', '.webp')}`
         };
-        addGalleryItem(title, imageUrl, thetaGallery, true);
+        addGalleryItem(title, imageUrl, thetaGallery, true, title, description);
     });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    const oeisGrid = document.querySelector('.oeis-edits');
-     // const editedSequences = [
-        // { id: "A000755", name: "No-3-in-line problem on n X n grid: total number of ways of placing 2n points on n X n grid so no 3 are in a line. No symmetries are taken into account." },...
-    editedSequences.forEach(sequence => {
-        const sequenceDiv = document.createElement('div');
-        sequenceDiv.classList.add('oeis-sequence');
-
-        sequenceDiv.innerHTML = `
-            <div class="sequence-id">${sequence.id}</div>
-            <div class="sequence-name">${sequence.name}</div>
-        `;
-
-        sequenceDiv.addEventListener('click', () => {
-            window.open(`https://oeis.org/${sequence.id}`, '_blank');
-        });
-
-        oeisGrid.appendChild(sequenceDiv);
-    });
-});
 
 document.addEventListener("DOMContentLoaded", () => {
+    function populateSequences(gridSelector, sequences) {
+        const oeisGrid = document.querySelector(gridSelector);
+        if (!oeisGrid || !sequences) return;
 
-    const oeisGrid = document.querySelector('.oeis-authored');
+        sequences.forEach(sequence => {
+            const sequenceDiv = document.createElement('div');
+            sequenceDiv.classList.add('oeis-sequence');
 
-    authoredSequences.forEach(sequence => {
-        const sequenceDiv = document.createElement('div');
-        sequenceDiv.classList.add('oeis-sequence');
+            sequenceDiv.innerHTML = `
+                <div class="sequence-id">${sequence.id}</div>
+                <div class="sequence-name">${sequence.name}</div>
+            `;
 
-        sequenceDiv.innerHTML = `
-            <div class="sequence-id">${sequence.id}</div>
-            <div class="sequence-name">${sequence.name}</div>
-        `;
+            sequenceDiv.addEventListener('click', () => {
+                window.open(`https://oeis.org/${sequence.id}`, '_blank');
+            });
 
-        sequenceDiv.addEventListener('click', () => {
-            window.open(`https://oeis.org/${sequence.id}`, '_blank');
+            oeisGrid.appendChild(sequenceDiv);
         });
+    }
 
-        oeisGrid.appendChild(sequenceDiv);
-    });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const oeisGrid = document.querySelector('.oeis-favorite');
-
-    favoriteSequences.forEach(sequence => {
-        const sequenceDiv = document.createElement('div');
-        sequenceDiv.classList.add('oeis-sequence');
-
-        sequenceDiv.innerHTML = `
-            <div class="sequence-id">${sequence.id}</div>
-            <div class="sequence-name">${sequence.name}</div>
-        `;
-
-        sequenceDiv.addEventListener('click', () => {
-            window.open(`https://oeis.org/${sequence.id}`, '_blank');
-        });
-
-        oeisGrid.appendChild(sequenceDiv);
-    });
+    // Call the function for each sequence category
+    populateSequences('.oeis-edits', editedSequences);
+    populateSequences('.oeis-authored', authoredSequences);
+    populateSequences('.oeis-favorite', favoriteSequences);
 });

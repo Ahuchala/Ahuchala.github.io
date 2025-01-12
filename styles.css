@@ -225,30 +225,62 @@ h2 {
   align-items: center;
 }
 
-.modal-content {
+.modal .close {
+  position: absolute;
+  top: 15px; /* Adjust for vertical alignment */
+  right: 15px; /* Adjust for horizontal alignment */
+  color: black; /* Default text color */
+  font-size: 2.5rem; /* Make the "×" larger */
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1002; /* Ensure it sits above modal content */
+  line-height: 1; /* Prevent text stretching */
+  width: 40px; /* Increase clickable area */
+  height: 40px; /* Increase clickable area */
   display: flex;
-  flex-direction: row; /* Aligns the image and text side-by-side */
-  background-color: white; /* Modal content background */
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-radius: 50%; /* Circular shape */
+  background-color: rgba(255, 255, 255, 0.8); /* Light background */
+  transition: transform 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.modal .close:hover {
+  color: #e57373; /* Softer red */
+  background-color: rgba(255, 230, 230, 0.8); /* Light pink background */
+  transform: scale(1.2); /* Slightly enlarge on hover */
+}
+
+
+
+.modal-content {
+  position: relative; /* For positioning the close button */
+  background-color: white;
   padding: 20px;
   border-radius: 8px;
   max-width: 90%;
   max-height: 90%;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-  gap: 20px; /* Space between the image and text */
+  display: flex; /* Use flexbox for layout */
+  flex-direction: row; /* Arrange items horizontally (image + text side by side) */
+  gap: 20px; /* Add space between the image and the text */
+  align-items: center; /* Vertically center the content */
+  overflow: auto; /* Handle overflowing content gracefully */
 }
 
 .modal img {
   max-width: 40%; /* Restrict the image width */
-  max-height: 80vh; /* Prevent overflow */
+  max-height: 80vh; /* Prevent the image from overflowing */
   border-radius: 8px;
-  object-fit: contain;
+  object-fit: contain; /* Ensure the image scales proportionally */
 }
 
 .modal-text {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  max-width: 60%; /* Adjust width as per layout */
+  max-width: 60%; /* Allocate remaining space for text */
   color: var(--text-color);
 }
 
@@ -263,21 +295,6 @@ h2 {
   font-size: 1.2rem;
   color: var(--secondary-text);
   line-height: 1.6;
-}
-
-.modal .close {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  color: white;
-  font-size: 2rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.modal .close:hover {
-  color: #ff9a8b;
 }
 
 
