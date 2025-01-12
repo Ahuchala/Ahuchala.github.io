@@ -349,34 +349,6 @@ h2 {
   opacity: 0;
 }
 
-/* Hidden Items */
-.hidden {
-  display: none;
-}
-
-/* Toggle Button */
-.toggle-button {
-  text-align: center;
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-}
-
-.toggle-button button {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  color: #2b2d42;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.toggle-button button:hover {
-  background: var(--secondary-light);
-  color: white;
-}
 
 
 
@@ -433,3 +405,62 @@ footer a:hover {
     padding: 20px;
   }
 }
+
+/* Default: Hide all items */
+.collapsible .gallery-item,
+.collapsible .oeis-sequence {
+    display: none; /* Start with all items hidden */
+}
+
+/* Fully visible first row */
+.collapsible .gallery-item.first,
+.collapsible .oeis-sequence.first {
+    display: block; /* Ensure visibility */
+    opacity: 1; /* Full opacity */
+}
+
+/* Obscured second row */
+.collapsible .gallery-item.second,
+.collapsible .oeis-sequence.second {
+    display: block; /* Make it visible */
+    opacity: 0.7; /* Slightly faded */
+    pointer-events: auto; /* Ensure it's clickable */
+}
+
+/* Hidden rows beyond the second */
+.collapsible .gallery-item.hidden,
+.collapsible .oeis-sequence.hidden {
+    display: none; /* Completely hidden */
+}
+
+/* Styling for the Show More / Show Less button */
+.show-more {
+  padding: 10px 20px; /* Space inside the button */
+  background: var(--secondary-light); /* Your theme's secondary color */
+  color: white; /* Button text color */
+  font-size: 1rem; /* Font size */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor for interactivity */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
+}
+
+.show-more:hover {
+  background: var(--hover-light); /* Hover color */
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+/* Visibility Classes */
+.hidden {
+  display: none;
+}
+/* 
+.obscured {
+  opacity: 0.7;
+  pointer-events: auto; 
+}
+
+.visible {
+  display: block;
+  opacity: 1;
+} */

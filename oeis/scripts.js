@@ -107,3 +107,73 @@ document.addEventListener("DOMContentLoaded", () => {
     populateSequences('.oeis-authored', authoredSequences);
     populateSequences('.oeis-favorite', favoriteSequences);
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Define sections to apply collapsible behavior
+    const collapsibleSections = [
+        { selector: '#knight-gallery', itemClass: 'gallery-item' },
+        { selector: '.oeis-edits', itemClass: 'oeis-sequence' },
+        { selector: '.oeis-authored', itemClass: 'oeis-sequence' }
+    ];
+
+    collapsibleSections.forEach(({ selector, itemClass }) => {
+        const section = document.querySelector(selector);
+        if (!section) return; // Skip if the section doesn't exist
+
+        const items = Array.from(section.querySelectorAll(`.${itemClass}`));
+        const toggleButton = section.parentElement.querySelector('.show-more'); // Target existing button
+        if (!toggleButton) return; // Skip if no button exists
+
+        let itemsPerRow = 1;
+
+        // Function to calculate and apply visibility rules
+        const applyVisibility = () => {
+            const sectionWidth = section.clientWidth;
+            const itemWidth = items[0]?.offsetWidth || 1; // Prevent division by zero
+            itemsPerRow = Math.floor(sectionWidth / itemWidth);
+
+            items.forEach((item, index) => {
+                const rowIndex = Math.floor(index / itemsPerRow);
+
+                if (rowIndex === 0) {
+                    // Fully visible first row
+                    item.style.display = 'block';
+                    item.style.opacity = '1';
+                } else if (rowIndex === 1) {
+                    // Obscured second row
+                    item.style.display = 'block';
+                    item.style.opacity = '0.7';
+                } else {
+                    // Hidden rows after the second
+                    item.style.display = 'none';
+                }
+            });
+        };
+
+        // Attach functionality to the existing button
+        toggleButton.addEventListener('click', () => {
+            if (toggleButton.textContent === 'Show More') {
+                // Show all items
+                items.forEach((item) => {
+                    item.style.display = 'block';
+                    item.style.opacity = '1';
+                });
+                toggleButton.textContent = 'Show Less';
+            } else {
+                // Reapply visibility rules
+                applyVisibility();
+                toggleButton.textContent = 'Show More';
+            }
+        });
+
+                // Apply visibility rules immediately on page load
+                applyVisibility();
+
+                // Reapply visibility rules when the screen is resized
+                window.addEventListener('resize', applyVisibility);
+        
+                // Ensure visibility is correct after DOM content is fully loaded
+                window.addEventListener('load', applyVisibility);
+    });
+});
+
