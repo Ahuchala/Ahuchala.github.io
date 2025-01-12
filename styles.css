@@ -3,6 +3,8 @@
   --primary-dark: #31395a;
   --secondary-light: #6a80d3;
   --hover-light: #9ca7e8;
+  --hover-dark: #4a54b0;;
+  --hover-darker: #3e4590;
   --body-bg: #f4f4f4;
   --text-color: #333;
   --secondary-text: #555;
@@ -322,36 +324,6 @@ h2 {
 }
 
 
-/* Faded Row Effect */
-.faded-row {
-  position: relative;
-  z-index: 0;
-}
-
-.faded-row::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.1) 100%
-  );
-  z-index: 1;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.faded-row:hover::after {
-  opacity: 0;
-}
-
-
-
-
 /* Footer */
 footer {
   text-align: center;
@@ -446,21 +418,25 @@ footer a:hover {
 }
 
 .show-more:hover {
-  background: var(--hover-light); /* Hover color */
+  background: var(--hover-dark); /* Hover color */
   transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.show-more:active {
+  background-color: var(--hover-darker);
 }
 
 /* Visibility Classes */
 .hidden {
   display: none;
 }
-/* 
+
 .obscured {
   opacity: 0.7;
   pointer-events: auto; 
 }
 
 .visible {
-  display: block;
+  display: inline-block;
   opacity: 1;
-} */
+}

@@ -113,7 +113,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const collapsibleSections = [
         { selector: '#knight-gallery', itemClass: 'gallery-item' },
         { selector: '.oeis-edits', itemClass: 'oeis-sequence' },
-        { selector: '.oeis-authored', itemClass: 'oeis-sequence' }
+        { selector: '.oeis-authored', itemClass: 'oeis-sequence' },
+        { selector: '#theta-gallery', itemClass: 'gallery-item' }
+
     ];
 
     collapsibleSections.forEach(({ selector, itemClass }) => {
@@ -138,25 +140,40 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (rowIndex === 0) {
                     // Fully visible first row
                     item.style.display = 'block';
-                    item.style.opacity = '1';
+                    item.classList.add('visible');
+                    item.classList.remove('hidden', 'obscured');
                 } else if (rowIndex === 1) {
                     // Obscured second row
                     item.style.display = 'block';
-                    item.style.opacity = '0.7';
+                    item.classList.add('obscured');
+                    item.classList.remove('hidden', 'visible');
                 } else {
                     // Hidden rows after the second
                     item.style.display = 'none';
+                    item.classList.add('hidden');
+                    item.classList.remove('visible', 'obscured');
                 }
             });
-        };
+            const totalRows = Math.ceil(items.length / itemsPerRow);
 
+            // Toggle the visibility of the "Show More" button based on the number of rows
+            if (totalRows <= 1) {
+                toggleButton.style.display = 'none';
+            } else {
+                toggleButton.style.display = 'inline-block';
+            };
+            
+        };
+        
+        
         // Attach functionality to the existing button
         toggleButton.addEventListener('click', () => {
             if (toggleButton.textContent === 'Show More') {
                 // Show all items
                 items.forEach((item) => {
                     item.style.display = 'block';
-                    item.style.opacity = '1';
+                    item.classList.add('visible');
+                    item.classList.remove('hidden', 'obscured');
                 });
                 toggleButton.textContent = 'Show Less';
             } else {
