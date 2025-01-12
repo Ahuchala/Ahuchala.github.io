@@ -1,11 +1,13 @@
 export function footer() {
     return /* html */`
-        <footer>
-            <div class="gradient-above"></div>
-                <div class="footer-content">
+        <div class="gradient-bar"></div> <!-- Reusable gradient bar -->
+
+        <div class="footer">
+            <div class="footer-content">
                 <p>&copy; 2025 Andy Huchala | <a href="/index.html">Home</a></p>
-                </div>
-            <div class="gradient-below"></div>
-        </footer>
+            </div>
+</div>
+        <div class="gradient-bar"></div> <!-- Reusable gradient bar -->
+
     `;
 }

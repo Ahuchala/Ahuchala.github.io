@@ -30,7 +30,7 @@ p {
 
 /* Header */
 header {
-  background: linear-gradient(135deg, var( --header-color-1), var(--header-color-2));
+  background: linear-gradient(135deg, var(--header-color-1), var(--header-color-2));
   color: white;
   text-align: center;
   padding: 50px 20px;
@@ -96,15 +96,6 @@ header .header-content h1 {
   color: var(--secondary-light);
 }
 
-/* Gradient Below header */
-.navbar .gradient-below {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 8px; /* Updated gradient height */
-  background: linear-gradient(135deg,var(--header-color-1), var(--header-color-2));
-}
 
 
 /* Main Content */
@@ -325,47 +316,34 @@ h2 {
 
 
 /* Footer */
-footer {
-  text-align: center;
-  padding: 16px; /* Matches the navbar height */
+.footer {
   background: var(--primary-dark); /* Solid dark blue section */
-  color: white;
+  padding: 10px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
+  color: white;
+  text-align: center;
 }
 
-/* Gradient Above Footer */
-footer .gradient-above {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 8px; /* Updated gradient height */
-  background: linear-gradient(135deg, #5e60ce, #48bfe3); /* Matches the header gradient */
-}
 
 /* Footer Content */
-footer .footer-content {
+.footer .footer-content {
   position: relative;
   z-index: 1;
 }
 
-/* Gradient Below Footer */
-footer .gradient-below {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 8px; /* Updated gradient height */
-  background: linear-gradient(135deg, #5e60ce, #48bfe3); /* Matches the header gradient */
-}
 
 /* Footer Links */
-footer a {
+.footer a {
   color: var(--secondary-light);
   text-decoration: none;
 }
 
-footer a:hover {
+.footer p {
+  margin: 0px;
+}
+
+.footer a:hover {
   text-decoration: underline;
   color: var(--hover-light);
 }
@@ -407,23 +385,29 @@ footer a:hover {
 
 /* Styling for the Show More / Show Less button */
 .show-more {
-  padding: 10px 20px; /* Space inside the button */
-  background: var(--secondary-light); /* Your theme's secondary color */
-  color: white; /* Button text color */
-  font-size: 1rem; /* Font size */
-  border: none; /* Remove default border */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor for interactivity */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
+    display: inline-block;
+    margin: 20px auto; /* Center the button */
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, #5e60ce, #4a54b0); /* Subtle gradient */
+    border: none;
+    border-radius: 8px; /* Softer rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .show-more:hover {
-  background: var(--hover-dark); /* Hover color */
-  transform: scale(1.05); /* Slight zoom effect on hover */
+    background: linear-gradient(135deg, #4a54b0, #3c4796); /* Slightly darker gradient */
+    transform: scale(1.05); /* Subtle zoom effect */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
 }
 
 .show-more:active {
-  background-color: var(--hover-darker);
+    background: linear-gradient(135deg, #3c4796, #2f3672); /* Even darker gradient */
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Compressed shadow for click */
 }
 
 /* Visibility Classes */
@@ -439,4 +423,11 @@ footer a:hover {
 .visible {
   display: inline-block;
   opacity: 1;
+}
+
+.gradient-bar {
+  width: 100%; /* Full width */
+  height: 8px; /* Set the height of the gradient */
+  background: linear-gradient(135deg, var(--header-color-1), var(--header-color-2));
+  /*  display: block; /*Ensure it's treated as a block element */
 }

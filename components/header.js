@@ -5,6 +5,8 @@ export function header() {
                 <h1>Andy Huchala</h1>
             </div>
         </header>
+        <!-- disabled since the gradient bar disagrees with header. WHY -->
+        <!-- <div class="gradient-bar"></div>  -->
 
         <nav class="navbar">
             <ul>
@@ -14,8 +16,8 @@ export function header() {
                 <li><a href="/teaching">Teaching</a></li>
                 <li><a href="/oeis">OEIS</a></li>
             </ul>
-            <div class="gradient-below"></div>
         </nav>
-        
+        <div class="gradient-bar"></div> 
+
     `;
 }
