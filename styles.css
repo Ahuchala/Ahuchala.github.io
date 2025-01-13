@@ -433,6 +433,14 @@ h2 {
   transition: transform 0.2s ease, opacity 0.1s ease;
 }
 
+.hamburger-label {
+  font-size: 1rem;
+  line-height: 1;
+  color: white;
+  margin: 0; /* Remove unnecessary spacing */
+}
+
+
 .menu-button.active .hamburger div:nth-child(1) {
   transform: rotate(45deg) translate(6px, 5px); /* Symmetrical rotation */
 }
@@ -461,12 +469,6 @@ h2 {
 }
 
 
-.hamburger-label {
-  font-size: 1rem;
-  line-height: 1;
-  color: white;
-  margin: 0; /* Remove unnecessary spacing */
-}
 
 
 

@@ -49,6 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+
   
   document.addEventListener('DOMContentLoaded', () => {
     const menuButton = document.querySelector('.menu-button');

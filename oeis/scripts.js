@@ -133,11 +133,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const sectionWidth = section.clientWidth;
             const itemWidth = items[0]?.offsetWidth || 1; // Prevent division by zero
             itemsPerRow = Math.floor(sectionWidth / itemWidth);
+            const totalRows = Math.ceil(items.length / itemsPerRow);
 
             items.forEach((item, index) => {
                 const rowIndex = Math.floor(index / itemsPerRow);
 
-                if (rowIndex === 0) {
+                if (rowIndex === 0 || totalRows <= 2) {
                     // Fully visible first row
                     item.style.display = 'block';
                     item.classList.add('visible');
@@ -154,10 +155,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     item.classList.remove('visible', 'obscured');
                 }
             });
-            const totalRows = Math.ceil(items.length / itemsPerRow);
+            
 
             // Toggle the visibility of the "Show More" button based on the number of rows
-            if (totalRows <= 1) {
+            if (totalRows <= 2) {
                 toggleButton.style.display = 'none';
             } else {
                 toggleButton.style.display = 'inline-block';
