@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
             modalImage.alt = title;
             modalTitle.textContent = title;
             modalDescription.textContent = description;
+            if (window.MathJax) {
+                MathJax.typesetPromise([modalDescription])
+            }
         });
     });
 

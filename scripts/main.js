@@ -40,6 +40,7 @@ export function loadScript(src, isModule = false)
 window.MathJax = {
     tex: {
         inlineMath: [["$", "$"], ["\\(", "\\)"]],
+        // packages: ['base'],
     },
     svg: {
         fontCache: "global",
@@ -47,4 +48,4 @@ window.MathJax = {
 };
 
 // Load MathJax script
-loadScript("https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js")
+loadScript("https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js")

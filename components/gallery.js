@@ -30,7 +30,7 @@ resulting fractal structure.
         title: 'Billion Center', 
         description: 
         /* html */`
-        <p>When toppling a billion (actually 2^30) grains of sand, the center of an abelian sandpile revealed an interesting mandala-like pattern at high zoom and resolution. This image was <a href="https://mpembed.com/show/?m=FGvT8EzPQpy&mpu=885">also displayed in the JSMA virtual gallery</a> and <a href="https://www.girlsangle.org/page/bulletin-archive/GABv15n01E.pdf">appeared in Girls\' Angle magazine</a>.
+        <p>When toppling a billion (actually $2^{30}$) grains of sand, the center of an abelian sandpile revealed an interesting mandala-like pattern at high zoom and resolution. This image was <a href="https://mpembed.com/show/?m=FGvT8EzPQpy&mpu=885">also displayed in the JSMA virtual gallery</a> and <a href="https://www.girlsangle.org/page/bulletin-archive/GABv15n01E.pdf">appeared in Girls\' Angle magazine</a>.
     </p>
         `
     },
@@ -145,7 +145,7 @@ resulting fractal structure.
         title: 'Weierstrass', 
         description: 
         /* html */`
-        <p>I implemented the weierstrass p-function and its inverse on <a href="cgodar.com">Cruz's website</a>. Computing the p-function was straightforward enough, but the inverse required a lot of thinking outside the box. There was a region (|z|>1) which converged nicely, but for small moduli I decided to use gradient descent to approximate an inverse. Comparing the composition of the p-function and its inverse to the identity map produced this image. 
+        <p>I implemented the weierstrass $\\wp$-function and its inverse on <a href="cgodar.com">Cruz's website</a>. Computing the $\\wp$-function was straightforward enough, but the inverse required a lot of thinking outside the box. There was a region ($|z|>1$) which converged nicely, but for small moduli I decided to use gradient descent to approximate an inverse. Comparing the composition of the p-function and its inverse to the identity map produced this image. 
     </p>
         `
     },
@@ -156,7 +156,7 @@ resulting fractal structure.
         title: 'Knight\'s Domination', 
         description: 
         /* html */`
-        <p>In undergrad I investigated <a href="https://oeis.org/A261752">OEIS A261752: Minimum number of knights on an n X n chessboard such that every square is attacked</a> and its generalizations to m x n boards. This is a colormap of that data, i.e. the domination number of the i x j knight graph is encoded as the color of pixel (i,j).
+        <p>In undergrad I investigated <a href="https://oeis.org/A261752">OEIS A261752: Minimum number of knights on an n x n chessboard such that every square is attacked</a> and its generalizations to m x n boards. This is a colormap of that data, i.e. the domination number of the $i \\times j$ knight graph is encoded as the color of pixel $(i,j)$.
     </p>
         `
     },
@@ -167,7 +167,7 @@ resulting fractal structure.
         title: 'Weierstrass Lattice', 
         description: 
         /* html */`
-        <p>A plot of the weierstrass p function when g_2=0, g_3=-9/16 (i.e. a plot of -p(z,1,rho) where rho = e^(2*pi*i/3)). This image is from Sage, but I've <a href="https://cruzgodar.com/applets/complex-maps/?glsl-textarea=-wp%28z%252Crho%29">implemented it in glsl on Cruz's website</a> as well (just click generate!).
+        <p>A plot of the weierstrass $\\wp$-function when $g_2=0$, $g_3=\\frac{-9}{16}$ (i.e. a plot of $-\\wp(z,1,\\rho)$ where $\\rho = e^{2\\pi i/3}$). This image is from Sage, but I've <a href="https://cruzgodar.com/applets/complex-maps/?glsl-textarea=-wp%28z%252Crho%29">implemented it in glsl on Cruz's website</a> as well (just click generate!).
     </p>
         `
     },
