@@ -318,8 +318,8 @@ h2 {
 /* Footer */
 .footer {
   background: var(--primary-dark); /* Solid dark blue section */
-  padding: 10px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 0px 0;
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
   position: relative;
   color: white;
   text-align: center;
@@ -330,6 +330,7 @@ h2 {
 .footer .footer-content {
   position: relative;
   z-index: 1;
+  padding: 10px 0;
 }
 
 
@@ -349,12 +350,164 @@ h2 {
 }
 
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .section {
-    padding: 20px;
+
+/* Navbar menu toggle */
+
+
+.navbar ul.active {
+  display: flex; /* Show menu when active */
+}
+
+.hamburger-container {
+  display: none; /* Hidden by default */
+}
+
+
+/* Active state */
+.hamburger-container.active .hamburger div:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 5px); /* Align diagonally */
+}
+
+.hamburger-container.active .hamburger div:nth-child(2) {
+  opacity: 0; /* Fade out the middle bar */
+}
+
+.hamburger-container.active .hamburger div:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px); /* Symmetrical to top bar */
+}
+/* Button container for hamburger and label */
+.menu-button {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between hamburger and label */
+  padding: 10px 15px; /* Padding inside the button */
+  background: var(--primary-dark); /* Match navbar background */
+  color: white; /* Text color */
+  border: none; /* Remove default button border */
+  border-radius: 8px; /* Rounded corners */
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Button styling */
+.menu-button {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between hamburger and label */
+  padding: 10px 15px;
+  background: var(--primary-dark);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover and focus styles */
+.menu-button:hover,
+.menu-button:focus {
+  background: var(--hover-dark);
+  transform: scale(1.05);
+  outline: none;
+}
+
+.menu-button:active {
+  background: var(--hover-darker);
+  transform: scale(0.98);
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 20px;
+}
+
+.hamburger div {
+  height: 3px;
+  background: white;
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.1s ease;
+}
+
+.menu-button.active .hamburger div:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 5px); /* Symmetrical rotation */
+}
+
+.menu-button.active .hamburger div:nth-child(2) {
+  opacity: 0; /* Fade out the middle bar */
+}
+
+.menu-button.active .hamburger div:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px); /* Symmetrical rotation */
+}
+
+
+
+/* Big screens */
+@media (min-width: 769px) {
+  .navbar ul {
+    display: flex; /* Always visible on larger screens */
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .menu-button {
+    display: none; /* Hide button on larger screens */
   }
 }
+
+
+.hamburger-label {
+  font-size: 1rem;
+  line-height: 1;
+  color: white;
+  margin: 0; /* Remove unnecessary spacing */
+}
+
+
+
+/* Small screens */
+@media (max-width: 768px) {
+
+  .hamburger-label {
+    font-size: 1rem;
+    color: white;
+    margin-left: 10px;
+    transition: opacity 0.1s ease;
+  }
+
+  .hamburger-container.active .hamburger-label {
+    opacity: 0; /* Hide label when active */
+  }
+
+  .navbar ul {
+    display: none; /* Start hidden */
+    flex-direction: column;
+    background: var(--primary-dark);
+    position: absolute;
+    top: 60px; /* Adjust as per header height */
+    left: 0;
+    width: 100%;
+    padding: 10px 0;
+    z-index: 100;
+  }
+
+  .navbar ul.active {
+    display: flex; /* Show menu when active */
+  }
+
+  .navbar ul li {
+    text-align: center;
+    margin: 10px 0;
+  }
+}
+
+
+
 
 /* Default: Hide all items */
 .collapsible .gallery-item,
@@ -383,6 +536,8 @@ h2 {
     display: none; /* Completely hidden */
 }
 
+
+
 /* Styling for the Show More / Show Less button */
 .show-more {
     display: inline-block;
@@ -410,7 +565,10 @@ h2 {
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Compressed shadow for click */
 }
 
+
+
 /* Visibility Classes */
+
 .hidden {
   display: none;
 }
@@ -424,6 +582,9 @@ h2 {
   display: inline-block;
   opacity: 1;
 }
+
+
+/* Gradient bar */
 
 .gradient-bar {
   width: 100%; /* Full width */

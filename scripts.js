@@ -49,5 +49,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
-
-
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuButton = document.querySelector('.menu-button');
+    const navbarMenu = document.querySelector('.navbar ul');
+  
+    if (menuButton && navbarMenu) {
+      menuButton.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent body click from closing instantly
+        menuButton.classList.toggle('active');
+        navbarMenu.classList.toggle('active');
+      });
+  
+      // Close menu when clicking outside
+      document.body.addEventListener('click', () => {
+        if (navbarMenu.classList.contains('active')) {
+          navbarMenu.classList.remove('active');
+          menuButton.classList.remove('active');
+        }
+      });
+    }
+  });
+  
+  
