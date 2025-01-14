@@ -46,7 +46,7 @@ header .header-content h1 {
   font-size: 3rem;
   margin: 0;
   font-weight: bold;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); /* Subtle text shadow */
 
 }
 
