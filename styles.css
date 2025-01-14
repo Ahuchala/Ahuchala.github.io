@@ -44,6 +44,8 @@ header .header-content h1 {
   font-size: 3rem;
   margin: 0;
   font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
+
 }
 
 
@@ -87,6 +89,11 @@ header .header-content h1 {
   margin: 0 20px;
 }
 
+.navbar li:hover{
+  transform: scale(1.05); /* Slight zoom on hover */
+  border-color: var(--hover-dark); /* Highlight border on hover */
+}
+
 .navbar a {
   text-decoration: none;
   color: white;
@@ -94,11 +101,15 @@ header .header-content h1 {
   padding: 5px 10px;
   border-radius: 5px;
   transition: background-color 0.2s ease, color 0.4s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
+
 }
+
 
 .navbar a:hover {
   background: rgba(255, 255, 255, 0.15);
   color: var(--secondary-light);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
 }
 
 
@@ -112,6 +123,12 @@ h2 {
   text-align: center;
   margin-top: 40px;
   color: var(--primary-dark);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
+
+}
+
+h1 {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
 }
 
 
@@ -201,6 +218,8 @@ h2 {
   font-size: 2.5rem;
   color: var(--primary-dark);
   font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
+
 }
 
 .intro-alt p {
@@ -227,6 +246,7 @@ h2 {
   color: var(--primary-dark);
   margin-bottom: 10px;
   font-size: 1.8rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
 }
 
 .section p {
@@ -269,6 +289,8 @@ h2 {
 .featured h2, .grid-section h2 {
   margin-bottom: 20px;
   color: var(--primary-dark);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
+
 }
 
 .featured-item img, .grid-item img {
@@ -321,6 +343,8 @@ h2 {
   color: white;
   margin-bottom: 10px;
   font-size: 1.8rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
+
 }
 
 .grid-section p {
@@ -494,6 +518,8 @@ h2 {
   position: relative;
   z-index: 1;
   padding: 10px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9); /* Subtle text shadow */
+
 }
 
 
@@ -522,12 +548,16 @@ h2 {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7); /* Subtle text shadow */
+
 }
 
 .footer-button:hover {
   background-color: var(--hover-dark);
   transform: scale(1.05); /* Subtle zoom effect */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Add shadow on hover */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+
 }
 
 .footer-button:active {
