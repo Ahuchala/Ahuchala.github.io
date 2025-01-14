@@ -6,6 +6,8 @@
   --hover-dark: #4a54b0;;
   --hover-darker: #3e4590;
   --body-bg: #f4f4f4;
+  --body-bg-1: #f4f4f4;
+  --body-bg-2: #f5fdfff1;
   --body-section-1: #ffffffd9;
   --body-section-2: #eff5f6df;
   --text-color: #333;
@@ -22,7 +24,7 @@ body {
   font-family: 'Montserrat', sans-serif;
   line-height: 1.6;
   color: var(--text-color);
-  background: var(--body-bg);
+  background: linear-gradient(135deg,var(--body-bg-1),var(--body-bg-2));
   overflow-x: hidden;
 }
 
@@ -143,9 +145,10 @@ h1 {
   background: linear-gradient(135deg, var(--header-color-1), var(--header-color-2));
   color: white;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle depth */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle depth */
   position: relative;
   overflow: hidden; /* Clip animated elements */
+  border: 1px solid #2f3672;
 }
 
 /* Highlight Element */
@@ -331,6 +334,7 @@ h1 {
   transition: transform 0.2s ease, box-shadow 0.3s ease;
   border-radius: 10px;
   border: 1px solid rgba(0, 0, 0, 0.3); /* Subtle border */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Add shadow on hover */
 }
 
 .grid-item:hover {
