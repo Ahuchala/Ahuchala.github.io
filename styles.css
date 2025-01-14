@@ -50,6 +50,29 @@ header .header-content h1 {
 
 }
 
+/* General Link Styling */
+a {
+  color: var(--secondary-light); /* Match the theme's accent color */
+  text-decoration: none; /* Remove the default underline */
+  font-weight: 600; /* Slightly bold for visibility */
+  transition: color 0.3s ease, text-shadow 0.3s ease; /* Smooth transition */
+}
+
+/* Hover State */
+a:hover {
+  color: var(--hover-dark); /* Lighter accent color on hover */
+  text-shadow: 0 1px 5px rgba(255, 255, 255, 0.6); /* Subtle glow effect */
+  text-decoration: underline; /* Add an underline for emphasis */
+}
+
+/* Active and Focus States */
+a:active, a:focus {
+  color: var(--hover-dark); /* Slightly darker accent color */
+  outline: none; /* Remove default focus outline */
+}
+
+
+
 
 .body-text span
 {
@@ -241,7 +264,7 @@ h1 {
   background: linear-gradient(135deg, var(--body-section-1), var(--body-section-2));
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
+  max-width: 80%;
   border-radius: 10px;
 }
 
