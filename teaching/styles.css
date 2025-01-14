@@ -7,7 +7,7 @@
 
 /* Timeline Section */
 .timeline {
-    border-left: 2px solid #2b2d42; /* Vertical line for the timeline */
+    border-left: 2px solid var(--primary-dark); /* Vertical line for the timeline */
     display: flex;
     flex-direction: column;
     gap: 20px; /* Space between items */
@@ -33,7 +33,7 @@
     top: 6px; /* Align with the first line of text */
     width: 12px;
     height: 12px;
-    background: #2b2d42; /* Dot color */
+    background: var(--primary-dark); /* Dot color */
     border-radius: 50%; /* Make it circular */
     border: 2px solid #f7f7f7; /* Outline matches background */
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
@@ -64,7 +64,7 @@
     font-size: 2rem; /* Prominent font size */
     font-weight: bold; /* Bold title */
     margin-bottom: 20px; /* Spacing below the title */
-    color: #2b2d42; /* Match the timeline color scheme */
+    color: var(--primary-dark); /* Match the timeline color scheme */
 }
 
 /* Section Description */

@@ -4,7 +4,11 @@ const images = [
         full: '/images/gallery/tile.PNG', 
         alt: 'Tile Pattern', 
         title: 'Tile Pattern', 
-        description: 'A tiled image where each box was an abelian sandpile constrained to a smaller box than normal (with no sink).' 
+        description: 
+    /* html */`
+    <p>A tiled image where each box was an abelian sandpile constrained to a smaller box than normal (with no sink).
+    </p>
+    ` 
     },
     { 
         thumbnail: '/images/thumbnails/museum_small.webp', 
@@ -39,14 +43,22 @@ resulting fractal structure.
         full: '/images/gallery/hex.png', 
         alt: 'Cross Pattern', 
         title: 'Cross Pattern', 
-        description: 'A sandpile with little room to topple (and no sink). A tiled version of a similar image appears later in the gallery.' 
+        description: 
+    /* html */`
+    <p>A sandpile with little room to topple (and no sink). A tiled version of a similar image appears later in the gallery.
+    </p>
+    ` 
     },
     { 
         thumbnail: '/images/thumbnails/broken.webp', 
         full: '/images/gallery/broken.png', 
         alt: 'Race Condition', 
         title: 'Race Condition', 
-        description: 'An abelian sandpile implementation that accidentally had a race condition. I terminated the program early when I realized it was bugged, and it made this unique pattern. The multiple bands are from coloring the tile height mod 4.' 
+        description: 
+    /* html */`
+    <p>An abelian sandpile implementation that accidentally had a race condition. I terminated the program early when I realized it was bugged, and it made this unique pattern. The multiple bands are from coloring the tile height mod 4.
+    </p>
+    ` 
     },
     { 
         thumbnail: '/images/thumbnails/char2,5.webp', 
@@ -56,7 +68,7 @@ resulting fractal structure.
         description: 
         /* html */`
         <p>
-        The character formula of the Lie algebra SU(3) with highest weight (2,5) plotted in Sage. I've since written <a href="https://cruzgodar.com/applets/complex-maps/?glsl-textarea=su3_character%285%252C2%252Cz%29">an implementation in glsl on Cruz's website</a> which can generate this image and many others.
+        The character formula of the Lie algebra $\\mathfrak{su}(3)$ with highest weight $(2,5)$ plotted in Sage. I've since written <a href="https://cruzgodar.com/applets/complex-maps/?glsl-textarea=su3_character%285%252C2%252Cz%29">an implementation in glsl on Cruz's website</a> which can generate this image and many others.
     </p>
         `
     },
@@ -65,7 +77,11 @@ resulting fractal structure.
         full: '/images/gallery/julia.png', 
         alt: 'Julia', 
         title: 'Julia Set', 
-        description: 'A sandpile run through GNU Image Manipulation Program (GIMP)\'s Julia filter.' 
+        description: 
+    /* html */`
+    <p>A sandpile run through GNU Image Manipulation Program (GIMP)\'s Julia filter.
+    </p>
+` 
     },
     { 
         thumbnail: '/images/thumbnails/creepymagnet.webp', 
@@ -84,21 +100,33 @@ resulting fractal structure.
         full: '/images/gallery/husky.png', 
         alt: 'Husky', 
         title: 'Husky Pattern', 
-        description: 'A sandpile a little too big for its bounding box.' 
+        description: 
+    /* html */`
+    <p>A sandpile a little too big for its bounding box.
+    </p>
+` 
     },
     { 
         thumbnail: '/images/thumbnails/inverse_constant.webp', 
         full: '/images/gallery/inverse_constant.png', 
         alt: 'Inverse Constant', 
         title: 'Inverse Constant', 
-        description: 'This appears to be one over the weierstrass function of z, but the angle tau is unknown to me.' 
+        description: 
+    /* html */`
+    <p>This appears to be one over the weierstrass function of $z$, but the angle $\\tau$ is unknown to me.
+    </p>
+` 
     },
     { 
         thumbnail: '/images/thumbnails/ising.webp', 
         full: '/images/gallery/ising.png', 
         alt: 'Ising', 
         title: 'Ising Model', 
-        description: 'The Ising model doing its best imitation of a Zebra notebook.' 
+        description: 
+    /* html */`
+    <p>The Ising model doing its best imitation of a Zebra notebook.
+    </p>
+` 
     },
     { 
         thumbnail: '/images/thumbnails/cracked.webp', 
@@ -115,21 +143,33 @@ resulting fractal structure.
         full: '/images/gallery/julia_3.PNG', 
         alt: 'Julia 3', 
         title: 'Julia Variant', 
-        description: 'Another sandpile run through GIMP\'s Julia filter.' 
+        description: 
+    /* html */`
+    <p>Another sandpile run through GIMP\'s Julia filter.
+    </p>
+` 
     },
     { 
         thumbnail: '/images/thumbnails/tile2.webp', 
         full: '/images/gallery/tile2.PNG', 
         alt: 'Tile Pattern 2', 
         title: 'Tile Pattern II', 
-        description: 'Tiling a sandpile similar to the cross pattern.' 
+        description: 
+    /* html */`
+    <p>Tiling a sandpile similar to the cross pattern.
+    </p>
+` 
     },
     { 
         thumbnail: '/images/thumbnails/knight31.webp', 
         full: '/images/gallery/knight31.PNG', 
         alt: 'Knight31', 
         title: 'Knight31', 
-        description: 'An optimal solution to the Knight\'s Domination problem. To my knowledge it\'s the largest known solution on an odd-dimensional board.' 
+        description: 
+    /* html */`
+    <p>An optimal solution to the Knight\'s Domination problem. To my knowledge it\'s the largest known solution on an odd-dimensional board.
+    </p>
+` 
     },
     { 
         thumbnail: '/images/thumbnails/sand23_3k.webp', 

@@ -194,16 +194,49 @@ h2 {
   color: var(--secondary-text);
 }
 
+
+.grid-section {
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
 .grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  gap: 20px;  
+}
+
+
+.grid-section h2 {
+  color: var(--primary-dark);
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+}
+
+.grid-section p {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #555;
 }
 
 .grid-item img:hover, .clickable:hover {
   transform: scale(1.03);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+
+
+
+/* .oeis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  padding: 20px;
+} */
 
 .modal {
   display: none;
@@ -296,7 +329,7 @@ h2 {
 .thumbnail-title {
   text-align: center;
   font-size: 1rem;
-  color: #333;
+  color: var(--primary-dark);
   margin-bottom: 8px; /* Space between the title and the thumbnail */
   font-weight: bold;
 }
@@ -375,6 +408,7 @@ h2 {
 .hamburger-container.active .hamburger div:nth-child(3) {
   transform: rotate(-45deg) translate(6px, -6px); /* Symmetrical to top bar */
 }
+
 /* Button container for hamburger and label */
 .menu-button {
   display: flex;
