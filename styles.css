@@ -199,20 +199,36 @@ h2 {
   margin: 40px auto;
   padding: 20px;
   text-align: center;
-  background-color: #f8f9fa;
-  border: 1px solid #ddd;
+  background: linear-gradient(135deg, var(--header-color-1), var(--header-color-2));
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Soft border */
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add depth */
 }
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;  
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
+  gap: 20px; /* Space between items */
+  padding: 20px;
 }
 
+.grid-item {
+  padding: 20px;
+  background-color: var(--hover-light);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
+}
+
+.grid-item:hover {
+  transform: scale(1.05); /* Slight zoom on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+  border-color: var(--hover-dark); /* Highlight border on hover */
+}
 
 .grid-section h2 {
-  color: var(--primary-dark);
+  color: white;
   margin-bottom: 10px;
   font-size: 1.8rem;
 }
@@ -223,11 +239,35 @@ h2 {
   color: #555;
 }
 
-.grid-item img:hover, .clickable:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.grid-item img {
+  max-width: 100%; /* Responsive images */
+  height: auto;
+  border-radius: 10px; /* Rounded corners */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+  /* border: 2px solid rgba(255, 255, 255, 0.2); Image-specific border */
 }
 
+.grid-item img:hover {
+  /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); Stronger shadow */
+  /* border-color: var(--hover-dark); Darken border on hover */
+}
+
+.grid-item p {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: white; /* Match your button color */
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
+}
+
+.grid-item a {
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Inherit color from text */
+}
+
+.grid-item a:hover p {
+  color: var(--body-bg); /* Change text color on hover */
+}
 
 
 
@@ -380,6 +420,30 @@ h2 {
 .footer a:hover {
   text-decoration: underline;
   color: var(--hover-light);
+}
+
+.footer-button {
+  background-color: var(--primary-dark); /* Match navbar background */
+  color: var(--secondary-light);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.footer-button:hover {
+  background-color: var(--hover-dark);
+  transform: scale(1.05); /* Subtle zoom effect */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Add shadow on hover */
+}
+
+.footer-button:active {
+  background-color: var(--hover-darker);
+  transform: scale(0.95); /* Slight shrink on click */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Adjust shadow */
 }
 
 
