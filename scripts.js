@@ -7,7 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Ensure gallery items have proper click listeners
     document.querySelectorAll('.clickable').forEach((img) => {
-        img.addEventListener('click', () => {
+        
+        img.addEventListener('click', (event) => {
+            if (event.target.closest('.no-modal')) {
+                return; // Prevent opening the modal
+            }
             const fullImage = img.dataset.fullImage || ''; // Full image URL
             const title = img.dataset.title || ''; // Image title
             const description = img.dataset.description || ''; // Image description

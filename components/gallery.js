@@ -13,7 +13,7 @@ const images = [
         title: 'Museum Submission', 
         description: 
         /* html */`
-        <p>A 9,000 by 9,000 abelian sandpile with millions of grains. This, along with a zoomed in version, was originally submitted to the Jordan Schnitzer Museum of Art in 2020 and was <a href="https://mpembed.com/show/?m=FGvT8EzPQpy&mpu=885">displayed in their virtual gallery</a> until the museum was able to resume in-person operation in 2021. Also currently on display in gate A of the Eugene airport. It was also <a href="https://www.girlsangle.org/page/bulletin-archive/GABv15n01E.pdf">published in Girls\' Angle magazine</a>, a magazine aimed to increase engagement of girls in math.</p>
+        <p>A $9,000 \\times 9,000$ abelian sandpile with millions of grains. This, along with a zoomed in version, was originally submitted to the Jordan Schnitzer Museum of Art in 2020 and was <a href="https://mpembed.com/show/?m=FGvT8EzPQpy&mpu=885">displayed in their virtual gallery</a> until the museum was able to resume in-person operation in 2021. Also currently on display in gate A of the Eugene airport. It was also <a href="https://www.girlsangle.org/page/bulletin-archive/GABv15n01E.pdf">published in Girls\' Angle magazine</a>, a magazine aimed to increase engagement of girls in math.</p>
         
         <p><em>Original Caption: This piece attempts to capture the spirit of the infinite and print it on a single page. It uses what's called an Abelian Sandpile model, which is a fractal that colors "grains of sand" by their slope. A fractal is a kind of
 mathematical picture with a repeated motif no matter how far in or out you zoom. The Abelian Sandpile model achieves this by stacking a large number of grains of sand in the center of a grid, and then "topples" it onto
@@ -136,7 +136,11 @@ resulting fractal structure.
         full: '/images/gallery/sand23_3k.png', 
         alt: 'Sand 3k', 
         title: 'Sand 3k', 
-        description: 'A 3,000 x 3,000 sandpile that was also a little bit too big for its bounding box.' 
+        description: 
+        /* html */`
+        <p>A $3,000 \\times 3,000$ sandpile that was also a little bit too big for its bounding box.
+        </p>
+        `
     },
     { 
         thumbnail: '/images/thumbnails/inverse_wp.webp', 
@@ -145,7 +149,7 @@ resulting fractal structure.
         title: 'Weierstrass', 
         description: 
         /* html */`
-        <p>I implemented the weierstrass $\\wp$-function and its inverse on <a href="cgodar.com">Cruz's website</a>. Computing the $\\wp$-function was straightforward enough, but the inverse required a lot of thinking outside the box. There was a region ($|z|>1$) which converged nicely, but for small moduli I decided to use gradient descent to approximate an inverse. Comparing the composition of the p-function and its inverse to the identity map produced this image. 
+        <p>I implemented the weierstrass $\\wp$-function and its inverse on <a href="cgodar.com">Cruz's website</a>. Computing the $\\wp$-function was straightforward enough, but the inverse required a lot of thinking outside the box. There was a region ($|z|>1$) which converged nicely, but for small moduli I decided to use gradient descent to approximate an inverse. Comparing the composition of the $\\wp$-function and its inverse to the identity map produced this image. 
     </p>
         `
     },
@@ -178,7 +182,7 @@ resulting fractal structure.
         title: 'Theta 4', 
         description: 
         /* html */`
-        <p>A plot of the <a href=" A004011">theta function of the Barnes-Wall lattice in dimension 4</a>. A theta function counts the number of points in a lattice of squared length n from the origin. For example, on a 2D square lattice, there is one point of square norm zero (the origin), four points of square norm 1 (corresponding to the four cardinal directions), four points of square norm 2 (explicitly (1,1), (1,-1), (-1,1), (-1,-1), and so on.) <a href="https://oeis.org/A004018">The theta function of a 2D square lattice</a> is 1 + 4*q + 4*q^2 + ....
+        <p>A plot of the <a href=" A004011">theta function of the Barnes-Wall lattice in dimension 4</a>. A theta function counts the number of points in a lattice of squared length n from the origin. For example, on a 2D square lattice, there is one point of square norm zero (the origin), four points of square norm 1 (corresponding to the four cardinal directions), four points of square norm 2 (explicitly $(1,1), (1,-1), (-1,1), (-1,-1)$, and so on.) <a href="https://oeis.org/A004018">The theta function of a 2D square lattice</a> is $1 + 4q + 4q^2 + $....
     </p>
         `
     },
