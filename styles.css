@@ -6,6 +6,8 @@
   --hover-dark: #4a54b0;;
   --hover-darker: #3e4590;
   --body-bg: #f4f4f4;
+  --body-section-1: #ffffffd9;
+  --body-section-2: #eff5f6df;
   --text-color: #333;
   --secondary-text: #555;
   --header-color-1: #5e60ce;
@@ -112,22 +114,101 @@ h2 {
   color: var(--primary-dark);
 }
 
+
+/* Intro Section */
+/* Intro Section */
 .intro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, var(--header-color-1), var(--header-color-2));
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle depth */
+  position: relative;
+  overflow: hidden; /* Clip animated elements */
+}
+
+/* Highlight Element */
+.intro-highlight {
+  position: absolute;
+  top: -50px;
+  left: -50px;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: subtle-highlight 30s ease-in-out infinite; /* Subtle movement every 30 seconds */
+  z-index: 0; /* Behind content */
+}
+
+/* Keyframes for Subtle Movement */
+@keyframes subtle-highlight {
+  0% {
+    transform: translate(-50px, -50px) scale(1);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translate(20px, 20px) scale(1.1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(50px, 50px) scale(1.2);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translate(20px, 20px) scale(1.1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50px, -50px) scale(1);
+    opacity: 0.4;
+  }
+}
+
+.intro-content {
+  position: relative;
+  z-index: 1; /* Ensure content is above background effects */
+}
+
+.intro h2 {
+  font-size: 3rem;
+  color: white;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle text shadow */
+}
+
+.intro p {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 10px;
+  max-width: 800px; /* Limit paragraph width for readability */
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+/* another look for an intro section */
+.intro-alt {
   text-align: center;
   padding: 50px 20px;
 }
 
-.intro h2 {
+.intro-alt h2 {
   font-size: 2.5rem;
   color: var(--primary-dark);
   font-weight: 600;
 }
 
-.intro p {
+.intro-alt p {
   font-size: 1.2rem;
   color: #555;
   margin-top: 10px;
 }
+
 
 /* Section Styling */
 
@@ -135,7 +216,7 @@ h2 {
   margin: 40px auto;
   padding: 20px;
   text-align: center;
-  background-color: #f8f9fa;
+  background: linear-gradient(135deg, var(--body-section-1), var(--body-section-2));
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
@@ -182,7 +263,7 @@ h2 {
 .featured, .grid-section {
   text-align: center;
   padding: 40px 20px;
-  background: var(--body-bg);
+  /* background: var(--body-bg); */
 }
 
 .featured h2, .grid-section h2 {
@@ -700,6 +781,8 @@ h2 {
   height: 8px; /* Set the height of the gradient */
   background: linear-gradient(135deg, var(--header-color-1), var(--header-color-2));
   border: 1px solid var(--border-color-1);
+  border-right-width: 0px;
+  border-left-width: 0px;
   /*  display: block; /*Ensure it's treated as a block element */
 }
 

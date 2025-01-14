@@ -1,6 +1,8 @@
 export function header() {
     return /* html */`
         <header>
+        <div class="intro-highlight"></div> <!-- Highlight Element -->
+
             <div class="header-content">
                 <h1>Andy Huchala</h1>
             </div>
