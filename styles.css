@@ -19,6 +19,7 @@ html {
   --header-text-color: #e4e4e4;
   --section-header-text-color: var(--primary-dark);
   --oeis-sequence-background: #ffffff;
+  --intro-highlight-background: rgba(255, 255, 255, 0.1);
 }
 
 html.dark-mode {
@@ -47,6 +48,7 @@ html.dark-mode {
   --header-text-color: #ffffff; /* Text color for headers */
   --section-header-text-color: #e4e4e4; /* Header text in sections */
   --oeis-sequence-background: #4916e420;
+  --intro-highlight-background: #1426592e;
 }
 
 /* html.dark-mode {
@@ -89,7 +91,7 @@ body {
   line-height: 1.6;
   color: var(--text-color);
   background: linear-gradient(135deg, var(--body-bg-1), var(--body-bg-2));
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 
   /* Add transition for gradient background */
   transition: background 3.3s ease, color 0.3s ease;
@@ -104,7 +106,7 @@ header {
   z-index:10;
   text-align: center;
   padding: 50px 20px;
-  overflow: hidden;
+  /* overflow: hidden; */
   color: var(--header-text-color);
 }
 
@@ -174,7 +176,7 @@ a:active, a:focus {
   padding: 10px 0;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative; /* Enables use of ::after for the gradient */
-  z-index: 20;
+  z-index: 200;
   border: 1 px var(--border-color-1);
   
 }
@@ -265,10 +267,10 @@ h1 {
   left: -50px;
   width: 300px;
   height: 300px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--intro-highlight-background);
   border-radius: 50%;
   animation: subtle-highlight 30s ease-in-out infinite; /* Subtle movement every 30 seconds */
-  z-index: 2; /* Behind content */
+  z-index: 15; 
 }
 
 /* Keyframes for Subtle Movement */
@@ -439,9 +441,17 @@ h1 {
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+  gap: 20px; /* Space between grid items */
+
+  /* Ensure at least 2 columns */
+  grid-template-columns: repeat(2, minmax(150px, 1fr)); 
+
   gap: 20px; /* Space between items */
   padding: 20px;
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
 }
 
 .grid-item {
@@ -731,6 +741,7 @@ h1 {
   border-radius: 8px; /* Rounded corners */
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  margin-left: 15px;
 
 }
 
@@ -978,4 +989,6 @@ h1 {
   transform: scale(0.95);
 }
 
-
+.circle-container {
+  overflow: hidden;
+}
