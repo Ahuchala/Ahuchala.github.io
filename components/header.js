@@ -1,8 +1,12 @@
 export function header() {
     return /* html */`
+    <div class="circle-container">
         <header>
-        <div class="intro-highlight"></div> <!-- Highlight Element -->
+            <div class="dark-mode-toggle">
+                <button id="dark-mode-btn" aria-label="Toggle dark mode">🌙</button>
+            </div>
 
+            <div class="intro-highlight"></div> <!-- Highlight Element -->
             <div class="header-content">
                 <h1>Andy Huchala</h1>
             </div>
@@ -29,6 +33,7 @@ export function header() {
         </nav>
 
         <div class="gradient-bar"></div> 
+    </div>
 
     `;
 }

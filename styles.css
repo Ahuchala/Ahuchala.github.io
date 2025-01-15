@@ -1,5 +1,5 @@
 /* Global Variables */
-:root {
+html {
   --primary-dark: #31395a;
   --secondary-light: #6a80d3;
   --hover-light: #9ca7e8;
@@ -13,11 +13,51 @@
   --text-color: #333;
   --secondary-text: #555;
   --header-color-1: #5e60ce;
-  --header-color-2: #48bfe3;
+  --header-color-2: #48bfe3;  
   --border-color-1: black;
   --border-color-2: #5e60ce;
+  --header-text-color: #e4e4e4;
+  --section-header-text-color: var(--primary-dark);
+
 }
 
+html.dark-mode {
+
+  --primary-dark: #000e39;
+  --secondary-light: #6a80d3;
+  --hover-light: #4a4f72;
+  --hover-dark: #5e60ce;;
+  --hover-darker: #3e4590;
+  --body-bg: #f4f4f4;
+  --body-bg-1: #2a2a2a;
+  --body-bg-2: #08002d;
+  --section-bg: #2a2a2a;
+  --body-section-1: #050238;
+  --body-section-2: #0f0b44;
+  --text-color: #e4e4e4;
+  --secondary-text: #bbbbbb;
+  --primary-border: #444;
+  --secondary-border: #5e60ce;
+  --header-color-1: #0a1c5b;
+  --header-color-2: #225969;  
+  --border-color-1: black;
+  --border-color-2: #5e60ce;
+  --header-text-color: #e4e4e4;
+  --section-header-text-color: var(--header-text-color);
+}
+
+/* Disable transitions temporarily */
+.no-transition * {
+  transition: none !important;
+}
+
+
+/* Apply Background and Text Colors */
+/* body { */
+  /* background: var(--body-bg);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+} */
 /* General Reset */
 body {
   margin: 0;
@@ -26,7 +66,23 @@ body {
   color: var(--text-color);
   background: linear-gradient(135deg,var(--body-bg-1),var(--body-bg-2));
   overflow-x: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
 }
+
+
+
+header {
+  background: linear-gradient(135deg, var(--header-color-1), var(--header-color-2));
+  color: var(--text-color);
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  position: relative;
+  z-index:10;
+  text-align: center;
+  padding: 50px 20px;
+  overflow: hidden;
+  color: var(--header-text-color);
+}
+
 
 p {
   margin-block-start: 0px;
@@ -34,20 +90,16 @@ p {
   margin-bottom: 14px;
 }
 
-/* Header */
-header {
-  background: linear-gradient(135deg, var(--header-color-1), var(--header-color-2));
-  color: white;
-  text-align: center;
-  padding: 50px 20px;
-}
+
 
 header .header-content h1 {
   font-size: 3rem;
   margin: 0;
   font-weight: bold;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); /* Subtle text shadow */
-
+  position: relative;
+  z-index: 3;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* General Link Styling */
@@ -98,7 +150,9 @@ a:active, a:focus {
   padding: 10px 0;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative; /* Enables use of ::after for the gradient */
+  z-index: 20;
   border: 1 px var(--border-color-1);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 
@@ -127,6 +181,7 @@ a:active, a:focus {
   border-radius: 5px;
   transition: background-color 0.2s ease, color 0.4s ease;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
+  transition: background 0.3s ease, color 0.3s ease;
 
 }
 
@@ -142,13 +197,16 @@ a:active, a:focus {
 /* Main Content */
 main {
   padding: 20px;
+  position: relative;
+  z-index: 20;
 }
 
 h2 {
   text-align: center;
   margin-top: 40px;
-  color: var(--primary-dark);
+  color: var(--section-header-text-color);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
+  transition: background 0.3s ease, color 0.3s ease;
 
 }
 
@@ -172,6 +230,7 @@ h1 {
   position: relative;
   overflow: hidden; /* Clip animated elements */
   border: 1px solid #2f3672;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* Highlight Element */
@@ -184,7 +243,7 @@ h1 {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   animation: subtle-highlight 30s ease-in-out infinite; /* Subtle movement every 30 seconds */
-  z-index: 0; /* Behind content */
+  z-index: 2; /* Behind content */
 }
 
 /* Keyframes for Subtle Movement */
@@ -232,6 +291,7 @@ h1 {
   margin-left: auto;
   margin-right: auto;
   line-height: 1.6;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* another look for an intro section */
@@ -242,7 +302,7 @@ h1 {
 
 .intro-alt h2 {
   font-size: 2.5rem;
-  color: var(--primary-dark);
+  color: var(--section-header-text-color);
   font-weight: 600;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
 
@@ -250,7 +310,7 @@ h1 {
 
 .intro-alt p {
   font-size: 1.2rem;
-  color: #555;
+  color: var(--secondary-text);
   margin-top: 10px;
 }
 
@@ -266,10 +326,12 @@ h1 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 80%;
   border-radius: 10px;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
 }
 
 .section h2 {
-  color: var(--primary-dark);
+  color: var(--section-header-text-color);
   margin-bottom: 10px;
   font-size: 1.8rem;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
@@ -278,7 +340,7 @@ h1 {
 .section p {
   margin-bottom: 20px;
   font-size: 1rem;
-  color: #555;
+  color: var(--secondary-text);
 }
 
 
@@ -295,6 +357,7 @@ h1 {
   color: var(--primary-dark);
   text-decoration: none;
   font-weight: 600;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .resource-list a:hover {
@@ -314,7 +377,7 @@ h1 {
 
 .featured h2, .grid-section h2 {
   margin-bottom: 20px;
-  color: var(--primary-dark);
+  color: var(--section-header-text-color);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
 
 }
@@ -329,6 +392,7 @@ h1 {
 .featured-item p, .grid-item p {
   margin-top: 10px;
   color: var(--secondary-text);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 
@@ -341,6 +405,7 @@ h1 {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add depth */
   border-color:#2f3672;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .grid-container {
@@ -358,12 +423,14 @@ h1 {
   border-radius: 10px;
   border: 1px solid rgba(0, 0, 0, 0.3); /* Subtle border */
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Add shadow on hover */
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .grid-item:hover {
   transform: scale(1.05); /* Slight zoom on hover */
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
   border-color: var(--hover-dark); /* Highlight border on hover */
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .grid-section h2 {
@@ -377,7 +444,8 @@ h1 {
 .grid-section p {
   margin-bottom: 20px;
   font-size: 1rem;
-  color: #555;
+  color: var(--secondary-text);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .grid-item img {
@@ -408,6 +476,7 @@ h1 {
 
 .grid-item a:hover p {
   color: var(--body-bg); /* Change text color on hover */
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 
@@ -430,6 +499,7 @@ h1 {
   background-color: rgba(0, 0, 0, 0.8);
   justify-content: center;
   align-items: center;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .modal .close {
@@ -840,7 +910,40 @@ h1 {
   border: 1px solid var(--border-color-1);
   border-right-width: 0px;
   border-left-width: 0px;
+  position: relative;
+  z-index: 5;
   /*  display: block; /*Ensure it's treated as a block element */
+}
+
+
+/* Dark Mode Toggle Container */
+.dark-mode-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+#dark-mode-btn {
+  background: var(--primary-dark);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#dark-mode-btn:hover {
+  background: var(--hover-dark);
+  transform: scale(1.1);
+}
+
+#dark-mode-btn:active {
+  background: var(--hover-darker);
+  transform: scale(0.95);
 }
 
 
