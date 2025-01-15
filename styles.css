@@ -32,21 +32,21 @@ html.dark-mode {
   --body-bg-1: #1a1a1a; /* Subtle gradient start */
   --body-bg-2: #121212; /* Subtle gradient end */
 
-  --body-section-1: #212121; /* Background for sections */
-  --body-section-2: #2a2a2a; /* Alternate section background */
+  --body-section-1: var(--header-color-1); /* Background for sections */
+  --body-section-2: var(--header-color-2); /* Alternate section background */
   
   --text-color: #e0e0e0; /* Primary text */
   --secondary-text: #d3d3d3; /* Subdued text color */
   
-  --header-color-1: #0a1c5b; /* Gradient start for headers */
-  --header-color-2: #12313b; /* Gradient end for headers */
+  --header-color-1: #4916e420; /* Gradient start for headers */
+  --header-color-2: #14123b; /* Gradient end for headers */
   
   --border-color-1: #b1c8cd32; /* Subtle border for dark mode */
   --border-color-2: #5e60ce49; /* Accent border for contrast */
   
   --header-text-color: #ffffff; /* Text color for headers */
   --section-header-text-color: #e4e4e4; /* Header text in sections */
-  --oeis-sequence-background: #6d6d6d;
+  --oeis-sequence-background: #4916e420;
 }
 
 /* html.dark-mode {
