@@ -15,7 +15,7 @@
 .gallery-item p {
     margin: 5px 0;
     font-size: 0.9rem;
-    color: #555;
+    color: var(--secondary-text);
 }
 
 .gallery-item img {
@@ -67,7 +67,7 @@
 }
 
 .oeis-sequence {
-    background-color: white;
+    background-color: var(--oeis-sequence-background);
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 15px;

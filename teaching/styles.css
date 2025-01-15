@@ -64,7 +64,7 @@
     font-size: 2rem; /* Prominent font size */
     font-weight: bold; /* Bold title */
     margin-bottom: 20px; /* Spacing below the title */
-    color: var(--primary-dark); /* Match the timeline color scheme */
+    /* color: var(--primary-dark); Match the timeline color scheme */
 }
 
 /* Section Description */
