@@ -10,6 +10,7 @@ html {
   --body-bg-2: #f5fdfff1;
   --body-section-1: #ffffffd9;
   --body-section-2: #eff5f6df;
+  --grid-item-color: #9ca7e8;
   --text-color: #333;
   --secondary-text: #555;
   --header-color-1: #5e60ce;
@@ -23,33 +24,35 @@ html {
 }
 
 html.dark-mode {
-  --primary-dark: #000e39; /* Deep charcoal for primary elements */
-  --secondary-light: #6272a4; /* Soft purple for accents */
-  --hover-light: #0a03187e; /* Light blue for hover highlights */
-  --hover-dark: #b7c7eda2; /* Neutral hover for interactive elements */
-  --hover-darker: #282c34; /* Darker shade for active states */
-  
-  --body-bg: #1e1e1e; /* Overall background color */
-  --body-bg-1: #1a1a1a; /* Subtle gradient start */
-  --body-bg-2: #121212; /* Subtle gradient end */
+  --primary-dark: #1b1f2a; /* Deep slate for primary sections */
+  --secondary-light: #8b9dc3; /* Cool blue for accents */
+  --hover-light: #a8b4d9; /* Soft hover highlight */
+  --hover-dark: #4a5d78; /* Muted darker hover effect */
+  --hover-darker: #333f54; /* Subtle active state */
 
-  --body-section-1: var(--header-color-1); /* Background for sections */
-  --body-section-2: var(--header-color-2); /* Alternate section background */
-  
-  --text-color: #e0e0e0; /* Primary text */
-  --secondary-text: #d3d3d3; /* Subdued text color */
-  
-  --header-color-1: #4916e420; /* Gradient start for headers */
-  --header-color-2: #14123b; /* Gradient end for headers */
-  
-  --border-color-1: #b1c8cd32; /* Subtle border for dark mode */
-  --border-color-2: #5e60ce49; /* Accent border for contrast */
-  
-  --header-text-color: #ffffff; /* Text color for headers */
-  --section-header-text-color: #e4e4e4; /* Header text in sections */
-  --oeis-sequence-background: #4916e420;
-  --intro-highlight-background: #ffffff09;
+  --body-bg: #181a21; /* Dark overall background */
+  --body-bg-1: #20232a; /* Gradient start */
+  --body-bg-2: #181a21; /* Gradient end */
+
+  --body-section-1: #23262f; /* Dark section background */
+  --body-section-2: #1f2229; /* Alternate section background */
+  --grid-item-color: #23262f;
+
+  --text-color: #dcdde0; /* Light text color */
+  --secondary-text: #a1adc0; /* Muted text color */
+
+  --header-color-1: #3b4e68; /* Start of header gradient */
+  --header-color-2: #2b3547; /* End of header gradient */
+
+  --border-color-1: rgba(255, 255, 255, 0.1); /* Subtle border */
+  --border-color-2: #6a80d3; /* Accent border */
+
+  --header-text-color: #f4f6fa; /* Header text color */
+  --section-header-text-color: #c5c8d3; /* Section headers */
+  --oeis-sequence-background: #2b3145; /* Background for sequences */
+  --intro-highlight-background: rgba(255, 255, 255, 0.05); /* Subtle circle highlight */
 }
+
 
 /* html.dark-mode {
 
@@ -94,6 +97,7 @@ body {
   /* overflow-x: hidden; */
 
   /* Add transition for gradient background */
+  /* does nothing */
   transition: background 3.3s ease, color 0.3s ease;
 }
 
@@ -456,7 +460,7 @@ h1 {
 
 .grid-item {
   padding: 20px;
-  background-color: var(--hover-light);
+  background-color: var(--grid-item-color);
   text-align: center;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
   border-radius: 10px;
@@ -683,12 +687,12 @@ h1 {
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7); /* Subtle text shadow */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle text shadow */
 
 }
 
 .footer-button:hover {
-  background-color: var(--hover-dark);
+  background-color: var(--hover-darker);
   transform: scale(1.05); /* Subtle zoom effect */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Add shadow on hover */
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
