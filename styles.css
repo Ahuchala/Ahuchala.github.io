@@ -866,7 +866,7 @@ main {
 .settings-container.active {
   width: 220px;
   border-radius: 25px;
-  background: var(--body-section-1);
+  background: var(--header-color-2);
   justify-content: flex-start;
   padding-left: 10px;
 }
@@ -1008,6 +1008,18 @@ main {
     margin-left: auto;
   }
 }
+
+.settings-button svg.gear-icon {
+  stroke: currentColor; /* Inherits from .settings-button color (white or dark) */
+  vertical-align: middle; /* Keep it aligned nicely */
+  transition: transform 0.2s ease, stroke 0.2s ease;
+}
+
+.settings-button:hover svg.gear-icon {
+  transform: scale(1.0);
+  stroke: var(--secondary-light);
+}
+
 
 /* Big screens */
 @media (min-width: 769px) {
