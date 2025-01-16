@@ -1,33 +1,42 @@
 /* Global Variables */
 html {
-  --primary-dark: #31395a;
-  --secondary-light: #6a80d3;
-  --hover-light: #9ca7e8;
-  --hover-dark: #4a54b0;;
-  --hover-darker: #3e4590;
-  --body-bg: #f4f4f4;
-  --body-bg-1: #f4f4f4;
-  --body-bg-2: #f5fdfff1;
-  --body-section-1: #ffffffd9;
-  --body-section-2: #eff5f6df;
-  --grid-item-color: #9ca7e8;
-  --text-color: #333;
-  --secondary-text: #555;
-  --header-color-1: #5e60ce;
-  --header-color-2: #48bfe3;  
-  --border-color-1: rgba(0, 0, 0, 0.48);
-  --border-color-2: #5e60ce;
-  --header-text-color: #e4e4e4;
-  --section-header-text-color: var(--primary-dark);
-  --oeis-sequence-background: #ffffff;
-  --intro-highlight-background: rgba(255, 255, 255, 0.1);
+  --primary-dark: #2c3e50; /* Deep slate for primary text and sections */
+  --secondary-light: #5dade2; /* Muted steel blue for accents */
+  --hover-light: #85c1e9; /* Soft highlight for hover states */
+  --hover-dark: #3498db; /* Rich accent color for hover interactions */
+  --hover-darker: #2874a6; /* Stronger shade for active states */
+
+  --body-bg: #fdfdfd; /* Neutral, professional background */
+  --body-bg-1: #ffffff; /* Gradient start - clean white */
+  --body-bg-2: #f7f9fc; /* Gradient end - subtle light gray */
+
+  --body-section-1: #ffffff; /* Crisp white for section backgrounds */
+  --body-section-2: #eef3f8; /* Light neutral for alternating sections */
+  --grid-item-color: #794b8f5a; /* Soft steel blue for grid items */
+
+  --text-color: #2c3e50; /* Dark slate for readable text */
+  --secondary-text: #6c7a89; /* Muted gray for secondary elements */
+
+  --header-color-1: #5dade2; /* Gradient start for headers */
+  --header-color-2: #2e86c1; /* Gradient end for headers */
+
+  --border-color-1: rgba(44, 62, 80, 0.15); /* Subtle borders */
+  --border-color-2: #3498db; /* Accent borders for emphasis */
+
+  --header-text-color: #ffffff; /* Clear white for header text */
+  --section-header-text-color: #2c3e50; /* Dark slate for section headers */
+
+  --oeis-sequence-background: #f4f8fb; /* Soft light gray for sequences */
+  --intro-highlight-background: rgba(44, 62, 80, 0.05); /* Subtle intro circle highlight */
 }
+
+
 
 html.dark-mode {
   --primary-dark: #1b1f2a; /* Deep slate for primary sections */
   --secondary-light: #8b9dc3; /* Cool blue for accents */
   --hover-light: #a8b4d9; /* Soft hover highlight */
-  --hover-dark: #4a5d78; /* Muted darker hover effect */
+  --hover-dark: #90a7c8; /* Muted darker hover effect */
   --hover-darker: #333f54; /* Subtle active state */
 
   --body-bg: #181a21; /* Dark overall background */
@@ -143,7 +152,7 @@ a {
 /* Hover State */
 a:hover {
   color: var(--hover-dark); /* Lighter accent color on hover */
-  text-shadow: 0 1px 5px rgba(255, 255, 255, 0.6); /* Subtle glow effect */
+  text-shadow: 0 1px 5px rgba(255, 255, 255, 0.2); /* Subtle glow effect */
   text-decoration: underline; /* Add an underline for emphasis */
 }
 
@@ -173,34 +182,30 @@ a:active, a:focus {
     justify-content: center;
     margin: 0 auto;
 }
-
-/* Navigation Bar */
 .navbar {
-  background: var(--primary-dark); /* Solid dark blue section */
-  padding: 10px 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: relative; /* Enables use of ::after for the gradient */
+  display: flex;
+  align-items: center; /* Vertical alignment */
+  justify-content: space-between; /* Spread out: buttons on the left, gear on the right */
+  background: var(--primary-dark);
+  padding: 10px 20px;
+  position: relative;
   z-index: 200;
-  border: 1 px var(--border-color-1);
-  
+  height: 60px; /* Ensure consistent height */
+  overflow: visible;
 }
 
-
-.navbar ul {
-  list-style: none;
+.navbar-items {
   display: flex;
-  justify-content: center;
+  justify-content: center; /* Center the navbar buttons */
+  align-items: center; /* Vertical alignment */
+  flex-grow: 1; /* Take available space */
   margin: 0;
   padding: 0;
+  list-style: none; /* Remove dots */
 }
 
-.navbar li {
-  margin: 0 20px;
-}
-
-.navbar li:hover{
-  transform: scale(1.05); /* Slight zoom on hover */
-  border-color: var(--hover-dark); /* Highlight border on hover */
+.navbar-items li {
+  margin: 0 15px; /* Space between navbar buttons */
 }
 
 .navbar a {
@@ -209,19 +214,27 @@ a:active, a:focus {
   font-weight: bold;
   padding: 5px 10px;
   border-radius: 5px;
-  
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
-  
-
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Subtle shadow */
 }
-
 
 .navbar a:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.15); /* Highlight */
   color: var(--secondary-light);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
-
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Add shadow */
 }
+
+.menu-button {
+  display: none; /* Hidden on larger screens */
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+
+
+
+
 
 
 
@@ -269,8 +282,8 @@ h1 {
   position: absolute;
   top: -50px;
   left: -50px;
-  width: 300px;
-  height: 300px;
+  width: 200px;
+  height: 200px;
   background: var(--intro-highlight-background);
   border-radius: 50%;
   animation: subtle-highlight 30s ease-in-out infinite; /* Subtle movement every 30 seconds */
@@ -711,26 +724,50 @@ h1 {
 /* Navbar menu toggle */
 
 
-.navbar ul.active {
+/* .navbar ul.active {
   display: flex; /* Show menu when active */
+/* } */ 
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 20px;
 }
 
-.hamburger-container {
-  display: none; /* Hidden by default */
+.hamburger div {
+  height: 3px;
+  background: white;
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.1s ease;
 }
 
-
-/* Active state */
-.hamburger-container.active .hamburger div:nth-child(1) {
-  transform: rotate(45deg) translate(6px, 5px); /* Align diagonally */
+.navbar ul {
+  flex-grow: 1; /* Allow items to grow within available space */
+  justify-content: center; /* Center buttons */
 }
 
-.hamburger-container.active .hamburger div:nth-child(2) {
-  opacity: 0; /* Fade out the middle bar */
-}
+/* Responsive Navbar (Small Screens) */
+@media (max-width: 768px) {
+  .navbar-items {
+    display: none; /* Hide navbar buttons */
+    flex-direction: column; /* Stack buttons */
+    position: absolute;
+    top: 60px; /* Below navbar */
+    left: 0;
+    width: 100%;
+    background: var(--primary-dark);
+    padding: 20px 0;
+    z-index: 100;
+  }
 
-.hamburger-container.active .hamburger div:nth-child(3) {
-  transform: rotate(-45deg) translate(6px, -6px); /* Symmetrical to top bar */
+  .navbar-items.active {
+    display: flex; /* Show buttons on toggle */
+  }
+
+  .menu-button {
+    display: flex; /* Show hamburger menu button */
+  }
 }
 
 /* Button container for hamburger and label */
@@ -963,36 +1000,130 @@ h1 {
 
 }
 
-
-/* Dark Mode Toggle Container */
-.dark-mode-toggle {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-
-#dark-mode-btn {
-  background: var(--primary-dark);
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 50%;
-  font-size: 1.2rem;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-#dark-mode-btn:hover {
-  background: var(--hover-dark);
-  transform: scale(1.1);
-}
-
-#dark-mode-btn:active {
-  background: var(--hover-darker);
-  transform: scale(0.95);
-}
-
 .circle-container {
+  /* overflow: hidden; */
+}
+
+
+.settings-container {
+  position: absolute;
+  right: 20px; /* Anchor to the far-right */
+  top: 50%;
+  transform: translateY(-50%); /* Center vertically */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 50px; /* Matches navbar height */
+  width: 50px; /* Default size */
+  border-radius: 50%;
+  background: var(--primary-dark);
+  cursor: pointer;
+  transition: width 0.3s ease, height 0.3s ease, border-radius 0.3s ease, background 0.3s ease;
   overflow: hidden;
+}
+
+.settings-container.active {
+  width: 220px; /* Expanded width */
+  border-radius: 25px;
+  background: var(--body-section-1);
+  justify-content: flex-start; /* Keep content aligned left */
+  padding-left: 10px;
+}
+
+.settings-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  visibility: hidden; /* Hidden initially */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.settings-container.active .settings-content {
+  opacity: 1;
+  visibility: visible; /* Show when expanded */
+  transition-delay: 0.3s; /* Smooth appearance */
+}
+
+
+.settings-container .settings-button {
+  flex-shrink: 0; /* Prevent resizing */
+  width: 50px; /* Fixed size for gear */
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  z-index: 2; /* Keep gear on top */
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.settings-container.active .settings-button {
+  transform: rotate(90deg); /* Rotate gear on expand */
+  color: var(--primary-dark);
+}
+
+
+.settings-container.active .settings-content {
+  opacity: 1;
+  visibility: visible; /* Show content when expanded */
+  transition-delay: 0.3s; /* Delay for smooth animation */
+}
+
+.settings-container .dark-mode-label {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+.settings-container .toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border-color-1);
+  transition: background-color 0.3s ease;
+  border-radius: 50px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.toggle input:checked + .slider {
+  background-color: var(--secondary-light);
+}
+
+.toggle input:checked + .slider::before {
+  transform: translateX(26px);
+  background-color: var(--header-text-color);
 }

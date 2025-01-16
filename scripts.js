@@ -79,34 +79,38 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   });
-  
-  document.addEventListener('DOMContentLoaded', () => {
-    const darkModeButton = document.getElementById('dark-mode-btn');
-  
-    // Apply saved preference
-    const savedMode = localStorage.getItem('darkMode')
-    // uncomment to use dark mode based on user settings
-        // ?? (matchMedia("(prefers-color-scheme: dark)").matches ? 'enabled' : 'disabled');
 
-    if (savedMode === 'enabled') {
-      document.documentElement.classList.add('dark-mode');
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const settingsContainer = document.querySelector(".settings-container");
+    const darkModeToggle = document.getElementById("dark-mode-btn");
+
+    // Toggle the settings container
+    settingsContainer.addEventListener("click", (event) => {
+        event.stopPropagation();
+        settingsContainer.classList.toggle("active");
+    });
+
+    // Close settings when clicking outside
+    document.addEventListener("click", (event) => {
+        if (!settingsContainer.contains(event.target)) {
+            settingsContainer.classList.remove("active");
+        }
+    });
+
+    // Apply saved dark mode preference
+    const savedMode = localStorage.getItem("darkMode");
+    if (savedMode === "enabled") {
+        document.documentElement.classList.add("dark-mode");
+        darkModeToggle.checked = true;
     }
-  
-    // Temporarily disable transitions on page load
-    document.body.classList.add('no-transition');
-    setTimeout(() => {
-      document.body.classList.remove('no-transition');
-    }, 100); // Remove the class after 100ms (or adjust as needed)
-  
+
     // Toggle dark mode
-    if (darkModeButton) {
-      darkModeButton.addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark-mode');
-  
+    darkModeToggle.addEventListener("change", () => {
+        const isDarkMode = darkModeToggle.checked;
+        document.documentElement.classList.toggle("dark-mode", isDarkMode);
+
         // Save user preference
-        const isDarkMode = document.documentElement.classList.contains('dark-mode');
-        localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
-      });
-    }
-  });
-  
+        localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
+    });
+});
