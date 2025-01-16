@@ -1,10 +1,11 @@
-// File: /scripts/main.js
-
 /*****************************************************
  * IMPORTS
  *****************************************************/
 import { setComponents } from "/components/setComponents.js";
 import { initModal, initMenuToggle, initSettings } from "/scripts.js";
+
+import { images } from '/components/gallery.js';
+
 
 /*****************************************************
  * UTILITY: LOAD SCRIPT DYNAMICALLY
@@ -57,9 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   loadScript("https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js")
-    .then(() => {
-      console.log("MathJax loaded successfully.");
-    })
+    // .then(() => {
+    //   console.log("MathJax loaded successfully.");
+    // })
     .catch((err) => {
       console.error("Error loading MathJax:", err);
     });

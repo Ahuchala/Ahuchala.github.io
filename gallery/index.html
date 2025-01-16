@@ -2,76 +2,80 @@
 <html lang="en-US">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Art Gallery</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Art Gallery</title>
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap"
+    rel="stylesheet"
+  >
 
-    <!-- External Stylesheet -->
-    <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="styles.css">
+  <!-- Global site-wide stylesheet -->
+  <link rel="stylesheet" href="/styles.css">
 
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-    <link rel="manifest" href="/favicon/manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
+  <!-- OPTIONAL: If you have a /gallery/styles.css specifically for gallery styling -->
+  <link rel="stylesheet" href="styles.css">
 
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/favicon/manifest.json">
+
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
 </head>
 
 <body>
-    
-    <script src="/scripts.js" type="module"></script>
-    <script src="/scripts/main.js" type="module"></script>
-    <script src="/components/gallery.js"></script>
-    <script src="scripts.js"></script>
-    
 
+  <!-- The header component (injected by setComponents or similar) -->
+  <div id="header"></div>
 
-    <div id="header"></div>
-    
-    <main>
-        <section class="intro-alt"></section>
-            <p style="text-align: center;">
-                A collection of images I've created throughout my career, in no particular order.
-            </p>
-        </section>
-        <div class="section">
-            <section class="gallery">
-                <!-- Thumbnails will be dynamically loaded here -->
-            </section>
-        </div>
-    </main>
+  <main>
+    <section class="intro-alt">
+      <p style="text-align: center;">
+        A collection of images I've created throughout my career, in no particular order.
+      </p>
+    </section>
 
-    <!-- Modal -->
-    <div id="image-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span> <!-- Close button inside modal-content -->
-            <img id="modal-image" src="" alt="">
-            <div class="modal-text">
-                <h2 id="modal-title"></h2>
-                <p id="modal-description"></p>
-            </div>
-        </div>
+    <div class="section">
+      <section class="gallery">
+        <!-- Thumbnails will be dynamically loaded here (by /components/gallery.js, presumably) -->
+      </section>
     </div>
+  </main>
 
-    <div class="footer"></div>
+  <!-- Modal -->
+  <div id="image-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span> <!-- Close button inside modal-content -->
+      <img id="modal-image" src="" alt="">
+      <div class="modal-text">
+        <h2 id="modal-title"></h2>
+        <p id="modal-description"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- The footer component (injected by setComponents or similar) -->
+  <div class="footer"></div>
+
+  <!-- Single module script that handles all JS imports (scripts.js, gallery.js, etc.) -->
+  <script type="module" src="/scripts/main.js"></script>
+  <script type="module" src="scripts.js"></script>
 
 </body>
-
 </html>
