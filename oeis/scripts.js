@@ -4,31 +4,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Function to add gallery items
     const addGalleryItem = (label, imageUrl, gallery, hasImage, title = '', description = '') => {
-    const wrapper = document.createElement('div');
-    wrapper.classList.add('gallery-item');
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('gallery-item');
 
-    const labelElement = document.createElement('p');
-    labelElement.textContent = label;
-    wrapper.appendChild(labelElement);
+        const labelElement = document.createElement('p');
+        labelElement.innerHTML = label;
+        wrapper.appendChild(labelElement);
 
-    if (hasImage) {
-        const img = new Image();
-        img.src = imageUrl.thumbnail || ''; // Ensure thumbnail is defined
-        img.alt = label;
-        img.classList.add('clickable');
-        img.dataset.fullImage = imageUrl.full || ''; // Ensure full image path is defined
-        img.dataset.title = title;
-        img.dataset.description = description;
+        if (hasImage) {
+            const img = new Image();
+            img.src = imageUrl.thumbnail || ''; // Ensure thumbnail is defined
+            img.alt = label;
+            img.classList.add('clickable');
+            img.dataset.fullImage = imageUrl.full || ''; // Ensure full image path is defined
+            img.dataset.title = title;
+            img.dataset.description = description;
 
-        wrapper.appendChild(img);
-    } else {
-        const placeholder = document.createElement('div');
-        placeholder.classList.add('placeholder');
-        wrapper.appendChild(placeholder);
-    }
+            wrapper.appendChild(img);
+        } else {
+            const placeholder = document.createElement('div');
+            placeholder.classList.add('placeholder');
+            wrapper.appendChild(placeholder);
+        }
 
-    gallery.appendChild(wrapper);
-};
+        gallery.appendChild(wrapper);
+    };
 
     
 
@@ -59,12 +59,19 @@ knights.forEach((n) => {
 
     // Barnes-Wall Lattice Theta Series
     const thetaImages = [
-        { n: 4, file: 'theta_4.png', title: 'A004011: n = 4', description: 'Theta series for n = 4.' },
-        { n: 8, file: 'theta_8.png', title: 'A004009: n = 8', description: 'Theta series for n = 8.' },
-        { n: 16, file: 'theta_16.png', title: 'A008409: n = 16', description: 'Theta series for n = 16.' },
-        { n: 32, file: 'theta_32.png', title: 'A004670: n = 32', description: 'Theta series for n = 32.' },
-        { n: 64, file: 'theta_64.png', title: 'A103936: n = 64', description: 'Theta series for n = 64.' },
-        { n: 128, file: 'theta_128.png', title: 'A100004: n = 128', description: 'Theta series for n = 128.' }
+        { n: 4, file: 'theta_4.png', title:  /* html */`<a href="https://oeis.org/A004011">A004011</a>: n = 4`, description:  /* html */`
+            G.f. = $1 + 24z + 24z^2 + 96z^3+\\ldots$, theta series for the $n = 4$ Barnes-Wall lattice. In this case, this is just the usual $D_4$ lattice, i.e. the set of integer points in $\\mathbb{R}^4$.
+        ` },
+        { n: 8, file: 'theta_8.png', title: /* html */`<a href="https://oeis.org/A004009">A004009</a>: n = 8`, description:  /* html */`
+            The theta function for the Barnes-Wall lattice in dimension 8 goes by many names. The lattice itself is the root lattice for the Lie algebra $E_8$, and its theta function is the Eisenstein series $E_4$, which along with the Eisenstein series $E_6$, generates the full space of modular forms. It admits a nice description
+            $$1 + 240\\sum_{n >= 1} n^3 q^n/(1 - q^n) = 1 + 240q^2 + 2160q^4 + 6720q^6 + \\ldots
+            $$
+            although for aesthetic purposes I've chosen to plot the graph in $z=q^2$.
+        `},
+        { n: 16, file: 'theta_16.png', title: /* html */`<a href="https://oeis.org/A008409">A008409</a>: n = 16`, description: 'Theta series for n = 16.' },
+        { n: 32, file: 'theta_32.png', title: /* html */`<a href="https://oeis.org/A004670">A004670</a>: n = 32`, description: 'Theta series for n = 32.' },
+        { n: 64, file: 'theta_64.png', title: /* html */`<a href="https://oeis.org/A103936">A103936</a>: n = 64`, description: 'Theta series for n = 64.' },
+        { n: 128, file: 'theta_128.png', title: /* html */`<a href="https://oeis.org/A100004">A100004</a>: n = 128`, description: 'Theta series for n = 128.' }
     ];
 
     const thetaPath = '/images/gallery/';

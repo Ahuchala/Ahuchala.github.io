@@ -20,8 +20,8 @@ export function initModal() {
         modal.style.display = 'flex';
         modalImage.src = fullImage;
         modalImage.alt = title;
-        modalTitle.textContent = title;
-        modalDescription.textContent = description;
+        modalTitle.innerHTML = title;
+        modalDescription.innerHTML = description;
   
         if (window.MathJax) {
           MathJax.typesetPromise([modalDescription]);
@@ -32,16 +32,16 @@ export function initModal() {
     closeModal.addEventListener('click', () => {
       modal.style.display = 'none';
       modalImage.src = '';
-      modalTitle.textContent = '';
-      modalDescription.textContent = '';
+      modalTitle.innerHTML = '';
+      modalDescription.innerHTML = '';
     });
   
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
         modal.style.display = 'none';
         modalImage.src = '';
-        modalTitle.textContent = '';
-        modalDescription.textContent = '';
+        modalTitle.innerHTML = '';
+        modalDescription.innerHTML = '';
       }
     });
   

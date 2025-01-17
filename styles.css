@@ -237,6 +237,7 @@ header .header-content h1 {
   padding: 10px 20px;
   border-radius: 25px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.1s ease; /* Smooth transition */
 }
 
 .navbar a:hover {
@@ -267,7 +268,7 @@ header .header-content h1 {
   background: var(--primary-dark); 
   color: white; 
   border: none; 
-  border-radius: 40px; 
+  border-radius: 25px; 
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
   margin-left: 15px;
@@ -283,8 +284,8 @@ header .header-content h1 {
 }
 
 .menu-button:active {
-  background: var(--hover-darker);
-  transform: scale(0.98);
+  /* background: var(--hover-darker); */
+  /* transform: scale(0.98); */
 }
 
 /* The hamburger icon itself */
@@ -635,7 +636,7 @@ main {
 
 .modal-content {
   position: relative;
-  background-color: white;
+  background-color: var(--body-bg);
   padding: 20px;
   border-radius: 8px;
   max-width: 90%;

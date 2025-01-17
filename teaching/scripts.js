@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         timelineItem.className = "timeline-item";
 
         const term = document.createElement("h2");
-        term.textContent = entry.term;
+        term.innerHTML = entry.term;
 
         const details = document.createElement("p");
         details.innerHTML = `<strong>${entry.role}</strong> for <em>${entry.course}</em>`;

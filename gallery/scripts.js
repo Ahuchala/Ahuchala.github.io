@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     wrapper.classList.add('gallery-item');
 
     const titleElement = document.createElement('p');
-    titleElement.textContent = title;
+    titleElement.innerHTML = title;
     titleElement.classList.add('thumbnail-title');
 
     const imgElement = document.createElement('img');
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.style.display = 'flex';
       modalImage.src = full;
       modalImage.alt = alt;
-      modalTitle.textContent = title;
+      modalTitle.innerHTML = title;
       modalDescription.innerHTML = description;
       
       // If MathJax is present, typeset the modal content
@@ -70,6 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
 function closeModalModal(modal, modalImage, modalTitle, modalDescription) {
   modal.style.display = 'none';
   modalImage.src = '';
-  modalTitle.textContent = '';
-  modalDescription.textContent = '';
+  modalTitle.innerHTML = '';
+  modalDescription.innerHTML = '';
 }
