@@ -2,7 +2,7 @@ import json
 
 MAX_DIM = 10
 MAX_DEGREE = 10
-MAX_NUM_HYPERSURFACES = 4
+MAX_NUM_HYPERSURFACES = 6
 
 def hodge(d, n):
     n -= len(d)  # Adjust dimension for the intersections
