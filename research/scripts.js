@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const degreeToggles = document.getElementById("degree-toggles");
     const diamondContainer = document.getElementById("diamond-container");
 
+    let lastUserSetK = parseInt(kSlider.value); // Track the last user-set value of k
+
     // Load Hodge numbers JSON
     let hodgeData = {};
     try {
@@ -52,15 +54,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         nValue.innerText = n;
         kValue.innerText = k;
 
-        // Collect degrees from toggles
-        const degrees = Array.from(degreeToggles.querySelectorAll(".degree-input"))
-            .map((input) => parseInt(input.value))
-            .sort((a, b) => b - a); // Ensure degrees are sorted in descending order
-
         diamondContainer.innerHTML = ""; // Clear previous diamond
 
-        if (k > n) {
-            // Case where k > n: Display trivial diamond (all 0s)
+        if (k === n) {
+            // Case where k == n: Display a single number (product of degrees)
+            const degrees = Array.from(degreeToggles.querySelectorAll(".degree-input"))
+                .map((input) => parseInt(input.value));
+            const product = degrees.reduce((acc, degree) => acc * degree, 1);
+
+            const singleRow = document.createElement("div");
+            singleRow.className = "diamond-row";
+
+            const value = document.createElement("span");
+            value.className = "diamond-value";
+            value.innerText = product;
+
+            singleRow.appendChild(value);
+            diamondContainer.appendChild(singleRow);
+            return;
+        }
+
+        if (k === 0) {
+            // Case where k = 0: Draw a normal Hodge diamond
             for (let j = 0; j < rows; j++) {
                 const row = document.createElement("div");
                 row.className = "diamond-row";
@@ -75,11 +90,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                     row.appendChild(space);
                 }
 
-                // Add 0s for each element
+                // Add values for each element in the row
                 for (let i = 0; i < elements; i++) {
                     const value = document.createElement("span");
                     value.className = "diamond-value";
-                    value.innerText = "0";
+                    // Apply the delta(i, j) rule
+                    value.innerText = 2 * i === Math.min(j, 2 * (n - k) - j) ? "1" : "0";
                     row.appendChild(value);
                 }
 
@@ -95,28 +111,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        if (k === n) {
-            // Case where k == n: Display a single number (product of degrees)
-            const product = degrees.reduce((acc, degree) => acc * degree, 1);
+        // Case where 0 < k < n: Fetch Hodge numbers and build the diamond
+        const degrees = Array.from(degreeToggles.querySelectorAll(".degree-input"))
+            .map((input) => parseInt(input.value))
+            .sort((a, b) => b - a); // Ensure degrees are sorted in descending order
 
-            const singleRow = document.createElement("div");
-            singleRow.className = "diamond-row";
-
-            const value = document.createElement("span");
-            value.className = "diamond-value";
-            value.innerText = product;
-
-            singleRow.appendChild(value);
-            diamondContainer.appendChild(singleRow);
-            return;
-        }
-
-        // Case where k < n: Fetch Hodge numbers and build the diamond
         const key = `${degrees.join("-")},${n}`;
         const hodgeNumbers = hodgeData[key] || null; // Fetch corresponding Hodge numbers from JSON
 
         if (!hodgeNumbers) {
-            // Handle missing Hodge data
+            // Handle missing Hodge data gracefully
+            diamondContainer.innerHTML = '<p class="placeholder">No data available for the given input.</p>';
             return;
         }
 
@@ -163,11 +168,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     };
 
+    const updateKSlider = () => {
+        const n = parseInt(nSlider.value);
+
+        // Adjust k-slider max to match n
+        kSlider.max = n;
+
+        // Dynamically set k to the last valid value or n, whichever is smaller
+        if (lastUserSetK > n) {
+            kSlider.value = n;
+        } else {
+            kSlider.value = lastUserSetK;
+        }
+
+        // Update degree toggles dynamically
+        createDegreeToggles(parseInt(kSlider.value));
+        updateDiamond(); // Refresh the diamond
+    };
+
     // Attach slider event listeners
-    nSlider.addEventListener("input", updateDiamond);
+    nSlider.addEventListener("input", () => {
+        updateKSlider(); // Update k-slider when n changes
+    });
+
     kSlider.addEventListener("input", () => {
-        const k = parseInt(kSlider.value);
-        createDegreeToggles(k); // Update degree toggles dynamically
+        lastUserSetK = parseInt(kSlider.value); // Update the last user-set value
+        createDegreeToggles(lastUserSetK); // Update degree toggles dynamically
         updateDiamond(); // Refresh the diamond
     });
 
