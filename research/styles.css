@@ -26,7 +26,6 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
-
 #diamond-container {
     margin-top: 20px;
     display: flex;
@@ -41,27 +40,46 @@
 }
 
 .diamond-space {
-    width: 30px;
-    height: 30px;
+    width: 1em; /* Matches the size of the number dynamically */
+    height: 1em; /* Matches the size of the number dynamically */
 }
 
 .diamond-value {
     display: inline-block;
-    width: 30px;
-    height: 30px;
-    margin: 2px;
+    min-width: 1em;
+    min-height: 1em;
+    margin: 0.25em; /* Adjusted for perfect alignment */
     text-align: center;
-    line-height: 30px;
+    padding: 0.5em;
     font-size: 1rem;
     font-weight: bold;
     border-radius: 50%;
     background-color: var(--secondary-light);
     color: var(--header-text-color);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
-.diamond-value:hover {
-    background-color: var(--hover-light);
-    transform: scale(1.2);
+#degree-toggles {
+    margin-top: 10px;
+    text-align: left;
+}
+
+.degree-toggle {
+    margin-bottom: 10px;
+}
+
+.degree-toggle label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.degree-input {
+    color: var(--header-text-color);
+    width: 50px;
+    padding: 5px;
+    font-size: 1rem;
+    border: 1px solid var(--border-color-1);
+    border-radius: 5px;
+    background-color: var(--body-section-2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

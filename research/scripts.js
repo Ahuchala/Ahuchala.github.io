@@ -1,69 +1,171 @@
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("compute-btn").addEventListener("click", async () => {
-        const nInput = parseInt(document.getElementById("n-input").value);
-        const degreesInput = document
-            .getElementById("degrees-input")
-            .value.split(",")
-            .map((d) => parseInt(d.trim()))
-            .sort((a, b) => b - a); // Ensure degrees are sorted in descending order
-    
-        if (isNaN(nInput) || degreesInput.some(isNaN)) {
-            document.getElementById("output").innerText =
-                "Invalid input. Please enter valid numbers.";
-            return;
-        }
-    
-        const k = degreesInput.length; // Number of hypersurfaces
-        const diamondSize = nInput - k + 1;
-    
-        const key = degreesInput.join("-") + `,${nInput}`;
-    
-        // Fetch the JSON file
+document.addEventListener("DOMContentLoaded", async () => {
+    const nSlider = document.getElementById("n-slider");
+    const kSlider = document.getElementById("k-slider");
+    const nValue = document.getElementById("n-value");
+    const kValue = document.getElementById("k-value");
+    const degreeToggles = document.getElementById("degree-toggles");
+    const diamondContainer = document.getElementById("diamond-container");
+    const outputMessage = document.getElementById("output-message");
+
+    // Load Hodge numbers JSON
+    let hodgeData = {};
+    try {
         const response = await fetch("hodge_numbers.json");
-        const hodgeData = await response.json();
-    
-        const result = hodgeData[key];
-    
-        const diamondContainer = document.getElementById("diamond-container");
-        diamondContainer.innerHTML = ""; // Clear previous diamond
-    
-        if (result) {
-            // Build the Hodge diamond
-            for (let p = 0; p < diamondSize; p++) {
+        hodgeData = await response.json();
+    } catch (error) {
+        console.error("Error loading Hodge numbers:", error);
+        outputMessage.innerText = "Error: Could not load Hodge numbers data.";
+        return;
+    }
+
+    const createDegreeToggles = (k) => {
+        degreeToggles.innerHTML = ""; // Clear previous toggles
+
+        for (let i = 0; i < k; i++) {
+            const toggleContainer = document.createElement("div");
+            toggleContainer.className = "degree-toggle";
+
+            const label = document.createElement("label");
+            label.innerText = `Degree of Hypersurface ${i + 1}:`;
+
+            const input = document.createElement("input");
+            input.type = "number";
+            input.min = "1";
+            input.max = "10";
+            input.value = "2"; // Default degree
+            input.className = "degree-input";
+
+            // Add event listener to update the diamond when degree changes
+            input.addEventListener("input", updateDiamond);
+
+            toggleContainer.appendChild(label);
+            toggleContainer.appendChild(input);
+            degreeToggles.appendChild(toggleContainer);
+        }
+    };
+
+    const updateDiamond = () => {
+        const n = parseInt(nSlider.value);
+        const k = parseInt(kSlider.value);
+        const rows = 2 * (n - k) + 1;
+        const targetRowIndex = n - k; // Target row is (n-k+1)th, zero-indexed
+
+        // Update slider values
+        nValue.innerText = n;
+        kValue.innerText = k;
+
+        // Handle cases where k >= n (deducible results)
+        if (k >= n) {
+            diamondContainer.innerHTML = ""; // Clear the diamond
+            // outputMessage.innerText = `Result deduced: Hodge diamond is trivial for k >= n.`;
+            // outputMessage.style.color = "green";
+
+            // Render a trivial diamond (all 0s)
+            for (let j = 0; j < rows; j++) {
                 const row = document.createElement("div");
                 row.className = "diamond-row";
-    
-                // Add spaces for alignment
-                for (let s = 0; s < Math.abs(diamondSize - 1 - p); s++) {
+
+                const elements = j <= (rows - 1) / 2 ? j + 1 : rows - j;
+                const spaces = (rows - elements) / 2;
+
+                // Add spaces for alignment (left)
+                for (let s = 0; s < spaces; s++) {
                     const space = document.createElement("span");
                     space.className = "diamond-space";
                     row.appendChild(space);
                 }
-    
-                // Add values
-                for (let q = 0; q < diamondSize; q++) {
+
+                // Add 0s for each element
+                for (let i = 0; i < elements; i++) {
                     const value = document.createElement("span");
                     value.className = "diamond-value";
-    
-                    if (p + q === diamondSize - 1) {
-                        value.innerText = result[q] || 0; // JSON-provided values in the middle
-                    } else if (p === q || p + q === diamondSize - 1) {
-                        value.innerText = 1; // 1s along diagonals
-                    } else {
-                        value.innerText = 0; // Other values are 0
-                    }
-    
+                    value.innerText = "0"; // Trivial case: all zeros
                     row.appendChild(value);
                 }
-    
+
+                // Add spaces for alignment (right)
+                for (let s = 0; s < spaces; s++) {
+                    const space = document.createElement("span");
+                    space.className = "diamond-space";
+                    row.appendChild(space);
+                }
+
                 diamondContainer.appendChild(row);
             }
-    
-            document.getElementById("output").innerText = `Hodge diamond generated for n=${nInput}, degrees=${degreesInput.join(",")}`;
+            return;
         } else {
-            document.getElementById("output").innerText = "No data available for the given input.";
-            diamondContainer.innerHTML = '<p class="placeholder">No valid Hodge diamond could be computed.</p>';
+            outputMessage.innerText = ""; // Clear any previous output messages
         }
+
+        // Collect degrees from toggles
+        const degrees = Array.from(degreeToggles.querySelectorAll(".degree-input"))
+            .map((input) => parseInt(input.value))
+            .sort((a, b) => b - a); // Ensure degrees are sorted in descending order
+
+        const key = `${degrees.join("-")},${n}`;
+        const hodgeNumbers = hodgeData[key] || null; // Fetch corresponding Hodge numbers from JSON
+
+        diamondContainer.innerHTML = ""; // Clear previous diamond
+
+        if (!hodgeNumbers) {
+            // Handle missing Hodge data
+            outputMessage.innerText = `No data available for n=${n}, degrees=[${degrees.join(", ")}].`;
+            outputMessage.style.color = "red"; // Highlight error message
+            return;
+        }
+
+        for (let j = 0; j < rows; j++) {
+            const row = document.createElement("div");
+            row.className = "diamond-row";
+
+            const elements = j <= (rows - 1) / 2 ? j + 1 : rows - j;
+            const spaces = (rows - elements) / 2;
+
+            // Add spaces for alignment (left)
+            for (let s = 0; s < spaces; s++) {
+                const space = document.createElement("span");
+                space.className = "diamond-space";
+                row.appendChild(space);
+            }
+
+            // Add values for each element in the row
+            for (let i = 0; i < elements; i++) {
+                const value = document.createElement("span");
+                value.className = "diamond-value";
+
+                if (j === targetRowIndex) {
+                    // Target row: Use Hodge numbers for symmetry
+                    const symmetricIndex = targetRowIndex - i; // Symmetric position index
+                    value.innerText = hodgeNumbers[i] || hodgeNumbers[symmetricIndex] || 0;
+                } else {
+                    // All other rows: Use delta rule with the updated condition
+                    const condition = 2 * i === Math.min(j, 2 * (n - k) - j);
+                    value.innerText = condition ? "1" : "0";
+                }
+
+                row.appendChild(value);
+            }
+
+            // Add spaces for alignment (right)
+            for (let s = 0; s < spaces; s++) {
+                const space = document.createElement("span");
+                space.className = "diamond-space";
+                row.appendChild(space);
+            }
+
+            diamondContainer.appendChild(row);
+        }
+    };
+
+    // Attach slider event listeners
+    nSlider.addEventListener("input", updateDiamond);
+    kSlider.addEventListener("input", () => {
+        const k = parseInt(kSlider.value);
+        createDegreeToggles(k); // Update degree toggles dynamically
+        updateDiamond(); // Refresh the diamond
     });
-    
+
+    // Initialize with default slider values
+    createDegreeToggles(parseInt(kSlider.value));
+    updateDiamond();
 });
