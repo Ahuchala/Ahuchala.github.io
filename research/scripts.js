@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const kValue = document.getElementById("k-value");
     const degreeToggles = document.getElementById("degree-toggles");
     const diamondContainer = document.getElementById("diamond-container");
-    const outputMessage = document.getElementById("output-message");
 
     // Load Hodge numbers JSON
     let hodgeData = {};
@@ -14,7 +13,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         hodgeData = await response.json();
     } catch (error) {
         console.error("Error loading Hodge numbers:", error);
-        outputMessage.innerText = "Error: Could not load Hodge numbers data.";
         return;
     }
 
@@ -54,13 +52,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         nValue.innerText = n;
         kValue.innerText = k;
 
-        // Handle cases where k >= n (deducible results)
-        if (k >= n) {
-            diamondContainer.innerHTML = ""; // Clear the diamond
-            // outputMessage.innerText = `Result deduced: Hodge diamond is trivial for k >= n.`;
-            // outputMessage.style.color = "green";
+        // Collect degrees from toggles
+        const degrees = Array.from(degreeToggles.querySelectorAll(".degree-input"))
+            .map((input) => parseInt(input.value))
+            .sort((a, b) => b - a); // Ensure degrees are sorted in descending order
 
-            // Render a trivial diamond (all 0s)
+        diamondContainer.innerHTML = ""; // Clear previous diamond
+
+        if (k > n) {
+            // Case where k > n: Display trivial diamond (all 0s)
             for (let j = 0; j < rows; j++) {
                 const row = document.createElement("div");
                 row.className = "diamond-row";
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 for (let i = 0; i < elements; i++) {
                     const value = document.createElement("span");
                     value.className = "diamond-value";
-                    value.innerText = "0"; // Trivial case: all zeros
+                    value.innerText = "0";
                     row.appendChild(value);
                 }
 
@@ -93,24 +93,30 @@ document.addEventListener("DOMContentLoaded", async () => {
                 diamondContainer.appendChild(row);
             }
             return;
-        } else {
-            outputMessage.innerText = ""; // Clear any previous output messages
         }
 
-        // Collect degrees from toggles
-        const degrees = Array.from(degreeToggles.querySelectorAll(".degree-input"))
-            .map((input) => parseInt(input.value))
-            .sort((a, b) => b - a); // Ensure degrees are sorted in descending order
+        if (k === n) {
+            // Case where k == n: Display a single number (product of degrees)
+            const product = degrees.reduce((acc, degree) => acc * degree, 1);
 
+            const singleRow = document.createElement("div");
+            singleRow.className = "diamond-row";
+
+            const value = document.createElement("span");
+            value.className = "diamond-value";
+            value.innerText = product;
+
+            singleRow.appendChild(value);
+            diamondContainer.appendChild(singleRow);
+            return;
+        }
+
+        // Case where k < n: Fetch Hodge numbers and build the diamond
         const key = `${degrees.join("-")},${n}`;
         const hodgeNumbers = hodgeData[key] || null; // Fetch corresponding Hodge numbers from JSON
 
-        diamondContainer.innerHTML = ""; // Clear previous diamond
-
         if (!hodgeNumbers) {
             // Handle missing Hodge data
-            outputMessage.innerText = `No data available for n=${n}, degrees=[${degrees.join(", ")}].`;
-            outputMessage.style.color = "red"; // Highlight error message
             return;
         }
 
