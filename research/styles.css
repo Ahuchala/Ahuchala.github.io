@@ -1,0 +1,67 @@
+#hodge-container {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+#inputs {
+    flex: 1;
+    max-width: 45%;
+    padding: 20px;
+    border: 1px solid var(--border-color-1);
+    border-radius: 10px;
+    background-color: var(--body-section-2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#diamond-box {
+    flex: 1;
+    max-width: 45%;
+    padding: 20px;
+    border: 1px solid var(--border-color-1);
+    border-radius: 10px;
+    background-color: var(--body-section-2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#diamond-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.diamond-row {
+    display: flex;
+    justify-content: center;
+}
+
+.diamond-space {
+    width: 30px;
+    height: 30px;
+}
+
+.diamond-value {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin: 2px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 50%;
+    background-color: var(--secondary-light);
+    color: var(--header-text-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.diamond-value:hover {
+    background-color: var(--hover-light);
+    transform: scale(1.2);
+}
