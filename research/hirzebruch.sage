@@ -4,7 +4,7 @@ from itertools import combinations_with_replacement
 
 MAX_DIM = 10
 MAX_DEGREE = 10
-MAX_NUM_HYPERSURFACES = 8
+MAX_NUM_HYPERSURFACES = 10
 
 # Hodge polynomial computation
 def hodge(d, n, front_part, back_part):
