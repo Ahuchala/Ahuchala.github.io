@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en-US">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +12,7 @@
     <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="styles.css">
 
-        <!-- Favicon -->
+    <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-icon-72x72.png">
@@ -31,19 +30,17 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/favincon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
-
-
 </head>
 
-<body>    
+<body>
+    <!-- Math.js for convenience -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.5.0/math.min.js"></script>
-    
 
+    <!-- Our main scripts; we use type="module" so we can import from hodge.js -->
 
-    <script src="/scripts.js" type="module"></script>
-    <script src="/scripts/main.js" type="module"></script>
-    <script src="scripts.js"></script>
-    
+    <script src="/scripts/main.js" type="module"></script> 
+    <script src="scripts.js" type="module"></script>
+
 
     <!-- Header -->
     <div id="header"></div>
@@ -91,7 +88,6 @@
                     <p id="output-message"></p>
 
                 </div>
-                
             
                 <div id="diamond-box">
                     <h2>Hodge Diamond</h2>
@@ -135,20 +131,19 @@
         </section>
 
         <!-- Modal for Images -->
-    <div id="image-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span> <!-- Close button inside modal-content -->
-            <img id="modal-image" src="" alt="">
-            <div class="modal-text">
-                <h2 id="modal-title"></h2>
-                <p id="modal-description"></p>
+        <div id="image-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span> <!-- Close button inside modal-content -->
+                <img id="modal-image" src="" alt="">
+                <div class="modal-text">
+                    <h2 id="modal-title"></h2>
+                    <p id="modal-description"></p>
+                </div>
             </div>
         </div>
-    </div>
     </main>
 
     <!-- Footer -->
     <div class="footer"></div>
 </body>
-
 </html>

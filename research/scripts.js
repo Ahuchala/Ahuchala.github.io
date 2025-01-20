@@ -1,3 +1,6 @@
+// We import the "hodge" function from our new hodge.js file:
+import { hodge } from "./hodge.js";
+
 document.addEventListener("DOMContentLoaded", async () => {
     const nSlider = document.getElementById("n-slider");
     const kSlider = document.getElementById("k-slider");
@@ -6,18 +9,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const degreeToggles = document.getElementById("degree-toggles");
     const diamondContainer = document.getElementById("diamond-container");
 
-    let lastUserSetK = parseInt(kSlider.value); // Track the last user-set value of k
+    let lastUserSetK = parseInt(kSlider.value); // Track last user-set value of k
 
-    // Load Hodge numbers JSON
-    let hodgeData = {};
-    try {
-        const response = await fetch("hodge_numbers.json");
-        hodgeData = await response.json();
-    } catch (error) {
-        console.error("Error loading Hodge numbers:", error);
-        return;
-    }
-
+    // Create the set of numeric inputs for degrees
     const createDegreeToggles = (k) => {
         degreeToggles.innerHTML = ""; // Clear previous toggles
 
@@ -35,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             input.value = "2"; // Default degree
             input.className = "degree-input";
 
-            // Add event listener to update the diamond when degree changes
+            // Recompute diamond when any degree changes
             input.addEventListener("input", updateDiamond);
 
             toggleContainer.appendChild(label);
@@ -44,20 +38,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     };
 
+    // Main function to build/refresh the diamond
     const updateDiamond = () => {
         const n = parseInt(nSlider.value);
         const k = parseInt(kSlider.value);
         const rows = 2 * (n - k) + 1;
-        const targetRowIndex = n - k; // Target row is (n-k+1)th, zero-indexed
+        const targetRowIndex = n - k; // row index where Hodge numbers appear
 
-        // Update slider values
         nValue.innerText = n;
         kValue.innerText = k;
-
         diamondContainer.innerHTML = ""; // Clear previous diamond
 
+        // 1) If k == n: Display a single number (product of degrees)
         if (k === n) {
-            // Case where k == n: Display a single number (product of degrees)
             const degrees = Array.from(degreeToggles.querySelectorAll(".degree-input"))
                 .map((input) => parseInt(input.value));
             const product = degrees.reduce((acc, degree) => acc * degree, 1);
@@ -74,8 +67,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+        // 2) If k == 0: Standard Hodge diamond for projective space
         if (k === 0) {
-            // Case where k = 0: Draw a normal Hodge diamond
             for (let j = 0; j < rows; j++) {
                 const row = document.createElement("div");
                 row.className = "diamond-row";
@@ -83,23 +76,24 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const elements = j <= (rows - 1) / 2 ? j + 1 : rows - j;
                 const spaces = (rows - elements) / 2;
 
-                // Add spaces for alignment (left)
+                // Left spacing
                 for (let s = 0; s < spaces; s++) {
                     const space = document.createElement("span");
                     space.className = "diamond-space";
                     row.appendChild(space);
                 }
 
-                // Add values for each element in the row
+                // Values for each element
                 for (let i = 0; i < elements; i++) {
-                    const value = document.createElement("span");
-                    value.className = "diamond-value";
-                    // Apply the delta(i, j) rule
-                    value.innerText = 2 * i === Math.min(j, 2 * (n - k) - j) ? "1" : "0";
-                    row.appendChild(value);
+                    const valEl = document.createElement("span");
+                    valEl.className = "diamond-value";
+                    // apply the standard delta(i, j) rule
+                    const condition = 2 * i === Math.min(j, 2 * (n - k) - j);
+                    valEl.innerText = condition ? "1" : "0";
+                    row.appendChild(valEl);
                 }
 
-                // Add spaces for alignment (right)
+                // Right spacing
                 for (let s = 0; s < spaces; s++) {
                     const space = document.createElement("span");
                     space.className = "diamond-space";
@@ -111,20 +105,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        // Case where 0 < k < n: Fetch Hodge numbers and build the diamond
+        // 3) Otherwise (0 < k < n): compute Hodge numbers at runtime with hodge.js
         const degrees = Array.from(degreeToggles.querySelectorAll(".degree-input"))
-            .map((input) => parseInt(input.value))
-            .sort((a, b) => b - a); // Ensure degrees are sorted in descending order
+            .map((input) => parseInt(input.value));
 
-        const key = `${degrees.join("-")},${n}`;
-        const hodgeNumbers = hodgeData[key] || null; // Fetch corresponding Hodge numbers from JSON
+        // Call our new hodge() function
+        const hodgeNumbers = hodge(degrees, n);
+        // hodgeNumbers is typically length (n-k+1).
 
-        if (!hodgeNumbers) {
-            // Handle missing Hodge data gracefully
-            diamondContainer.innerHTML = '<p class="placeholder">No data available for the given input.</p>';
-            return;
-        }
-
+        // Build the diamond, using the middle row for hodgeNumbers
         for (let j = 0; j < rows; j++) {
             const row = document.createElement("div");
             row.className = "diamond-row";
@@ -132,32 +121,33 @@ document.addEventListener("DOMContentLoaded", async () => {
             const elements = j <= (rows - 1) / 2 ? j + 1 : rows - j;
             const spaces = (rows - elements) / 2;
 
-            // Add spaces for alignment (left)
+            // Left spacing
             for (let s = 0; s < spaces; s++) {
                 const space = document.createElement("span");
                 space.className = "diamond-space";
                 row.appendChild(space);
             }
 
-            // Add values for each element in the row
+            // Values
             for (let i = 0; i < elements; i++) {
-                const value = document.createElement("span");
-                value.className = "diamond-value";
+                const valEl = document.createElement("span");
+                valEl.className = "diamond-value";
 
                 if (j === targetRowIndex) {
-                    // Target row: Use Hodge numbers for symmetry
-                    const symmetricIndex = targetRowIndex - i; // Symmetric position index
-                    value.innerText = hodgeNumbers[i] || hodgeNumbers[symmetricIndex] || 0;
+                    // Middle (dimension) row => show the computed Hodge # h^{i,n-k-i}
+                    // For symmetry in the diamond, we also show the 'symmetricIndex' if i out of range
+                    const symmetricIndex = targetRowIndex - i;
+                    valEl.innerText = hodgeNumbers[i] || hodgeNumbers[symmetricIndex] || 0;
                 } else {
-                    // All other rows: Use delta rule with the updated condition
+                    // All other rows: default to a "delta" style for alignment
                     const condition = 2 * i === Math.min(j, 2 * (n - k) - j);
-                    value.innerText = condition ? "1" : "0";
+                    valEl.innerText = condition ? "1" : "0";
                 }
 
-                row.appendChild(value);
+                row.appendChild(valEl);
             }
 
-            // Add spaces for alignment (right)
+            // Right spacing
             for (let s = 0; s < spaces; s++) {
                 const space = document.createElement("span");
                 space.className = "diamond-space";
@@ -181,23 +171,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             kSlider.value = lastUserSetK;
         }
 
-        // Update degree toggles dynamically
+        // Update degree toggles for the new k
         createDegreeToggles(parseInt(kSlider.value));
-        updateDiamond(); // Refresh the diamond
+        updateDiamond();
     };
 
-    // Attach slider event listeners
+    // When n changes, we might need to clamp k
     nSlider.addEventListener("input", () => {
-        updateKSlider(); // Update k-slider when n changes
+        updateKSlider();
     });
 
+    // When k changes, record it, rebuild toggles & diamond
     kSlider.addEventListener("input", () => {
-        lastUserSetK = parseInt(kSlider.value); // Update the last user-set value
-        createDegreeToggles(lastUserSetK); // Update degree toggles dynamically
-        updateDiamond(); // Refresh the diamond
+        lastUserSetK = parseInt(kSlider.value);
+        createDegreeToggles(lastUserSetK);
+        updateDiamond();
     });
 
-    // Initialize with default slider values
+    // Initialize on page load
     createDegreeToggles(parseInt(kSlider.value));
     updateDiamond();
 });
