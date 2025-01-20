@@ -74,7 +74,7 @@
 }
 
 .degree-input {
-    color: var(--header-text-color);
+    color: var(--text-color);
     width: 50px;
     padding: 5px;
     font-size: 1rem;

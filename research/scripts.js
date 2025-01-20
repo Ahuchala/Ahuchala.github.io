@@ -1,4 +1,3 @@
-// We import the "hodge" function from our new hodge.js file:
 import { hodge } from "./hodge.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
