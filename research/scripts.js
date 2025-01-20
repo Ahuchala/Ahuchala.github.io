@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const createDegreeToggles = (k) => {
         degreeToggles.innerHTML = ""; // Clear previous toggles
 
+        const defaultDegrees = [3, 2]; // Default degrees: cubic and quadric
+
         for (let i = 0; i < k; i++) {
             const toggleContainer = document.createElement("div");
             toggleContainer.className = "degree-toggle";
@@ -25,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             input.type = "number";
             input.min = "1";
             input.max = "10";
-            input.value = "2"; // Default degree
+            input.value = defaultDegrees[i] || "2"; // Use default or fallback to 2
             input.className = "degree-input";
 
             // Recompute diamond when any degree changes
@@ -175,19 +177,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         updateDiamond();
     };
 
-    // When n changes, we might need to clamp k
-    nSlider.addEventListener("input", () => {
-        updateKSlider();
-    });
+    // Initialize on page load
+    nSlider.value = 4; // Set default n = 4
+    kSlider.value = 2; // Set default k = 2
+    lastUserSetK = 2;
 
-    // When k changes, record it, rebuild toggles & diamond
+    createDegreeToggles(parseInt(kSlider.value));
+    updateDiamond();
+
+    // Attach event listeners
+    nSlider.addEventListener("input", updateKSlider);
     kSlider.addEventListener("input", () => {
         lastUserSetK = parseInt(kSlider.value);
         createDegreeToggles(lastUserSetK);
         updateDiamond();
     });
-
-    // Initialize on page load
-    createDegreeToggles(parseInt(kSlider.value));
-    updateDiamond();
 });
