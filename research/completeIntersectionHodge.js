@@ -7,7 +7,7 @@
  * We'll factor out (x-y) explicitly so we never divide
  * by a power series with zero constant term.
  */
-export function hodge(dArray, nInput) {
+export function hodgeCompleteIntersection(dArray, nInput) {
     // ============= HELPER: binomial coefficient =============
     function binomial(n, k) {
       if (k < 0 || k > n) return 0;

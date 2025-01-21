@@ -1,4 +1,5 @@
-import { hodge } from "./hodge.js";
+import { hodgeCompleteIntersection } from "./completeIntersectionHodge.js";
+import { hodgeAbelianVariety } from "./abelianVarietyHodge.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const nSlider = document.getElementById("n-slider");
@@ -10,6 +11,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const presetButtons = document.querySelectorAll(".preset-button");
     let lastUserSetK = parseInt(kSlider.value); // Tracks the last user-set value of `k`
+
+    const toggleCompleteIntersection = document.getElementById("toggle-complete-intersection");
+    const toggleDuplicate = document.getElementById("toggle-duplicate");
+    const completeIntersectionContainer = document.getElementById("complete-intersection-container");
+    const duplicateCalculatorContainer = document.getElementById("duplicate-calculator-container");
+
+    // Toggle functionality
+    toggleCompleteIntersection.addEventListener("click", () => {
+        completeIntersectionContainer.style.display = "block";
+        duplicateCalculatorContainer.style.display = "none";
+    });
+
+    toggleDuplicate.addEventListener("click", () => {
+        completeIntersectionContainer.style.display = "none";
+        duplicateCalculatorContainer.style.display = "block";
+    });
 
     const syncSliderAndTextbox = (slider, textbox, onChange, maxValue = 50) => {
         slider.addEventListener("input", () => {
@@ -132,7 +149,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const degrees = Array.from(degreeToggles.querySelectorAll(".hodge-input"))
             .map((input) => parseInt(input.value));
 
-        const hodgeNumbers = hodge(degrees, n);
+        const hodgeNumbers = hodgeCompleteIntersection(degrees, n);
 
         for (let j = 0; j < rows; j++) {
             const row = document.createElement("div");
@@ -212,4 +229,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Default preset
     loadPreset(4, 2, [3, 2]);
+    
 });

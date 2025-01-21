@@ -70,3 +70,22 @@ document.addEventListener("DOMContentLoaded", () => {
   initMenuToggle();
   initSettings();
 });
+
+// unclear if this does anything
+document.addEventListener("DOMContentLoaded", () => {
+  // Get the computed background color from CSS
+  const backgroundColor = getComputedStyle(document.body).getPropertyValue('--body-bg').trim();
+
+  // Find the <meta name="theme-color"> tag
+  let themeMetaTag = document.querySelector('meta[name="theme-color"]');
+
+  // If the tag exists, update its content; otherwise, create one
+  if (themeMetaTag) {
+      themeMetaTag.setAttribute('content', backgroundColor);
+  } else {
+      themeMetaTag = document.createElement('meta');
+      themeMetaTag.setAttribute('name', 'theme-color');
+      themeMetaTag.setAttribute('content', backgroundColor);
+      document.head.appendChild(themeMetaTag);
+  }
+});

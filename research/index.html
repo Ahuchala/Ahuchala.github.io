@@ -36,24 +36,20 @@
     <!-- Math.js for convenience -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.5.0/math.min.js"></script>
 
-    <!-- Our main scripts; we use type="module" so we can import from hodge.js -->
-
+    <!-- Main Scripts -->
     <script src="/scripts/main.js" type="module"></script> 
     <script src="scripts.js" type="module"></script>
-
 
     <!-- Header -->
     <div id="header"></div>
 
     <!-- Main Content -->
     <main>
-
         <!-- Current Work -->
         <section class="section">
             <h2>Current Research</h2>
             <p>
                 I'm a math graduate student at the University of Oregon studying algebraic geometry under the guidance of Nicolas Addington. 
-
                 My work focuses on computing Hasse-Weil zeta functions of smooth hypersurfaces and complete intersections in Grassmannians using $p$-adic cohomology.
             </p>
             <p>
@@ -61,59 +57,61 @@
             </p>
         </section>
 
+        <!-- Hodge Diamond Calculators -->
         <section class="section">
-            <h2>Coding Stuff</h2>
+            <h2>Hodge Diamond Calculator</h2>
             <p>
-                This applet computes the hodge numbers of a complete intersection in $\mathbb{P}^n$. I'd like to introduce Grassmannians as an option soon.
+                This applet computes the Hodge numbers of varieties such as complete intersections in $\mathbb{P}^n$.
             </p>
-            <section class="section">
-                <h2>Preset Examples</h2>
-                <div id="preset-buttons">
-                    <button class="preset-button" data-n="2" data-k="1" data-degrees="3">Elliptic Curve (Cubic in $\mathbb P^2$)</button>
-                    <button class="preset-button" data-n="3" data-k="2" data-degrees="2,2">Elliptic Curve (Two Quadrics in $\mathbb P^3$)</button>
-                    <button class="preset-button" data-n="3" data-k="1" data-degrees="4">K3 Surface (Quartic in $\mathbb P^3$)</button>
-                    <button class="preset-button" data-n="4" data-k="2" data-degrees="3,2">K3 Surface (Cubic and Quadric in $\mathbb P^4$)</button>
-                    <button class="preset-button" data-n="5" data-k="3" data-degrees="2,2,2">K3 Surface (Three Quadrics in $\mathbb P^5$)</button>
-                    <button class="preset-button" data-n="5" data-k="1" data-degrees="3">Cubic Fourfold (Cubic in $\mathbb P^5$)</button>
-                </div>
-            </section>
-            <div id="hodge-container">
+            <!-- Toggle Menu -->
+            <div id="toggle-menu">
+                <button id="toggle-complete-intersection" class="toggle-button">Complete Intersection</button>
+                <button id="toggle-duplicate" class="toggle-button">Duplicate Calculator</button>
+            </div>
+
+            <!-- Calculator Containers -->
+            <div id="complete-intersection-container" class="calculator-container">
                 <div id="inputs">
-                    <h1>Hodge Diamond Calculator</h1>
-                    
-                    
-                
-                    <!-- Dimension of Projective Space -->
+                    <h3>Complete Intersection Calculator</h3>
                     <label for="n-slider">Dimension of Projective Space (\(n\)):</label>
                     <input type="range" id="n-slider" min="1" max="10" value="4">
                     <input type="number" id="n-value" min="1" max="50" value="4" class="hodge-input">
-                
                     <br><br>
-                
-                    <!-- Number of Hypersurfaces -->
                     <label for="k-slider">Number of Hypersurfaces (\(k\)):</label>
                     <input type="range" id="k-slider" min="0" max="10" value="2">
                     <input type="number" id="k-value" min="0" value="2" class="hodge-input">
-                
                     <br><br>
-                
-                    <div id="degree-toggles">
-                        <!-- Degree toggles will be dynamically added here -->
-                    </div>
-                    <p id="output-message"></p>
+                    <div id="degree-toggles"></div>
                 </div>
-                
-            
                 <div id="diamond-box">
-                    <h2>Hodge Diamond</h2>
+                    <h4>Hodge Diamond</h4>
                     <div id="diamond-container">
                         <p class="placeholder">The Hodge diamond will be displayed here.</p>
                     </div>
                 </div>
             </div>
-            
+
+            <div id="duplicate-calculator-container" class="calculator-container" style="display: none;">
+                <div id="inputs">
+                    <h3>Duplicate Calculator</h3>
+                    <label for="n-slider-duplicate">Dimension of Projective Space (\(n\)):</label>
+                    <input type="range" id="n-slider-duplicate" min="1" max="10" value="4">
+                    <input type="number" id="n-value-duplicate" min="1" max="50" value="4" class="hodge-input">
+                    <br><br>
+                    <label for="k-slider-duplicate">Number of Hypersurfaces (\(k\)):</label>
+                    <input type="range" id="k-slider-duplicate" min="0" max="10" value="2">
+                    <input type="number" id="k-value-duplicate" min="0" value="2" class="hodge-input">
+                    <br><br>
+                    <div id="degree-toggles-duplicate"></div>
+                </div>
+                <div id="diamond-box">
+                    <h4>Hodge Diamond</h4>
+                    <div id="diamond-container-duplicate">
+                        <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                    </div>
+                </div>
+            </div>
         </section>
-        
 
         <!-- Past Work -->
         <section class="section">
@@ -121,44 +119,25 @@
             <p>
                 A few years ago I was interested in computing blowups of toric varieties. Some of the code is available <a href="https://github.com/Ahuchala/Toric-Varieties" target="_blank">here</a>.
             </p>
-            <p>
-                I got my BS in math and physics at the University of Washington in Seattle in 2018. 
-                I wrote my senior honors thesis on <a href="files/undergrad/Lie_Algebra_Representation_Thesis.pdf" target="_blank">
-                repeated dimensions of irreducible representations of compact semisimple Lie algebras</a>, 
-                under the guidance of Monty McGovern.
-            </p>
-            <p>
-                As an undergrad at UW I worked in Prof. David Cobden's <a href="https://sites.google.com/uw.edu/nanodevice-physics" target="_blank">graphene lab</a> for a summer. Before that, I did some work on <a href="https://cocalc.com/" target="_blank">SageMathCloud (now CoCalc)</a>. I contributed code <a href="https://github.com/sagemathinc/cocalc-example-files" target="_blank">to this repository</a>.
-            </p>
         </section>
-
-        <!-- Resources -->
-        <section class="section">
-            <h2>Additional Resources</h2>
-            <ul class="resource-list">
-                <li>
-                    <a href="https://github.com/Ahuchala/ZetaFunctions" target="_blank">Hasse-Weil Zeta Functions</a>
-                </li>
-                <li>
-                    <a href="files/undergrad/Lie_Algebra_Representation_Thesis.pdf" target="_blank">Undergraduate Thesis</a>
-                </li>
-            </ul>
-        </section>
-
-        <!-- Modal for Images -->
-        <div id="image-modal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span> <!-- Close button inside modal-content -->
-                <img id="modal-image" src="" alt="">
-                <div class="modal-text">
-                    <h2 id="modal-title"></h2>
-                    <p id="modal-description"></p>
-                </div>
-            </div>
-        </div>
     </main>
 
     <!-- Footer -->
-    <div class="footer"></div>
+  <div class="footer"></div>
+
+  <!-- Modal for Images -->
+  <div id="image-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span> <!-- Close button inside modal-content -->
+      <img id="modal-image" src="" alt="">
+      <div class="modal-text">
+        <h2 id="modal-title"></h2>
+        <p id="modal-description"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Everything from main.js as a Module -->
+  <script type="module" src="/scripts/main.js"></script>
 </body>
 </html>
