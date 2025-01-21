@@ -3,6 +3,7 @@
     gap: 20px;
     justify-content: space-between;
     align-items: flex-start;
+    flex-wrap: wrap; /* Ensures responsiveness for smaller screens */
 }
 
 #inputs {
@@ -26,6 +27,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
+
 #diamond-container {
     margin-top: 20px;
     display: flex;
@@ -105,5 +107,34 @@
 }
 
 .preset-button:active {
+    transform: scale(0.95);
+}
+
+/* Additional Styling for Toggle Menu */
+#toggle-menu {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.toggle-button {
+    background-color: var(--header-color-2);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.toggle-button:hover {
+    background-color: var(--hover-dark);
+    transform: scale(1.05);
+}
+
+.toggle-button:active {
     transform: scale(0.95);
 }
