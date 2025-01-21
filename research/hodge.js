@@ -13,6 +13,9 @@ export function hodge(dArray, nInput) {
       if (k < 0 || k > n) return 0;
       if (k === 0 || k === n) return 1;
       let res = 1;
+      if (k > n-k) {
+        k = n-k;
+      }
       for (let i = 1; i <= k; i++) {
         res = (res * (n - (k - i))) / i;
       }

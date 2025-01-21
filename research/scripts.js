@@ -8,62 +8,77 @@ document.addEventListener("DOMContentLoaded", async () => {
     const degreeToggles = document.getElementById("degree-toggles");
     const diamondContainer = document.getElementById("diamond-container");
 
-    let lastUserSetK = parseInt(kSlider.value); // Track last user-set value of k
+    const presetButtons = document.querySelectorAll(".preset-button");
+    let lastUserSetK = parseInt(kSlider.value); // Tracks the last user-set value of `k`
 
-    // Update sliders and textboxes together
-    const syncSliderAndTextbox = (slider, textbox, onChange) => {
+    const syncSliderAndTextbox = (slider, textbox, onChange, maxValue = 50) => {
         slider.addEventListener("input", () => {
             textbox.value = slider.value;
             onChange();
         });
 
         textbox.addEventListener("input", () => {
-            const value = Math.max(1, parseInt(textbox.value) || 1); // Minimum value is 1
+            const value = Math.max(1, Math.min(parseInt(textbox.value) || 1, maxValue));
             textbox.value = value;
-            slider.value = Math.min(value, slider.max); // Slider stays within its max
+            slider.value = Math.min(value, parseInt(slider.max));
             onChange();
+        });
+
+        textbox.addEventListener("blur", () => {
+            if (textbox.value === "") {
+                textbox.value = slider.value;
+            }
         });
     };
 
-    // Create the set of numeric inputs for degrees
-    const createDegreeToggles = (k) => {
-        degreeToggles.innerHTML = ""; // Clear previous toggles
+    const updateKSlider = () => {
+        const n = parseInt(nValue.value) || 1;
+        const newK = Math.min(lastUserSetK, n); // Ensure `k` is within valid bounds
+        kSlider.max = Math.min(10, n); // `k` slider maxes out at `n` or 10 (UI cap)
+        kSlider.value = newK; // Update the slider value
+        kValue.value = newK; // Sync textbox
+        updateDegreeToggles(newK); // Update degree toggles to match new `k`
+    };
+    
 
-        const defaultDegrees = [3, 2]; // Default degrees: cubic and quadric
+    const updateDegreeToggles = (k) => {
+        const currentCount = degreeToggles.children.length;
+        if (k > currentCount) {
+            for (let i = currentCount; i < k; i++) {
+                const toggleContainer = document.createElement("div");
+                toggleContainer.className = "degree-toggle";
 
-        for (let i = 0; i < k; i++) {
-            const toggleContainer = document.createElement("div");
-            toggleContainer.className = "degree-toggle";
+                const label = document.createElement("label");
+                label.innerText = `Degree of Hypersurface ${i + 1}:`;
 
-            const label = document.createElement("label");
-            label.innerText = `Degree of Hypersurface ${i + 1}:`;
+                const input = document.createElement("input");
+                input.type = "number";
+                input.min = "1";
+                input.max = "50";
+                input.value = "2";
+                input.className = "hodge-input";
 
-            const input = document.createElement("input");
-            input.type = "number";
-            input.min = "1";
-            input.max = "1000";
-            input.value = defaultDegrees[i] || "2"; // Use default or fallback to 2
-            input.className = "hodge-input";
+                input.addEventListener("input", updateDiamond);
 
-            // Recompute diamond when any degree changes
-            input.addEventListener("input", updateDiamond);
-
-            toggleContainer.appendChild(label);
-            toggleContainer.appendChild(input);
-            degreeToggles.appendChild(toggleContainer);
+                toggleContainer.appendChild(label);
+                toggleContainer.appendChild(input);
+                degreeToggles.appendChild(toggleContainer);
+            }
+        } else if (k < currentCount) {
+            for (let i = currentCount - 1; i >= k; i--) {
+                degreeToggles.children[i].remove();
+            }
         }
     };
 
-    // Main function to build/refresh the diamond
     const updateDiamond = () => {
         const n = parseInt(nValue.value);
         const k = parseInt(kValue.value);
         const rows = 2 * (n - k) + 1;
-        const targetRowIndex = n - k; // row index where Hodge numbers appear
+        const targetRowIndex = n - k;
 
-        diamondContainer.innerHTML = ""; // Clear previous diamond
+        diamondContainer.innerHTML = "";
 
-        // 1) If k == n: Display a single number (product of degrees)
         if (k === n) {
             const degrees = Array.from(degreeToggles.querySelectorAll(".hodge-input"))
                 .map((input) => parseInt(input.value));
@@ -81,7 +96,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        // 2) If k == 0: Standard Hodge diamond for projective space
         if (k === 0) {
             for (let j = 0; j < rows; j++) {
                 const row = document.createElement("div");
@@ -90,14 +104,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const elements = j <= (rows - 1) / 2 ? j + 1 : rows - j;
                 const spaces = (rows - elements) / 2;
 
-                // Left spacing
                 for (let s = 0; s < spaces; s++) {
                     const space = document.createElement("span");
                     space.className = "diamond-space";
                     row.appendChild(space);
                 }
 
-                // Values for each element
                 for (let i = 0; i < elements; i++) {
                     const valEl = document.createElement("span");
                     valEl.className = "diamond-value";
@@ -106,7 +118,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     row.appendChild(valEl);
                 }
 
-                // Right spacing
                 for (let s = 0; s < spaces; s++) {
                     const space = document.createElement("span");
                     space.className = "diamond-space";
@@ -118,13 +129,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        // 3) Otherwise (0 < k < n): compute Hodge numbers at runtime with hodge.js
         const degrees = Array.from(degreeToggles.querySelectorAll(".hodge-input"))
             .map((input) => parseInt(input.value));
 
         const hodgeNumbers = hodge(degrees, n);
 
-        // Build the diamond
         for (let j = 0; j < rows; j++) {
             const row = document.createElement("div");
             row.className = "diamond-row";
@@ -132,14 +141,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             const elements = j <= (rows - 1) / 2 ? j + 1 : rows - j;
             const spaces = (rows - elements) / 2;
 
-            // Left spacing
             for (let s = 0; s < spaces; s++) {
                 const space = document.createElement("span");
                 space.className = "diamond-space";
                 row.appendChild(space);
             }
 
-            // Values
             for (let i = 0; i < elements; i++) {
                 const valEl = document.createElement("span");
                 valEl.className = "diamond-value";
@@ -155,7 +162,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 row.appendChild(valEl);
             }
 
-            // Right spacing
             for (let s = 0; s < spaces; s++) {
                 const space = document.createElement("span");
                 space.className = "diamond-space";
@@ -166,23 +172,44 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     };
 
-    // Initialize on page load
-    nSlider.value = 4;
-    kSlider.value = 2;
-    nValue.value = 4;
-    kValue.value = 2;
+    const loadPreset = (n, k, degrees) => {
+        nValue.value = n;
+        nSlider.value = Math.min(n, nSlider.max);
+        lastUserSetK = k; // Remember the preset `k`
+        updateKSlider();
+        updateDegreeToggles(k);
 
-    createDegreeToggles(2);
-    updateDiamond();
+        const inputs = degreeToggles.querySelectorAll(".hodge-input");
+        degrees.forEach((deg, i) => {
+            if (inputs[i]) {
+                inputs[i].value = deg;
+            }
+        });
 
-    // Attach event listeners
-    syncSliderAndTextbox(nSlider, nValue, () => {
-        createDegreeToggles(parseInt(kSlider.value));
         updateDiamond();
+    };
+
+    presetButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const n = parseInt(button.dataset.n);
+            const k = parseInt(button.dataset.k);
+            const degrees = button.dataset.degrees.split(",").map(Number);
+            loadPreset(n, k, degrees);
+        });
     });
+
+    // Initialize sliders and textboxes
+    syncSliderAndTextbox(nSlider, nValue, () => {
+        updateKSlider();
+        updateDiamond();
+    }, 50);
 
     syncSliderAndTextbox(kSlider, kValue, () => {
-        createDegreeToggles(parseInt(kSlider.value));
+        lastUserSetK = parseInt(kValue.value); // Update remembered `k`
+        updateDegreeToggles(parseInt(kValue.value));
         updateDiamond();
     });
+
+    // Default preset
+    loadPreset(4, 2, [3, 2]);
 });

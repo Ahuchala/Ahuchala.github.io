@@ -83,3 +83,27 @@
     background-color: var(--body-section-2);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.preset-button {
+    background: var(--header-color-1);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.preset-button:hover {
+    background: var(--hover-dark);
+    transform: scale(1.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.preset-button:active {
+    transform: scale(0.95);
+}

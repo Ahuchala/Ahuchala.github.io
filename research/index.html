@@ -66,9 +66,22 @@
             <p>
                 This applet computes the hodge numbers of a complete intersection in $\mathbb{P}^n$. I'd like to introduce Grassmannians as an option soon.
             </p>
+            <section class="section">
+                <h2>Preset Examples</h2>
+                <div id="preset-buttons">
+                    <button class="preset-button" data-n="2" data-k="1" data-degrees="3">Elliptic Curve (Cubic in $\mathbb P^2$)</button>
+                    <button class="preset-button" data-n="3" data-k="2" data-degrees="2,2">Elliptic Curve (Two Quadrics in $\mathbb P^3$)</button>
+                    <button class="preset-button" data-n="3" data-k="1" data-degrees="4">K3 Surface (Quartic in $\mathbb P^3$)</button>
+                    <button class="preset-button" data-n="4" data-k="2" data-degrees="3,2">K3 Surface (Cubic and Quadric in $\mathbb P^4$)</button>
+                    <button class="preset-button" data-n="5" data-k="3" data-degrees="2,2,2">K3 Surface (Three Quadrics in $\mathbb P^5$)</button>
+                    <button class="preset-button" data-n="5" data-k="1" data-degrees="3">Cubic Fourfold (Cubic in $\mathbb P^5$)</button>
+                </div>
+            </section>
             <div id="hodge-container">
                 <div id="inputs">
                     <h1>Hodge Diamond Calculator</h1>
+                    
+                    
                 
                     <!-- Dimension of Projective Space -->
                     <label for="n-slider">Dimension of Projective Space (\(n\)):</label>
