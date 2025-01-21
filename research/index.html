@@ -69,16 +69,18 @@
             <div id="hodge-container">
                 <div id="inputs">
                     <h1>Hodge Diamond Calculator</h1>
-                    
+                
+                    <!-- Dimension of Projective Space -->
                     <label for="n-slider">Dimension of Projective Space (\(n\)):</label>
                     <input type="range" id="n-slider" min="1" max="10" value="4">
-                    <span id="n-value">3</span>
+                    <input type="number" id="n-value" min="1" max="50" value="4" class="hodge-input">
                 
                     <br><br>
                 
+                    <!-- Number of Hypersurfaces -->
                     <label for="k-slider">Number of Hypersurfaces (\(k\)):</label>
-                    <input type="range" id="k-slider" min="0" max="4" value="4">
-                    <span id="k-value">2</span>
+                    <input type="range" id="k-slider" min="0" max="10" value="2">
+                    <input type="number" id="k-value" min="0" value="2" class="hodge-input">
                 
                     <br><br>
                 
@@ -86,8 +88,8 @@
                         <!-- Degree toggles will be dynamically added here -->
                     </div>
                     <p id="output-message"></p>
-
                 </div>
+                
             
                 <div id="diamond-box">
                     <h2>Hodge Diamond</h2>
