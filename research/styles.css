@@ -138,3 +138,38 @@
 .toggle-button:active {
     transform: scale(0.95);
 }
+
+#hodge-container {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap; /* Allows wrapping for small screens */
+}
+
+#inputs {
+    flex: 1;
+    max-width: 45%;
+    text-align: center;
+    background-color: var(--body-section-2);
+    padding: 20px;
+    border: 1px solid var(--border-color-1);
+    border-radius: 10px;
+}
+
+#diamond-box {
+    flex: 1;
+    max-width: 45%;
+    text-align: center;
+    background-color: var(--body-section-2);
+    padding: 20px;
+    border: 1px solid var(--border-color-1);
+    border-radius: 10px;
+}
+
+#diamond-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
