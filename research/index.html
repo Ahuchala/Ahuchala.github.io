@@ -41,6 +41,7 @@
 
     <script src="/components/hodge/completeIntersection.js" type="module"></script>
     <script src="/components/hodge/abelianVariety.js" type="module"></script>
+    <script src="/components/hodge/grassmannian.js" type="module"></script>
     <script src="scripts.js" type="module"></script>
 
     <!-- Header -->
@@ -64,12 +65,13 @@
         <section class="section">
             <h2>Hodge Diamond Calculator</h2>
             <p>
-                This applet computes the Hodge diamond of a few classes of interesting varieties over $\mathbb C$, such as complete intersections and abelian varieties.
+                This applet computes the Hodge diamond of a few classes of interesting varieties over $\mathbb C$, such as complete intersections, abelian varieties, and Grassmannians.
             </p>
             <!-- Toggle Menu -->
             <div id="toggle-menu">
                 <button id="toggle-complete-intersection" class="toggle-button pressed">Complete Intersections in $\mathbb P^n$</button>
                 <button id="toggle-abelian-variety" class="toggle-button">Abelian Varieties</button>
+                <button id="toggle-grassmannian" class="toggle-button">Grassmannians</button>
             </div>
         
             <!-- Calculator Containers -->
@@ -144,6 +146,28 @@
                     <div id="diamond-box">
                         <h4>Hodge Diamond</h4>
                         <div id="diamond-container-abelian">
+                            <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grassmannian Calculator Container -->
+            <div id="grassmannian-container" class="calculator-container" style="display: none;">
+                <div id="hodge-container">
+                    <div id="inputs">
+                        <h3>Grassmannian Calculator</h3>
+                        <label for="n-slider-grassmannian">Dimension of Space (\(n\)):</label>
+                        <input type="range" id="n-slider-grassmannian" min="1" max="10" value="4">
+                        <input type="number" id="n-value-grassmannian" min="1" max="50" value="4" class="hodge-input">
+                        <br><br>
+                        <label for="k-slider-grassmannian">Dimension of Subspace (\(k\)):</label>
+                        <input type="range" id="k-slider-grassmannian" min="0" max="10" value="2">
+                        <input type="number" id="k-value-grassmannian" min="0" value="2" class="hodge-input">
+                    </div>
+                    <div id="diamond-box">
+                        <h4>Hodge Diamond</h4>
+                        <div id="diamond-container-grassmannian">
                             <p class="placeholder">The Hodge diamond will be displayed here.</p>
                         </div>
                     </div>

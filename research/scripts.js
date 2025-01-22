@@ -2,28 +2,60 @@
 // import { setupAbelianVariety } from "/components/hodge/abelianVariety.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+    const nSliderGrassmannian = document.getElementById("n-slider-grassmannian");
+    const kSliderGrassmannian = document.getElementById("k-slider-grassmannian");
+    const nValueGrassmannian = document.getElementById("n-value-grassmannian");
+    const kValueGrassmannian = document.getElementById("k-value-grassmannian");
+    const diamondContainerGrassmannian = document.getElementById("diamond-container-grassmannian");
+
     const toggleCompleteIntersection = document.getElementById("toggle-complete-intersection");
     const toggleAbelianVariety = document.getElementById("toggle-abelian-variety");
+    const toggleGrassmannian = document.getElementById("toggle-grassmannian");
+
     const completeIntersectionContainer = document.getElementById("complete-intersection-container");
     const abelianVarietyContainer = document.getElementById("abelian-variety-container");
+    const grassmannianContainer = document.getElementById("grassmannian-container");
 
     // Highlight the active toggle button
-    const setActiveToggle = (activeToggle, inactiveToggle) => {
+    const setActiveToggle = (activeToggle, ...inactiveToggles) => {
         activeToggle.classList.add("pressed");
-        inactiveToggle.classList.remove("pressed");
+        inactiveToggles.forEach(toggle => toggle.classList.remove("pressed"));
     };
-
+    
     toggleCompleteIntersection.addEventListener("click", () => {
         completeIntersectionContainer.style.display = "block";
         abelianVarietyContainer.style.display = "none";
-        setActiveToggle(toggleCompleteIntersection, toggleAbelianVariety);
+        grassmannianContainer.style.display = "none";
+        setActiveToggle(toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian);
     });
-
+    
     toggleAbelianVariety.addEventListener("click", () => {
         completeIntersectionContainer.style.display = "none";
         abelianVarietyContainer.style.display = "block";
-        setActiveToggle(toggleAbelianVariety, toggleCompleteIntersection);
+        grassmannianContainer.style.display = "none";
+        setActiveToggle(toggleAbelianVariety, toggleCompleteIntersection, toggleGrassmannian);
     });
+    
+    toggleGrassmannian.addEventListener("click", () => {
+        completeIntersectionContainer.style.display = "none";
+        abelianVarietyContainer.style.display = "none";
+        grassmannianContainer.style.display = "block";
+        setActiveToggle(toggleGrassmannian, toggleCompleteIntersection, toggleAbelianVariety);
+    });
+    
+
+    const showContainer = (container) => {
+        completeIntersectionContainer.style.display = "none";
+        abelianVarietyContainer.style.display = "none";
+        grassmannianContainer.style.display = "none";
+
+        container.style.display = "block";
+    };
+
+    // Toggle Button Functionality
+    toggleCompleteIntersection.addEventListener("click", () => showContainer(completeIntersectionContainer));
+    toggleAbelianVariety.addEventListener("click", () => showContainer(abelianVarietyContainer));
+    toggleGrassmannian.addEventListener("click", () => showContainer(grassmannianContainer));
 
     // Initialize calculators
     // setupCompleteIntersection();
