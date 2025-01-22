@@ -191,6 +191,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     presetButtons.forEach(button => {
         button.addEventListener("click", () => {
+            // Check if the button has the required attributes for complete intersections
+
+            if (!button.dataset.n || !button.dataset.k || !button.dataset.degrees) return;
+
             const n = parseInt(button.dataset.n);
             const k = parseInt(button.dataset.k);
             const degrees = button.dataset.degrees.split(",").map(Number);

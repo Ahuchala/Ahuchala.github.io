@@ -326,6 +326,19 @@ header .header-content h1 {
   transform: rotate(-45deg) translate(6px, -6px);
 }
 
+/* Active state for toggle and preset buttons */
+.pressed,
+.toggle-button.pressed,
+ .preset-button.pressed {
+  background: var(--primary-dark); /* Darker background to indicate selection */
+  color: white;
+  /* color: var(--secondary-light); Contrasting text color */
+  transform: scale(1.02); /* Slightly enlarged for emphasis */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+  border: 2px solid var(--border-color-2); /* Optional outline */
+}
+
+/* .menu-button.pressed  */
 
 /*****************************************************
  * 7. MAIN CONTENT AREA

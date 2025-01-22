@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 1) Set up your header/footer, etc.
   setComponents();
+  
 
   // 2) Load MathJax (only once)
   window.MathJax = {

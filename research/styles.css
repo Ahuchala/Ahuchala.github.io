@@ -122,7 +122,7 @@
     border: none;
     padding: 10px 15px;
     border-radius: 20px;
-    font-size: 1rem;
+    font-size: 2rem;
     font-weight: bold;
     cursor: pointer;
     margin: 5px;
@@ -133,6 +133,7 @@
 .toggle-button:hover {
     background-color: var(--hover-dark);
     transform: scale(1.05);
+    color: var(--primary-dark);
 }
 
 .toggle-button:active {
