@@ -38,6 +38,9 @@
 
     <!-- Main Scripts -->
     <script src="/scripts/main.js" type="module"></script> 
+
+    <script src="/components/hodge/completeIntersection.js" type="module"></script>
+    <script src="/components/hodge/abelianVariety.js" type="module"></script>
     <script src="scripts.js" type="module"></script>
 
     <!-- Header -->
@@ -66,7 +69,7 @@
             <!-- Toggle Menu -->
             <div id="toggle-menu">
                 <button id="toggle-complete-intersection" class="toggle-button">Complete Intersection</button>
-                <button id="toggle-duplicate" class="toggle-button">Duplicate Calculator</button>
+                <button id="toggle-abelian-variety" class="toggle-button">Duplicate Calculator</button>
             </div>
         
             <!-- Calculator Containers -->
@@ -118,28 +121,23 @@
                 </div>
             </div>
         
-            <div id="duplicate-calculator-container" class="calculator-container" style="display: none;">
+            <div id="abelian-variety-container" class="calculator-container" style="display: none;">
                 <div id="hodge-container">
                     <div id="inputs">
-                        <h3>Duplicate Calculator</h3>
-                        <label for="n-slider-duplicate">Dimension of Projective Space (\(n\)):</label>
-                        <input type="range" id="n-slider-duplicate" min="1" max="10" value="4">
-                        <input type="number" id="n-value-duplicate" min="1" max="50" value="4" class="hodge-input">
-                        <br><br>
-                        <label for="k-slider-duplicate">Number of Hypersurfaces (\(k\)):</label>
-                        <input type="range" id="k-slider-duplicate" min="0" max="10" value="2">
-                        <input type="number" id="k-value-duplicate" min="0" value="2" class="hodge-input">
-                        <br><br>
-                        <div id="degree-toggles-duplicate"></div>
+                        <h3>Abelian Variety Calculator</h3>
+                        <label for="g-slider">Genus (\(g\)):</label>
+                        <input type="range" id="g-slider" min="1" max="10" value="4">
+                        <input type="number" id="g-value" min="1" max="50" value="4" class="hodge-input">
                     </div>
                     <div id="diamond-box">
                         <h4>Hodge Diamond</h4>
-                        <div id="diamond-container-duplicate">
+                        <div id="diamond-container-abelian">
                             <p class="placeholder">The Hodge diamond will be displayed here.</p>
                         </div>
                     </div>
                 </div>
             </div>
+            
         </section>
         
 
@@ -168,7 +166,5 @@
     </div>
   </div>
 
-  <!-- Load Everything from main.js as a Module -->
-  <script type="module" src="/scripts/main.js"></script>
 </body>
 </html>
