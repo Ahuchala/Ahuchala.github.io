@@ -157,13 +157,19 @@
                 <div id="hodge-container">
                     <div id="inputs">
                         <h3>Grassmannian Calculator</h3>
-                        <label for="n-slider-grassmannian">Dimension of Space (\(n\)):</label>
+                        <label for="n-slider-grassmannian">Dimension of Ambient Space (\(n\)):</label>
                         <input type="range" id="n-slider-grassmannian" min="1" max="10" value="4">
                         <input type="number" id="n-value-grassmannian" min="1" max="50" value="4" class="hodge-input">
                         <br><br>
                         <label for="k-slider-grassmannian">Dimension of Subspace (\(k\)):</label>
-                        <input type="range" id="k-slider-grassmannian" min="0" max="10" value="2">
-                        <input type="number" id="k-value-grassmannian" min="0" value="2" class="hodge-input">
+                        <input type="range" id="k-slider-grassmannian" min="1" max="10" value="2">
+                        <input type="number" id="k-value-grassmannian" min="1" max="50" value="2" class="hodge-input">
+                        <br><br>
+                        <label for="r-slider-grassmannian">Number of Hypersurfaces (\(r\)):</label>
+                        <input type="range" id="r-slider-grassmannian" min="0" max="10" value="2">
+                        <input type="number" id="r-value-grassmannian" min="0" max="50" value="2" class="hodge-input">
+                        <br><br>
+                        <div id="degree-toggles-grassmannian"></div>
                     </div>
                     <div id="diamond-box">
                         <h4>Hodge Diamond</h4>
@@ -172,6 +178,7 @@
                         </div>
                     </div>
                 </div>
+                
             </div>
             
         </section>
