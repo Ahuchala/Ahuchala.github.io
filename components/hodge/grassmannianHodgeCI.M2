@@ -19,6 +19,9 @@ grassmannianHodgeNumbersCI = (k,n,d) -> (
     ls = for i from 0 to floor(dim X / 2) list
         abs(chi exteriorPower(i, OmX) - chi exteriorPower(i, OmG));
 
+    if (n % 2 ==1) then (
+        return join(ls,reverse ls);
+    );
     -- include the second half, but don't repeat middle element
     return (join(ls, for i from 1 to #ls-1  list ls#(#ls-i-1)));
 );
@@ -38,7 +41,7 @@ buildDatabase = (nMin, nMax, kMin, dMax, rMax) -> (
 
     for n from nMin to nMax list (
         for k from kMin to floor(n / 2) list (
-            for r from 1 to rMax list (
+            for r from 2 to rMax list ( -- we can use other methods to solve for when r = 1
                 for d in generateWeaklyDecreasingSequences(r, dMax) list (
                     try (
                         result = grassmannianHodgeNumbersCI(k, n, d);
@@ -88,6 +91,8 @@ exportDatabase = (db, filename) -> (
 
 
 -- example: 
-db = buildDatabase(4,5,2,3,3);
-exportDatabase(db,"grassmannian_CI_hodge_numbers.csv")
+-- db = buildDatabase(4,5,2,3,3);
+-- exportDatabase(db,"grassmannian_CI_hodge_numbers.csv")
+
+-- buildDatabase(4,8,2,3,4)
 

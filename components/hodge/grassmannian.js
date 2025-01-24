@@ -63,37 +63,43 @@ document.addEventListener("DOMContentLoaded", () => {
         const n = parseInt(nValueGrassmannian.value);
         const k = parseInt(kValueGrassmannian.value);
         const r = parseInt(rValueGrassmannian.value);
-        const degrees = Array.from(degreeTogglesGrassmannian.querySelectorAll(".hodge-input")).map(input => parseInt(input.value));
+        const dimension = k * (n - k) - r;
 
-        // Clear diamond container
+        if (dimension < 0) {
+            diamondContainerGrassmannian.innerHTML = `<p class="error">Error: Dimension is negative. Ensure \( r < k(n-k) \).</p>`;
+            return;
+        }
+
+        const rows = 2 * dimension - 1;
+
         diamondContainerGrassmannian.innerHTML = "";
 
-        try {
-            const hodgeDiamond = hodgeGrassmannian(k, n, degrees);
-            const totalRows = hodgeDiamond.length;
+        // Get the full Hodge diamond for Gr(k, n)
+        const fullHodgeNumbers = hodgeGrassmannian(k, n);
 
-            for (let i = 0; i < totalRows; i++) {
-                const row = document.createElement("div");
-                row.className = "diamond-row";
+        for (let i = 0; i < rows; i++) {
+            const row = document.createElement("div");
+            row.className = "diamond-row";
 
-                // Number of values in this row
-                const numValues = hodgeDiamond[i].length;
+            const elements = i < dimension ? i + 1 : rows - i;
 
-                // Add Hodge number values
-                for (let j = 0; j < numValues; j++) {
-                    const valueCell = document.createElement("span");
-                    valueCell.className = "diamond-value";
-                    valueCell.innerText = hodgeDiamond[i][j] || "0";
-                    row.appendChild(valueCell);
+            for (let j = 0; j < elements; j++) {
+                const valueCell = document.createElement("span");
+                valueCell.className = "diamond-value";
+
+                if (i < dimension) {
+                    // Use values from hodgeGrassmannian for the first half
+                    valueCell.innerText = fullHodgeNumbers[i]?.[j] || "0";
+                } else {
+                    // Mirror values using Serre duality for the second half
+                    const mirrorRow = rows - i - 1;
+                    valueCell.innerText = fullHodgeNumbers[mirrorRow]?.[j] || "0";
                 }
 
-                diamondContainerGrassmannian.appendChild(row);
+                row.appendChild(valueCell);
             }
-        } catch (error) {
-            console.error(error.message);
-            const errorMessage = document.createElement("p");
-            errorMessage.innerText = `Error: ${error.message}`;
-            diamondContainerGrassmannian.appendChild(errorMessage);
+
+            diamondContainerGrassmannian.appendChild(row);
         }
     };
 
