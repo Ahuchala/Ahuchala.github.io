@@ -7,19 +7,22 @@ loadPackage "Schubert2"
 -- d = [2,1]
 -- grassmannianHodgeNumbersCI(k,n,d)
 
+onlyFirstHalf = true; -- option to only return "interesting" part of hodge diamond
+                       -- I couldn't figure out how to write optional arguments so it goes outside
 
-
-grassmannianHodgeNumbersCI = (k,n,d) -> (
+grassmannianHodgeNumbersCI = (k,n,d) -> ( 
     G = flagBundle {k,n-k}; -- secretly Gr(k,n)
-    -- for d from 1 to 25 list (
-    X = sectionZeroLocus(sum for i from 1 to #d list OO_G(d#(i-1))); -- quadric and a cubic
+
+    X = sectionZeroLocus(sum for i from 1 to #d list OO_G(d#(i-1))); 
     OmG = cotangentBundle G;
     OmX = cotangentBundle X;
 
     ls = for i from 0 to floor(dim X / 2) list
         abs(chi exteriorPower(i, OmX) - chi exteriorPower(i, OmG));
-    if (false) then (
-    -- if (n % 2 ==0) then (
+    if onlyFirstHalf then (
+        return ls;
+    );
+    if (k*(n-k)-r % 2 == 1) then ( -- middle row of hodge diamond repeats an element
         return join(ls,reverse ls);
     );
     -- include the second half, but don't repeat middle element

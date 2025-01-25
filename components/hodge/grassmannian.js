@@ -63,75 +63,106 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     };
 
-    const updateDiamondGrassmannian = () => {
-        const n = parseInt(nValueGrassmannian.value);
-        const kInput = parseInt(kValueGrassmannian.value);
-        const k = Math.min(kInput, n - kInput); // Replace k with min(k, n-k)
-        const r = parseInt(rValueGrassmannian.value);
-        const dimension = k * (n - k) - r;
-    
-        if (dimension < 0) {
-            diamondContainerGrassmannian.innerHTML = `<p class="error">Error: Dimension is negative. Ensure \( r < k(n-k) \).</p>`;
-            return;
+    // Extend the middle row using Hodge symmetry and only relevant JSON data
+const constructMiddleRow = (dimension, jsonData) => {
+    const isOdd = dimension % 2 === 1; // Check if the dimension is odd
+    const requiredLength = isOdd ? Math.floor(dimension / 2) + 1 : dimension / 2 + 1;
+
+    // Use only the relevant portion of the JSON data
+    const truncatedData = jsonData.slice(0, requiredLength);
+
+    // Construct the full middle row using Hodge symmetry
+    const middleRow = [...truncatedData];
+
+    if (isOdd) {
+        // Odd: Mirror and repeat the middle element
+        for (let i = truncatedData.length - 1; i >= 0; i--) {
+            middleRow.push(truncatedData[i]);
         }
-    
-        const rows = 2 * dimension + 1; // Correct number of rows
-    
-        diamondContainerGrassmannian.innerHTML = "";
-    
-        // Collect and sort degrees in weakly decreasing order
-        const degrees = Array.from(degreeTogglesGrassmannian.querySelectorAll(".hodge-input"))
-            .map((input) => parseInt(input.value))
-            .sort((a, b) => b - a); // Sort degrees in weakly decreasing order
-    
-        // Construct the key with proper formatting
-        const degreeString = degrees.join(", ");
-        const key = `${k},${n},{${degreeString}}`; // Ensure this matches the JSON format exactly
-    
-        // Look up Hodge numbers in the JSON file
-        const hodgeNumbersFromJson = hodgeData[key]
-            ? hodgeData[key].replace(/[{}]/g, "").split(",").map(Number)
-            : null;
-    
-        if (!hodgeNumbersFromJson) {
-            diamondContainerGrassmannian.innerHTML = `<p class="error">Error: No Hodge numbers found for this configuration.</p>`;
-            console.error(`Key "${key}" not found in JSON data.`);
-            return;
+    } else {
+        // Even: Mirror without repeating the middle element
+        for (let i = truncatedData.length - 2; i >= 0; i--) {
+            middleRow.push(truncatedData[i]);
         }
-    
-        // Get the full Hodge diamond for Gr(k, n)
-        const fullHodgeNumbers = hodgeGrassmannian(kInput, n);
-    
-        for (let i = 0; i < rows; i++) {
-            const row = document.createElement("div");
-            row.className = "diamond-row";
-    
-            const elements = i < dimension ? i + 1 : rows - i;
-    
-            for (let j = 0; j < elements; j++) {
-                const valueCell = document.createElement("span");
-                valueCell.className = "diamond-value";
-    
-                if (i === dimension) {
-                    // Middle row: add Hodge numbers from JSON to grassmannianHodge.js
-                    const grassmannianValue = fullHodgeNumbers[i]?.[j] || 0;
-                    const jsonValue = hodgeNumbersFromJson[j] || 0;
-                    valueCell.innerText = grassmannianValue + jsonValue;
-                } else if (i < dimension) {
-                    // First half: use values from hodgeGrassmannian
-                    valueCell.innerText = fullHodgeNumbers[i]?.[j] || "0";
-                } else {
-                    // Second half: mirror values using Serre duality
-                    const mirrorRow = rows - i - 1;
-                    valueCell.innerText = fullHodgeNumbers[mirrorRow]?.[j] || "0";
-                }
-    
-                row.appendChild(valueCell);
+    }
+
+    return middleRow;
+};
+
+const updateDiamondGrassmannian = () => {
+    const n = parseInt(nValueGrassmannian.value);
+    const kInput = parseInt(kValueGrassmannian.value);
+    const k = Math.min(kInput, n - kInput); // Replace k with min(k, n-k)
+    const r = parseInt(rValueGrassmannian.value);
+    const dimension = k * (n - k) - r;
+
+    if (dimension < 0) {
+        diamondContainerGrassmannian.innerHTML = `<p class="error">Error: Dimension is negative. Ensure \( r < k(n-k) \).</p>`;
+        return;
+    }
+
+    const rows = 2 * dimension + 1; // Correct number of rows
+
+    diamondContainerGrassmannian.innerHTML = "";
+
+    // Collect and sort degrees in weakly decreasing order
+    const degrees = Array.from(degreeTogglesGrassmannian.querySelectorAll(".hodge-input"))
+        .map((input) => parseInt(input.value))
+        .sort((a, b) => b - a); // Sort degrees in weakly decreasing order
+
+    // Construct the key with proper formatting
+    const degreeString = degrees.join(", ");
+    const key = `${k},${n},{${degreeString}}`; // Ensure this matches the JSON format exactly
+
+    // Look up Hodge numbers in the JSON file
+    const hodgeNumbersFromJson = hodgeData[key]
+        ? hodgeData[key].replace(/[{}]/g, "").split(",").map(Number)
+        : null;
+
+    if (!hodgeNumbersFromJson) {
+        diamondContainerGrassmannian.innerHTML = `<p class="error">Error: No Hodge numbers found for this configuration.</p>`;
+        console.error(`Key "${key}" not found in JSON data.`);
+        return;
+    }
+
+    // Construct the middle row using the updated logic
+    const middleRow = constructMiddleRow(dimension, hodgeNumbersFromJson);
+
+    // Get the full Hodge diamond for Gr(k, n)
+    const fullHodgeNumbers = hodgeGrassmannian(kInput, n);
+
+    for (let i = 0; i < rows; i++) {
+        const row = document.createElement("div");
+        row.className = "diamond-row";
+
+        const elements = i < dimension ? i + 1 : rows - i;
+
+        for (let j = 0; j < elements; j++) {
+            const valueCell = document.createElement("span");
+            valueCell.className = "diamond-value";
+
+            if (i === dimension) {
+                // Middle row: add Hodge numbers from JSON to grassmannianHodge.js
+                const grassmannianValue = fullHodgeNumbers[i]?.[j] || 0;
+                const jsonValue = middleRow[j] || 0;
+                valueCell.innerText = grassmannianValue + jsonValue;
+            } else if (i < dimension) {
+                // First half: use values from hodgeGrassmannian
+                valueCell.innerText = fullHodgeNumbers[i]?.[j] || "0";
+            } else {
+                // Second half: mirror values using Serre duality
+                const mirrorRow = rows - i - 1;
+                valueCell.innerText = fullHodgeNumbers[mirrorRow]?.[j] || "0";
             }
-    
-            diamondContainerGrassmannian.appendChild(row);
+
+            row.appendChild(valueCell);
         }
-    };
+
+        diamondContainerGrassmannian.appendChild(row);
+    }
+};
+
+    
     
     // Sync sliders and textboxes for Grassmannian
     syncSliderAndTextbox(nSliderGrassmannian, nValueGrassmannian, updateDiamondGrassmannian);
@@ -156,16 +187,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateDiamondGrassmannian(); // Initialize Hodge diamond
     
     
-    
-
-    // Sync sliders and textboxes for Grassmannian
-    syncSliderAndTextbox(nSliderGrassmannian, nValueGrassmannian, updateDiamondGrassmannian);
-    syncSliderAndTextbox(kSliderGrassmannian, kValueGrassmannian, updateDiamondGrassmannian);
-    syncSliderAndTextbox(rSliderGrassmannian, rValueGrassmannian, () => {
-        updateDegreeTogglesGrassmannian(parseInt(rValueGrassmannian.value));
-        updateDiamondGrassmannian();
-    });
-
-    updateDegreeTogglesGrassmannian(parseInt(rValueGrassmannian.value)); // Initialize degree toggles
-    updateDiamondGrassmannian(); // Initialize Hodge diamond
 });
