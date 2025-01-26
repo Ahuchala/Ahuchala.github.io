@@ -30,7 +30,7 @@ grassmannianHodgeNumbersCI = (k,n,d) -> (
 );
 
 -- compute all hodge numbers for O(d_1,d_2,...,d_r) in Gr(k,n) for nMin<=n<=nMax, kMin<=k<=n/2, 0<=r<=rMax
-buildDatabase = (nMin, nMax, kMin, dMax, rMax) -> (
+buildDatabase = (nMin, nMax, kMin, dMax, rMin, rMax) -> (
     database = {};
     
     generateWeaklyDecreasingSequences = (r, maxD) -> (
@@ -44,14 +44,16 @@ buildDatabase = (nMin, nMax, kMin, dMax, rMax) -> (
 
     for n from nMin to nMax list (
         for k from kMin to floor(n / 2) list (
-            for r from 1 to rMax list ( -- why did we can use other methods to solve for when r = 1
+            for r from rMin to rMax list ( -- why did we can use other methods to solve for when r = 1
                 for d in generateWeaklyDecreasingSequences(r, dMax) list (
-                    try (
-                        result = grassmannianHodgeNumbersCI(k, n, d);
-                        database = database | {(k, n, d) => result};
-                    ) else (
-                        << "Failed for (k=" << k << ", n=" << n << ", d=" << d << ")" << endl;
-                    )
+                    if k*(n-k)-r > 0 then (
+                        try (
+                            result = grassmannianHodgeNumbersCI(k, n, d);
+                            database = database | {(k, n, d) => result};
+                        ) else (
+                            << "Failed for (k=" << k << ", n=" << n << ", d=" << d << ")" << endl;
+                        )
+                    );
                 )
             )
         )
@@ -93,11 +95,12 @@ exportDatabase = (db, filename) -> (
 
 
 
--- buildDatabase = (nMin, nMax, kMin, dMax, rMax) ...
+-- buildDatabase = (nMin, nMax, kMin, dMax, rMin, rMax) ...
 -- example: 
--- db = buildDatabase(4,5,2,3,3);
+-- db = buildDatabase(4,5,2,3,1,3);
 -- exportDatabase(db,"grassmannian_CI_hodge_numbers.csv")
 
 
--- buildDatabase(4,10,2,10,4)
+-- buildDatabase(4,10,2,10,1,4)
+-- buildDatabase(4,10,2,10,5,6)
 
