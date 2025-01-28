@@ -1,4 +1,5 @@
 import { hodgeGrassmannian } from "/components/hodge/grassmannianHodge.js";
+import { hodgeCompleteIntersection } from "/components/hodge/completeIntersectionHodgeNumbers.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const nSliderGrassmannian = document.getElementById("n-slider-grassmannian");
@@ -21,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         textbox.addEventListener("input", () => {
-            const value = Math.max(1, Math.min(parseInt(textbox.value) || 1, maxValue));
+            const value = Math.max(1, Math.min(parseInt(textbox.value) || 1, 50));
             textbox.value = value;
             slider.value = Math.min(value, parseInt(slider.max));
             onChange();
@@ -35,13 +36,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     const evaluatePolynomial = (polynomial, degrees) => {
-        // Parse the polynomial and substitute degree values
         const expr = math.parse(polynomial);
         const scope = {};
         degrees.forEach((deg, index) => {
             scope[`d_${index + 1}`] = deg;
         });
-        return Math.abs(expr.evaluate(scope)); // Take the absolute value
+        return Math.abs(expr.evaluate(scope));
     };
 
     const updateDegreeTogglesGrassmannian = (r) => {
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const input = document.createElement("input");
                 input.type = "number";
                 input.min = "1";
-                // input.max = "50";
+                input.max = "50";
                 input.value = "2";
                 input.className = "hodge-input";
 
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const updateDiamondGrassmannian = () => {
         const n = parseInt(nValueGrassmannian.value);
         const kInput = parseInt(kValueGrassmannian.value);
-        const k = Math.min(kInput, n - kInput); // Use min(k, n-k) when constructing the key
+        const k = Math.min(kInput, n - kInput); // Use min(k, n-k) for symmetry
         const r = parseInt(rValueGrassmannian.value);
         const dimension = k * (n - k) - r;
 
@@ -112,18 +112,25 @@ document.addEventListener("DOMContentLoaded", async () => {
             .map((input) => parseInt(input.value))
             .sort((a, b) => b - a);
 
+        let hodgeNumbersForDegrees;
         const key = `${k},${n},${r}`;
 
-        if (!(key in hodgeData)) {
+        if (r === 0) {
+            // Special case: Use the Grassmannian's own Hodge numbers when r = 0
+            hodgeNumbersForDegrees = hodgeGrassmannian(k, n);
+        } else if (k === 1 || k === n - 1) {
+            // Special case for Gr(1, n) or Gr(n-1, n), using P^{n-1} logic
+            hodgeNumbersForDegrees = hodgeCompleteIntersection(degrees, n-1);
+        } else if (key in hodgeData) {
+            const hodgePolynomials = hodgeData[key];
+            hodgeNumbersForDegrees = hodgePolynomials.map((poly) =>
+                evaluatePolynomial(poly, degrees)
+            );
+        } else {
             diamondContainerGrassmannian.innerHTML = `<p class="error">Error: No data found for Gr(${k},${n}) with ${r} hypersurfaces.</p>`;
             console.error(`Key "${key}" not found in JSON data.`);
             return;
         }
-
-        const hodgePolynomials = hodgeData[key];
-        const hodgeNumbersForDegrees = hodgePolynomials.map((poly) =>
-            evaluatePolynomial(poly, degrees) // Use absolute values of evaluated polynomials
-        );
 
         const middleRow = constructMiddleRow(dimension, hodgeNumbersForDegrees);
         const fullHodgeNumbers = hodgeGrassmannian(kInput, n);
@@ -141,7 +148,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (i === dimension) {
                     const grassmannianValue = fullHodgeNumbers[i]?.[j] || 0;
                     const jsonValue = middleRow[j] || 0;
-                    valueCell.innerText = grassmannianValue + jsonValue;
+                    if (r === 0) {
+                        valueCell.innerText = grassmannianValue;
+                    } else {
+                        valueCell.innerText = grassmannianValue + jsonValue;
+                    }
                 } else if (i < dimension) {
                     valueCell.innerText = fullHodgeNumbers[i]?.[j] || "0";
                 } else {

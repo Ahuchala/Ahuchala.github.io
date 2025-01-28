@@ -1,4 +1,4 @@
-import { hodgeCompleteIntersection } from "/components/hodge//completeIntersectionHodgeNumbers.js";
+import { hodgeCompleteIntersection } from "/components/hodge/completeIntersectionHodgeNumbers.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const nSlider = document.getElementById("n-slider");
