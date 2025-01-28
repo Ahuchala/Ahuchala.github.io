@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const response = await fetch("/components/hodge/grassmannian_hodge_numbers_factored.json");
     const hodgeData = await response.json();
 
-    const syncSliderAndTextbox = (slider, textbox, onChange, maxValue = 50) => {
+    const syncSliderAndTextbox = (slider, textbox, onChange) => {
         slider.addEventListener("input", () => {
             textbox.value = slider.value;
             onChange();
