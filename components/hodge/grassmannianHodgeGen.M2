@@ -1,20 +1,28 @@
 loadPackage "Schubert2"
 
-k = 2
-n = 5
-r = 2
-grassmannianHodgeNumbersCI = (k,n,r) -> ( 
-    G = flagBundle({k,n-k}, base (d_1..d_r));
 
+-- Function to compute Hodge numbers for a complete intersection in Gr(k,n)
+grassmannianHodgeNumbersCI = (k, n, r) -> (
+    -- Initialize the Grassmannian and complete intersection
+    G = flagBundle({k, n - k}, base (d_1..d_r));
     X = sectionZeroLocus sum for i from 1 to r list OO_G(d_i);
 
+    -- Compute cotangent bundles
     OmG = cotangentBundle G;
     OmX = cotangentBundle X;
 
-    return toString for i from 0 to floor(dim X / 2) list (chi exteriorPower(i, OmX) - chi exteriorPower(i, OmG));
+    -- Compute Hodge numbers
+    -- Warning: these need to be absolute valued!
+    hodgeNumbers = for i from 0 to floor(dim X / 2) list (
+        chi exteriorPower(i, OmX) - chi exteriorPower(i, OmG)
+    );
+
+    return hodgeNumbers;
 );
 
--- compute all hodge numbers for O(d_1,d_2,...,d_r) in Gr(k,n) for nMin<=n<=nMax, kMin<=k<=n/2, 0<=r<=rMax
+
+
+-- compute all hodge numbers for O(d_1,d_2,...,d_r) in Gr(k,n)
 buildDatabase = (nMin, nMax, kMin, rMin, rMax) -> (
     database = {};
     
@@ -35,6 +43,7 @@ buildDatabase = (nMin, nMax, kMin, rMin, rMax) -> (
     );
     return database;
 );
+
 
 
 -- use this to create CSV file, then convert to JSON using the file in /misc
@@ -68,4 +77,5 @@ exportDatabase = (db, filename) -> (
     close file;
 );
 
-db = buildDatabase(4,8,2,1,3);
+db = buildDatabase(4,10,2,1,4);
+exportDatabase(db, "grassmannian_hodge_numbers.txt");

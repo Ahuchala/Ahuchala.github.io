@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const diamondContainerGrassmannian = document.getElementById("diamond-container-grassmannian");
 
     // Load JSON data
-    const response = await fetch("/components/hodge/grassmannian_CI_hodge_numbers.json");
+    const response = await fetch("/components/hodge/grassmannian_hodge_numbers_factored.json");
     const hodgeData = await response.json();
 
     const syncSliderAndTextbox = (slider, textbox, onChange, maxValue = 50) => {
@@ -32,6 +32,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                 textbox.value = slider.value;
             }
         });
+    };
+
+    const evaluatePolynomial = (polynomial, degrees) => {
+        // Parse the polynomial and substitute degree values
+        const expr = math.parse(polynomial);
+        const scope = {};
+        degrees.forEach((deg, index) => {
+            scope[`d_${index + 1}`] = deg;
+        });
+        return Math.abs(expr.evaluate(scope)); // Take the absolute value
     };
 
     const updateDegreeTogglesGrassmannian = (r) => {
@@ -86,7 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const updateDiamondGrassmannian = () => {
         const n = parseInt(nValueGrassmannian.value);
         const kInput = parseInt(kValueGrassmannian.value);
-        const k = Math.min(kInput, n - kInput);
+        const k = Math.min(kInput, n - kInput); // Use min(k, n-k) when constructing the key
         const r = parseInt(rValueGrassmannian.value);
         const dimension = k * (n - k) - r;
 
@@ -102,24 +112,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             .map((input) => parseInt(input.value))
             .sort((a, b) => b - a);
 
-        const degreeString = `{${degrees.join(", ")}}`;
-        const key = `${k},${n}`;
+        const key = `${k},${n},${r}`;
 
         if (!(key in hodgeData)) {
-            diamondContainerGrassmannian.innerHTML = `<p class="error">Error: No data found for Gr(${k},${n}).</p>`;
+            diamondContainerGrassmannian.innerHTML = `<p class="error">Error: No data found for Gr(${k},${n}) with ${r} hypersurfaces.</p>`;
             console.error(`Key "${key}" not found in JSON data.`);
             return;
         }
 
-        const hodgeNumbersForDegrees = hodgeData[key][degreeString]
-            ? hodgeData[key][degreeString].replace(/[{}]/g, "").split(",").map(Number)
-            : null;
-
-        if (!hodgeNumbersForDegrees) {
-            diamondContainerGrassmannian.innerHTML = `<p class="error">Error: No Hodge numbers found for degrees ${degreeString} in Gr(${k},${n}).</p>`;
-            console.error(`Degrees "${degreeString}" not found under "${key}" in JSON data.`);
-            return;
-        }
+        const hodgePolynomials = hodgeData[key];
+        const hodgeNumbersForDegrees = hodgePolynomials.map((poly) =>
+            evaluatePolynomial(poly, degrees) // Use absolute values of evaluated polynomials
+        );
 
         const middleRow = constructMiddleRow(dimension, hodgeNumbersForDegrees);
         const fullHodgeNumbers = hodgeGrassmannian(kInput, n);
