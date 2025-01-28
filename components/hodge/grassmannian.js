@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const input = document.createElement("input");
                 input.type = "number";
                 input.min = "1";
-                input.max = "50";
+                // input.max = "50";
                 input.value = "2";
                 input.className = "hodge-input";
 
