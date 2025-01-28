@@ -68,18 +68,18 @@ exportDatabase = (db, filename) -> (
     file = filename << "";
 
     -- Write the header row
-    file << "k,n,degrees_list,hodge_numbers" << endl;
+    file << "k,n,r,hodge_numbers" << endl;
 
     -- Iterate over the database and write each entry
     for entry in db do (
-        key = entry#0; -- Extract the key (k, n, degrees_list)
+        key = entry#0; -- Extract the key (k, n, r)
         hodgeNums = entry#1; -- Extract the Hodge numbers
 
         -- Ensure key is a valid sequence with exactly 3 parts
         if #key === 3 then (
-            (k, n, degList) = key; -- Use 'degList' instead of 'degrees'
+            (k, n, r) = key; -- Use 'degList' instead of 'degrees'
             -- Convert degList and hodgeNums to string representations
-            degListStr = toString degList;
+            degListStr = toString r;
             hodgeNumsStr = toString hodgeNums;
             -- Write the CSV line
             file << k << "," << n << "," << degListStr << "," << hodgeNumsStr << endl;
