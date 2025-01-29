@@ -28,14 +28,6 @@
     text-align: center;
 }
 
-#diamond-container {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
 .diamond-row {
     display: flex;
     justify-content: center;
@@ -48,7 +40,7 @@
 
 .diamond-value {
     display: inline-block;
-    min-width: 1em;
+    min-width: 1.5em;
     min-height: 1em;
     margin: 0.25em; /* Adjusted for perfect alignment */
     text-align: center;
@@ -59,6 +51,7 @@
     background-color: var(--secondary-light);
     color: var(--header-text-color);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    line-height: 1.5;
 }
 
 #degree-toggles {
@@ -173,4 +166,5 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
