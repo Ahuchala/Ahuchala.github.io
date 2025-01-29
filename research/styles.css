@@ -95,12 +95,12 @@
 
 .preset-button:hover {
     background: var(--hover-dark);
-    transform: scale(1.05);
+    transform: scale(1.02);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .preset-button:active {
-    transform: scale(0.95);
+    /* transform: scale(1.05); */
 }
 
 /* Additional Styling for Toggle Menu */
@@ -125,12 +125,12 @@
 
 .toggle-button:hover {
     background-color: var(--hover-dark);
-    transform: scale(1.05);
-    color: var(--primary-dark);
+    transform: scale(1.02);
+    /* color: var(--primary-dark); */
 }
 
 .toggle-button:active {
-    transform: scale(0.95);
+    /* transform: scale(0.95); */
 }
 
 #hodge-container {

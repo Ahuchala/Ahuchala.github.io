@@ -338,7 +338,7 @@ header .header-content h1 {
   background: var(--primary-dark); /* Darker background to indicate selection */
   color: white;
   /* color: var(--secondary-light); Contrasting text color */
-  transform: scale(1.02); /* Slightly enlarged for emphasis */
+  /* transform: scale(1.02); Slightly enlarged for emphasis */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
   border: 2px solid var(--border-color-2); /* Optional outline */
 }
@@ -513,7 +513,7 @@ main {
 .featured h2,
 .grid-section h2 {
   margin-bottom: 20px;
-  color: var(--section-header-text-color);
+  color: white;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
