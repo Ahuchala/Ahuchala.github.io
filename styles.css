@@ -90,6 +90,11 @@ html.dark-mode {
 } 
 */
 
+html, body {
+  background-color: var(--body-bg-1);
+  overscroll-behavior: contain; /* Minimizes the overscroll effect in some browsers */
+}
+
 
 /*****************************************************
  * 2. UTILITY CLASSES / RESET-LIKE STUFF

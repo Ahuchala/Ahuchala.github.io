@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
   // Get the computed background color from CSS
   const backgroundColor = getComputedStyle(document.body).getPropertyValue('--body-bg').trim();
-
+  console.log(backgroundColor);
   // Find the <meta name="theme-color"> tag
   let themeMetaTag = document.querySelector('meta[name="theme-color"]');
 
