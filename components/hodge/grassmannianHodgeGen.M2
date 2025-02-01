@@ -77,5 +77,6 @@ exportDatabase = (db, filename) -> (
     close file;
 );
 
-db = buildDatabase(4,10,2,1,4);
+-- nMin, nMax, kMin, rMin, rMax
+db = buildDatabase(9,10,2,1,3);
 exportDatabase(db, "grassmannian_hodge_numbers.txt");

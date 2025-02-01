@@ -13,7 +13,7 @@ def parse_macaulay2_output(filename):
     database = {}
     with open(filename, "r") as file:
         for line in file:
-            if line.startswith("k,n,degrees_list,hodge_numbers"):  # Skip header
+            if line.startswith("k,n,r,hodge_numbers"):  # Skip header
                 continue
             match = re.match(r"(\d+),(\d+),(\d+),\{([^\}]*)\}", line.strip())
             if match:
