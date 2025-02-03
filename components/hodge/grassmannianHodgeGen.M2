@@ -12,9 +12,9 @@ grassmannianHodgeNumbersCI = (k, n, r) -> (
     OmX = cotangentBundle X;
 
     -- Compute Hodge numbers
-    -- Warning: these need to be absolute valued!
     hodgeNumbers = for i from 0 to floor(dim X / 2) list (
-        chi exteriorPower(i, OmX) - chi exteriorPower(i, OmG)
+        -- (chi exteriorPower(i, OmX) - chi exteriorPower(i, OmG))
+        (-1)^(i+k*(n-k)-r) * (chi exteriorPower(i, OmX) - chi exteriorPower(i, OmG))
     );
 
     return hodgeNumbers;
@@ -80,3 +80,22 @@ exportDatabase = (db, filename) -> (
 -- nMin, nMax, kMin, rMin, rMax
 db = buildDatabase(9,10,2,1,3);
 exportDatabase(db, "grassmannian_hodge_numbers.txt");
+
+
+-- k = 2
+-- n = 5
+-- d = [7,1]
+-- r = #d
+-- G = flagBundle({k, n - k});
+-- X = sectionZeroLocus sum for i from 1 to r list OO_G(d#(i-1));
+
+-- -- Compute cotangent bundles
+-- OmG = cotangentBundle G;
+-- OmX = cotangentBundle X;
+
+-- -- Compute Hodge numbers
+-- -- Warning: take absolute values
+-- hodgeNumbers = for i from 0 to floor(dim X / 2) list (
+--     -- (chi exteriorPower(i, OmX) - chi exteriorPower(i, OmG))
+--     (-1)^(i+k*(n-k)-r) * (chi exteriorPower(i, OmX) - chi exteriorPower(i, OmG))
+-- )
