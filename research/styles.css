@@ -47,7 +47,7 @@
     padding: 0.5em;
     font-size: 1rem;
     font-weight: bold;
-    border-radius: 50%;
+    border-radius: 1.5em;
     background-color: var(--secondary-light);
     color: var(--header-text-color);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
