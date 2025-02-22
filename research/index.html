@@ -35,11 +35,6 @@
     <!-- Math.js for convenience -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.5.0/math.min.js"></script>
 
-    <!-- For rational arithmetic -->
-    <script src="https://cdn.jsdelivr.net/npm/fraction.js@4.2.3/fraction.min.js"></script>
-
-
-    
 
     <!-- Main Scripts -->
     <script src="/scripts/main.js" type="module"></script> 
@@ -70,13 +65,13 @@
         <section class="section">
             <h2>Hodge Diamond Calculator</h2>
             <p>
-                This applet computes the Hodge diamond of a few classes of interesting varieties over $\mathbb C$, such as complete intersections, abelian varieties, and Grassmannians.
+                This applet computes the Hodge diamond of a few classes of interesting varieties over $\mathbb C$, such as smooth complete intersections in projective space and Grassmannians, as well as abelian varieties.
             </p>
             <!-- Toggle Menu -->
             <div id="toggle-menu">
                 <button id="toggle-complete-intersection" class="toggle-button pressed">Complete Intersections in $\mathbb P^n$</button>
                 <button id="toggle-abelian-variety" class="toggle-button">Abelian Varieties</button>
-                <button id="toggle-grassmannian" class="toggle-button">Grassmannians</button>
+                <button id="toggle-grassmannian" class="toggle-button">Complete Intersections in $\text{Gr}(k,n)$</button>
             </div>
         
             <!-- Calculator Containers -->
