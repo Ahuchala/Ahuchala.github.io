@@ -41,7 +41,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         degrees.forEach((deg, index) => {
             scope[`d_${index + 1}`] = deg;
         });
-        return Math.abs(expr.evaluate(scope));
+        // make it an int
+        return Math.floor(Math.abs(expr.evaluate(scope))+.49);
     };
 
     const updateDegreeTogglesGrassmannian = (r) => {
