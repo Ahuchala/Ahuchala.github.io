@@ -16,6 +16,36 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
+.input-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .input-row label {
+    width: 350px;      /* Fixed width for labels for alignment */
+    max-width:40%;
+    margin-right: 10px;
+    padding-left: 10px;
+    text-align: left; /* Right-align text in labels */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+  }
+  
+  .input-row input[type="range"] {
+    flex: 1;           /* Slider takes available space */
+    max-width: 25%;
+    margin-right: 10px;
+  }
+  
+  .input-row input[type="number"] {
+    width: 60px;       /* Fixed width for textbox */
+    margin-left: 10px;
+  }
+  
+  .input-row .hodge-input {
+    margin-left: 10px;
+  }
 
 #diamond-box {
     flex: 1;
@@ -141,25 +171,6 @@
     flex-wrap: wrap; /* Allows wrapping for small screens */
 }
 
-#inputs {
-    flex: 1;
-    max-width: 45%;
-    text-align: center;
-    background-color: var(--body-section-2);
-    padding: 20px;
-    border: 1px solid var(--border-color-1);
-    border-radius: 10px;
-}
-
-#diamond-box {
-    flex: 1;
-    max-width: 45%;
-    text-align: center;
-    background-color: var(--body-section-2);
-    padding: 20px;
-    border: 1px solid var(--border-color-1);
-    border-radius: 10px;
-}
 
 #diamond-container {
     margin-top: 20px;

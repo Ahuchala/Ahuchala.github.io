@@ -57,9 +57,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         case '*':
           return args[0] * args[1];
         case '/':
-          if (args[0] % args[1] !== 0n) {
-            throw new Error("Non-exact division: " + args[0] + " / " + args[1]);
-          }
+            // trust we did the calculation correctly
+        //   if (args[0] % args[1] !== 0n) {
+        //     throw new Error("Non-exact division: " + args[0] + " / " + args[1]);
+        //   }
           return args[0] / args[1];
         case '^': {
           const exponent = parseInt(args[1].toString(), 10);

@@ -104,16 +104,23 @@
                 <div id="hodge-container">
                     <div id="inputs">
                         <h3>Complete Intersection Calculator</h3>
-                        <label for="n-slider">Dimension of Projective Space (\(n\)):</label>
-                        <input type="range" id="n-slider" min="1" max="10" value="4">
-                        <input type="number" id="n-value" min="1" max="50" value="4" class="hodge-input">
-                        <br><br>
-                        <label for="k-slider">Number of Hypersurfaces (\(k\)):</label>
-                        <input type="range" id="k-slider" min="0" max="10" value="2">
-                        <input type="number" id="k-value" min="0" value="2" class="hodge-input">
-                        <br><br>
-                        <div id="degree-toggles"></div>
-                    </div>
+                        <div class="input-row">
+                          <label for="n-slider">Dimension of Projective Space (\(n\)):</label>
+                          <input type="range" id="n-slider" min="1" max="10" value="4">
+                          <input type="number" id="n-value" min="1" max="50" value="4" class="hodge-input">
+                        </div>
+                        <div class="input-row">
+                          <label for="k-slider">Number of Hypersurfaces (\(k\)):</label>
+                          <input type="range" id="k-slider" min="0" max="10" value="2">
+                          <input type="number" id="k-value" min="0" value="2" class="hodge-input">
+                        </div>
+                        <!-- If you have additional controls, wrap them similarly -->
+                        <div class="input-row">
+                          <!-- For degree toggles, you might need additional styling -->
+                          <div id="degree-toggles"></div>
+                        </div>
+                      </div>
+                      
                     <div id="diamond-box">
                         <h4>Hodge Diamond</h4>
                         <div id="diamond-container">
@@ -139,9 +146,11 @@
                 <div id="hodge-container">
                     <div id="inputs">
                         <h3>Abelian Variety Calculator</h3>
-                        <label for="g-slider">Genus (\(g\)):</label>
-                        <input type="range" id="g-slider" min="1" max="10" value="2">
-                        <input type="number" id="g-value" min="1" max="50" value="2" class="hodge-input">
+                        <div class="input-row">
+                            <label for="g-slider">Genus ($g$):</label>
+                            <input type="range" id="g-slider" min="1" max="10" value="2">
+                            <input type="number" id="g-value" min="1" max="50" value="2" class="hodge-input">
+                          </div>
                     </div>
                     <div id="diamond-box">
                         <h4>Hodge Diamond</h4>
@@ -157,19 +166,24 @@
                 <div id="hodge-container">
                     <div id="inputs">
                         <h3>Grassmannian Calculator</h3>
-                        <label for="n-slider-grassmannian">Dimension of Ambient Space (\(n\)):</label>
-                        <input type="range" id="n-slider-grassmannian" min="1" max="10" value="4">
-                        <input type="number" id="n-value-grassmannian" min="1" max="50" value="4" class="hodge-input">
-                        <br><br>
-                        <label for="k-slider-grassmannian">Dimension of Subspace (\(k\)):</label>
-                        <input type="range" id="k-slider-grassmannian" min="1" max="10" value="2">
-                        <input type="number" id="k-value-grassmannian" min="1" max="50" value="2" class="hodge-input">
-                        <br><br>
-                        <label for="r-slider-grassmannian">Number of Hypersurfaces (\(r\)):</label>
-                        <input type="range" id="r-slider-grassmannian" min="0" max="10" value="2">
-                        <input type="number" id="r-value-grassmannian" min="0" max="50" value="2" class="hodge-input">
-                        <br><br>
+                        <div class="input-row">
+                            <label for="n-slider-grassmannian">Dimension of Ambient Space (\(n\)):</label>
+                            <input type="range" id="n-slider-grassmannian" min="1" max="10" value="4">
+                            <input type="number" id="n-value-grassmannian" min="1" max="50" value="4" class="hodge-input">
+                        </div>
+                        <div class="input-row">
+                            <label for="k-slider-grassmannian">Dimension of Subspace (\(k\)):</label>
+                            <input type="range" id="k-slider-grassmannian" min="1" max="10" value="2">
+                            <input type="number" id="k-value-grassmannian" min="1" max="50" value="2" class="hodge-input">
+                        </div>
+                        <div class="input-row">
+                            <label for="r-slider-grassmannian">Number of Hypersurfaces (\(r\)):</label>
+                            <input type="range" id="r-slider-grassmannian" min="0" max="10" value="2">
+                            <input type="number" id="r-value-grassmannian" min="0" max="50" value="2" class="hodge-input">
+                        </div>
+                        <div class="input-row">
                         <div id="degree-toggles-grassmannian"></div>
+                        </div>
                     </div>
                     <div id="diamond-box">
                         <h4>Hodge Diamond</h4>
