@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     diamondContainerGrassmannian.innerHTML = "";
   
     if (r === 0) {
-      // When r === 0, simply use hodgeGrassmannian(kInput, n)
+      // When r === 0, simply use hodgeGrassmannian(min(k,n-k), n)
       const fullHodgeNumbers = hodgeGrassmannian(k, n);
       for (let i = 0; i < rows; i++) {
         const row = document.createElement("div");
@@ -202,7 +202,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     
     const middleRow = constructMiddleRow(dimension, hodgeNumbersForDegrees);
-    const fullHodgeNumbers = hodgeGrassmannian(kInput, n);
+    // again use (min(k,n-k), n)
+    const fullHodgeNumbers = hodgeGrassmannian(k, n);
     for (let i = 0; i < rows; i++) {
       const row = document.createElement("div");
       row.className = "diamond-row";
