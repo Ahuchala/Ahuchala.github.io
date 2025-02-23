@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   
     if (r === 0) {
       // When r === 0, simply use hodgeGrassmannian(kInput, n)
-      const fullHodgeNumbers = hodgeGrassmannian(kInput, n);
+      const fullHodgeNumbers = hodgeGrassmannian(k, n);
       for (let i = 0; i < rows; i++) {
         const row = document.createElement("div");
         row.className = "diamond-row";
