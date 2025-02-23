@@ -18,7 +18,7 @@ grassmannianHodgeNumbersCI = (k, n, r) -> (
     );
 
     return hodgeNumbers;
-);
+);  
 
 
 

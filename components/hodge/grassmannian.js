@@ -226,4 +226,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   updateDegreeTogglesGrassmannian(parseInt(rValueGrassmannian.value));
   updateDiamondGrassmannian();
+
+  
 });
