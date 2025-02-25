@@ -3,38 +3,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const toggleCompleteIntersection = document.getElementById("toggle-complete-intersection");
     const toggleAbelianVariety = document.getElementById("toggle-abelian-variety");
     const toggleGrassmannian = document.getElementById("toggle-grassmannian");
-  
+    const toggleFlag = document.getElementById("toggle-flag");
+
     const completeIntersectionContainer = document.getElementById("complete-intersection-container");
     const abelianVarietyContainer = document.getElementById("abelian-variety-container");
     const grassmannianContainer = document.getElementById("grassmannian-container");
-  
+    const flagContainer = document.getElementById("flag-container");
+
     const setActiveToggle = (active, ...inactives) => {
       active.classList.add("pressed");
       inactives.forEach(el => el.classList.remove("pressed"));
     };
-  
+
     const showContainer = (container) => {
       completeIntersectionContainer.style.display = "none";
       abelianVarietyContainer.style.display = "none";
       grassmannianContainer.style.display = "none";
+      flagContainer.style.display = "none";
       container.style.display = "block";
-      // Delay update until after layout has occurred.
+      // If the container has a registered update function, call it.
+      if (typeof container.updateCalculator === "function") {
+          container.updateCalculator();
+      }
       setTimeout(() => requestAnimationFrame(updateHodgeDiamondDescription), 10);
     };
-  
+
     toggleCompleteIntersection.addEventListener("click", () => {
       showContainer(completeIntersectionContainer);
-      setActiveToggle(toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian);
+      setActiveToggle(toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian, toggleFlag);
     });
     toggleAbelianVariety.addEventListener("click", () => {
       showContainer(abelianVarietyContainer);
-      setActiveToggle(toggleAbelianVariety, toggleCompleteIntersection, toggleGrassmannian);
+      setActiveToggle(toggleAbelianVariety, toggleCompleteIntersection, toggleGrassmannian, toggleFlag);
     });
     toggleGrassmannian.addEventListener("click", () => {
       showContainer(grassmannianContainer);
-      setActiveToggle(toggleGrassmannian, toggleCompleteIntersection, toggleAbelianVariety);
+      setActiveToggle(toggleGrassmannian, toggleCompleteIntersection, toggleAbelianVariety, toggleFlag);
     });
-  
+    toggleFlag.addEventListener("click", () => {
+      showContainer(flagContainer);
+      setActiveToggle(toggleFlag, toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian);
+    });
+
+
     // --- Preset Button State Updates (existing code) ---
     const updateAllPressedButtons = () => {
       // Complete Intersection Presets
@@ -133,11 +144,32 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!gValueEl) return;
         const g = gValueEl.value;
         descriptionText = `Hodge diamond for an abelian variety of genus \\(g=${g}\\)`;
-      } else {
+      }
+      // For Flag Varieties:
+      else if (flagContainer && flagContainer.style.display !== "none") {
+        const dimsInput = document.getElementById("dims-input");
+        const rValueFlag = document.getElementById("r-value-flag");
+        const degreeToggles = document.getElementById("degree-toggles-flag");
+        if (!dimsInput || !rValueFlag || !degreeToggles) return;
+        const dims = dimsInput.value;
+        const r = parseInt(rValueFlag.value, 10);
+        const degreeInputs = Array.from(degreeToggles.querySelectorAll("input.hodge-input"));
+        if (degreeInputs.length === 0) {
+          descriptionText = `Hodge diamond for a partial flag of dimensions [${dims}]`;
+        } else if (degreeInputs.length === 1) {
+          const degree = degreeInputs[0].value;
+          descriptionText = `Hodge diamond for a hypersurface of degree ${degree} in a partial flag of dimensions [${dims}]`;
+        } else {
+          const degrees = degreeInputs.map(input => input.value);
+          const multidegreeStr = "(" + degrees.join(", ") + ")";
+          descriptionText = `Hodge diamond for a complete intersection of multidegree ${multidegreeStr} in a partial flag of dimensions [${dims}]`;
+        }
+      }
+      else {
         descriptionText = "";
       }
   
-      // Update all elements with the class "hodge-diamond-description"
+      // Update all elements with class "hodge-diamond-description"
       document.querySelectorAll(".hodge-diamond-description").forEach(el => {
         el.innerHTML = descriptionText;
         if (window.MathJax && MathJax.typesetPromise) {
@@ -199,7 +231,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (gValueEl) gValueEl.addEventListener("input", updateHodgeDiamondDescription);
   
-    // Also update description when any preset button is clicked.
     const presetButtons = document.querySelectorAll(".preset-button");
     presetButtons.forEach(button => {
       button.addEventListener("click", () => {
@@ -207,7 +238,5 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   
-    // Initial call on page load.
     updateHodgeDiamondDescription();
-  });
-  
+});

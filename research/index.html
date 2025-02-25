@@ -35,13 +35,12 @@
     <!-- Math.js for convenience -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.5.0/math.min.js"></script>
 
-
     <!-- Main Scripts -->
     <script src="/scripts/main.js" type="module"></script> 
-
     <script src="/components/hodge/completeIntersection.js" type="module"></script>
     <script src="/components/hodge/abelianVariety.js" type="module"></script>
     <script src="/components/hodge/grassmannian.js" type="module"></script>
+    <script src="/components/hodge/flag.js" type="module"></script>
     <script src="scripts.js" type="module"></script>
 
     <!-- Header -->
@@ -72,6 +71,7 @@
                 <button id="toggle-complete-intersection" class="toggle-button pressed">Complete Intersections in $\mathbb P^n$</button>
                 <button id="toggle-abelian-variety" class="toggle-button">Abelian Varieties</button>
                 <button id="toggle-grassmannian" class="toggle-button">Complete Intersections in $\text{Gr}(k,n)$</button>
+                <button id="toggle-flag" class="toggle-button">Flag Varieties</button>
             </div>
         
             <!-- Calculator Containers -->
@@ -99,8 +99,6 @@
                         </button>
                     </div>
                 </section>
-        
-                <!-- Calculator Inputs and Diamond -->
                 <div id="hodge-container">
                     <div id="inputs">
                         <h3>Complete Intersection Calculator</h3>
@@ -114,13 +112,10 @@
                           <input type="range" id="k-slider" min="0" max="10" value="2">
                           <input type="number" id="k-value" min="0" value="2" class="hodge-input">
                         </div>
-                        <!-- If you have additional controls, wrap them similarly -->
                         <div class="input-row">
-                          <!-- For degree toggles, you might need additional styling -->
                           <div id="degree-toggles"></div>
                         </div>
                       </div>
-                      
                     <div id="diamond-box">
                         <div class="hodge-diamond-description"></div>
                         <div id="diamond-container">
@@ -142,7 +137,6 @@
                         </button>
                     </div>
                 </section>
-                
                 <div id="hodge-container">
                     <div id="inputs">
                         <h3>Abelian Variety Calculator</h3>
@@ -150,7 +144,7 @@
                             <label for="g-slider">Genus ($g$):</label>
                             <input type="range" id="g-slider" min="1" max="10" value="2">
                             <input type="number" id="g-value" min="1" max="50" value="2" class="hodge-input">
-                          </div>
+                        </div>
                     </div>
                     <div id="diamond-box">
                         <div class="hodge-diamond-description"></div>
@@ -161,7 +155,6 @@
                 </div>
             </div>
 
-            <!-- Grassmannian Calculator Container -->
             <div id="grassmannian-container" class="calculator-container" style="display: none;">
                 <div id="hodge-container">
                     <div id="inputs">
@@ -182,7 +175,7 @@
                             <input type="number" id="r-value-grassmannian" min="0" max="50" value="2" class="hodge-input">
                         </div>
                         <div class="input-row">
-                        <div id="degree-toggles-grassmannian"></div>
+                            <div id="degree-toggles-grassmannian"></div>
                         </div>
                     </div>
                     <div id="diamond-box">
@@ -192,12 +185,37 @@
                         </div>
                     </div>
                 </div>
-                
             </div>
-            
-        </section>
-        
 
+            <!-- Flag Calculator Container -->
+            <div id="flag-container" class="calculator-container" style="display: none;">
+                <div id="hodge-container">
+                  <div id="inputs">
+                    <h3 id="flag-title">Flag Variety Calculator</h3>
+                    <div class="input-row">
+                      <label for="dims-input">List of Dimensions (e.g. 1,1,1,1):</label>
+                      <input type="text" id="dims-input" value="1,1,1,1" class="hodge-input">
+                    </div>
+                    <div class="input-row">
+                      <label for="r-slider-flag">Number of Hypersurfaces (r):</label>
+                      <input type="range" id="r-slider-flag" min="0" max="10" value="1">
+                      <input type="number" id="r-value-flag" min="0" value="1" class="hodge-input">
+                    </div>
+                    <div class="input-row">
+                      <div id="degree-toggles-flag"></div>
+                    </div>
+                  </div>
+                  <div id="diamond-box">
+                    <div class="hodge-diamond-description" id="flag-description"></div>
+                    <div id="diamond-container-flag">
+                      <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+  
+        </section>
 
         <!-- Past Work -->
         <section class="section">
@@ -209,19 +227,18 @@
     </main>
 
     <!-- Footer -->
-  <div class="footer"></div>
+    <div class="footer"></div>
 
-  <!-- Modal for Images -->
-  <div id="image-modal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span> <!-- Close button inside modal-content -->
-      <img id="modal-image" src="" alt="">
-      <div class="modal-text">
-        <h2 id="modal-title"></h2>
-        <p id="modal-description"></p>
-      </div>
+    <!-- Modal for Images -->
+    <div id="image-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img id="modal-image" src="" alt="">
+            <div class="modal-text">
+                <h2 id="modal-title"></h2>
+                <p id="modal-description"></p>
+            </div>
+        </div>
     </div>
-  </div>
-
 </body>
 </html>
