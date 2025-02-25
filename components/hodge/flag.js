@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const diamondContainer = document.getElementById("diamond-container-flag");
     const flagDescription = document.getElementById("flag-description");
   
+    // Sync a slider and its corresponding number input.
     function syncSliderAndTextbox(slider, textbox, onChange, maxValue = 50) {
       slider.addEventListener("input", () => {
         textbox.value = slider.value;
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   
+    // Update the degree toggles based on the number of hypersurfaces (r).
     function updateDegreeTogglesFlag(r) {
       const currentCount = degreeToggles.children.length;
       if (r > currentCount) {
@@ -54,32 +56,49 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   
+    // Update the flag variety diamond and its title.
     function updateDiamondFlag() {
+      // Parse the list of dimensions from the textbox (e.g. "1,1,1,1")
       const dimsRaw = dimsInput.value.trim();
-      const dims = dimsRaw.split(",")
-                           .map(s => parseInt(s.trim()))
-                           .filter(n => !isNaN(n));
+      const dimsArray = dimsRaw.split(",").map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+  
+      // Compute dim F = ∑₍i<j₎ dᵢ*dⱼ.
+      let dimF = 0;
+      for (let i = 0; i < dimsArray.length; i++) {
+        for (let j = i + 1; j < dimsArray.length; j++) {
+          dimF += dimsArray[i] * dimsArray[j];
+        }
+      }
+  
+      // Parse the number of hypersurfaces r.
       const r = parseInt(rValue.value, 10) || 0;
       updateDegreeTogglesFlag(r);
   
+      // Gather the degree values.
       let degrees = [];
       Array.from(degreeToggles.children).forEach(container => {
         const input = container.querySelector("input");
         if (input) degrees.push(parseInt(input.value));
       });
   
+      // Update the description title.
       const multidegreeStr = degrees.length > 0 ? "(" + degrees.join(", ") + ")" : "";
-      const dimsStr = dims.length > 0 ? "[" + dims.join(", ") + "]" : "";
+      const dimsStr = dimsArray.length > 0 ? "[" + dimsArray.join(", ") + "]" : "";
       flagDescription.innerHTML = `Hodge diamond of a complete intersection of multidegree ${multidegreeStr} for partial flag of dimensions ${dimsStr}`;
   
-      // Render a placeholder diamond of zeros.
-      const placeholderDimension = 2;
-      const rows = 2 * placeholderDimension + 1;
+      // Compute the number of rows: 2*(dimF - r) + 1.
+      let d = dimF - r;
+      if (d < 0) d = 0;
+      let rows = 2 * d + 1;
+      if (rows < 1) rows = 1;
+  
+      // Build a symmetric diamond of zeros.
       diamondContainer.innerHTML = "";
       for (let i = 0; i < rows; i++) {
         const rowDiv = document.createElement("div");
         rowDiv.className = "diamond-row";
-        const numCells = i <= placeholderDimension ? i + 1 : rows - i;
+        // For 0 ≤ i ≤ d, use i+1 entries; for i > d, use rows - i entries.
+        let numCells = (i <= d) ? i + 1 : rows - i;
         for (let j = 0; j < numCells; j++) {
           const cell = document.createElement("span");
           cell.className = "diamond-value";
@@ -90,13 +109,55 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   
+    // Set up syncing for the hypersurface slider and number input.
     syncSliderAndTextbox(rSlider, rValue, updateDiamondFlag, 10);
     dimsInput.addEventListener("input", updateDiamondFlag);
   
-    // Initial (even if hidden) update.
+    // Initial update.
     updateDiamondFlag();
   
-    // Register the update function with the container.
+    // Register the update function with the container for generic toggle logic.
     document.getElementById("flag-container").updateCalculator = updateDiamondFlag;
   });
   
+  import { hodgeFlag } from "/components/hodge/flagHodge.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+  const dimsInput = document.getElementById("dims-input");
+  const diamondContainer = document.getElementById("diamond-container-flag");
+  const flagDescription = document.getElementById("flag-description");
+
+  function updateDiamondFlag() {
+    // Parse the list of dimensions from the textbox (expected as "1,1,1,1", etc.)
+    const dimsRaw = dimsInput.value.trim();
+    const dims = dimsRaw.split(",").map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+
+    // For now, assume r = 0 and compute the flag Hodge diamond.
+    const diamond = hodgeFlag(dims);
+
+    // Update the description title.
+    flagDescription.innerHTML = `Hodge diamond for partial flag of dimensions [${dims.join(", ")}]`;
+
+    // Render the diamond.
+    diamondContainer.innerHTML = "";
+    diamond.forEach(row => {
+      const rowDiv = document.createElement("div");
+      rowDiv.className = "diamond-row";
+      row.forEach(val => {
+        const cell = document.createElement("span");
+        cell.className = "diamond-value";
+        cell.innerText = val.toString();
+        rowDiv.appendChild(cell);
+      });
+      diamondContainer.appendChild(rowDiv);
+    });
+  }
+
+  dimsInput.addEventListener("input", updateDiamondFlag);
+
+  // Initial update.
+  updateDiamondFlag();
+
+  // Register the update function with the container (if using generic toggle logic).
+  document.getElementById("flag-container").updateCalculator = updateDiamondFlag;
+});
