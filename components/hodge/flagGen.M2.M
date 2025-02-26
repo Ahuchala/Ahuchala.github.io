@@ -1,25 +1,29 @@
 needsPackage "Schubert2";
 
--- Function to compute Hodge numbers for a complete intersection.
+-- Function to compute Hodge numbers for a complete intersection of r hypersurfaces in Fl(dims) with len(dims) = 3
+needsPackage "Schubert2";
 flagHodgeNumbers = (dims, r) -> (
-    G = flagBundle(dims, base (d_1..d_r));
-    X = sectionZeroLocus sum for i from 1 to r list OO_G(d_i);
+    G = flagBundle(dims, base join(d_1..d_r,e_1..e_r));
+    Q = G.QuotientBundles;
+    L1 = det(Q#1);
+    L2 = det(Q#2);
+    X = sectionZeroLocus sum for i from 1 to r list (L1 tensor d_i) * (L2 tensor e_i);
     OmG = cotangentBundle G;
     OmX = cotangentBundle X;
     hodgeNumbers = for i from 0 to floor(dim(X)/2) list (
         (-1)^(i + dim X) * (chi exteriorPower(i, OmX) - chi exteriorPower(i, OmG))
     );
-    hodgeNumbers
+    return hodgeNumbers
 );
 
 -- Build the database of Hodge numbers.
-computeFlagHodgeNumbers = (nBound, rBound) -> (
+computeFlagHodgeNumbers = (nLowBound, nHighBound, rBound) -> (
     db := new MutableHashTable;
-    for n from 4 to nBound do (
+    for n from nLowBound to nHighBound do (
         P = partitions(n);
         for p in P do (
             dims = toList p;
-            if (#dims > 1 and dims != {n-1,1} and dims != {n-2,2}) then (
+            if (#dims > 2) then (
                 for r from 1 to rBound do (
                     key = "(" | toString(dims) | ", " | toString(r) | ")";
                     hodge = flagHodgeNumbers(dims, r);
@@ -48,5 +52,6 @@ exportDatabaseJSON = (db, filename) -> (
 );
 
 -- Test case: using nBound = 4 and rBound = 2.
-db = computeFlagHodgeNumbers(7, 3);
+db = computeFlagHodgeNumbers(3,4, 2);
 exportDatabaseJSON(db, "flag_hodge_numbers.txt");
+
