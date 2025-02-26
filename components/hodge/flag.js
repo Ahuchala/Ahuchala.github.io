@@ -1,371 +1,309 @@
 import { hodgeFlag } from "/components/hodge/flagHodge.js";
-import { hodgeGrassmannian } from "/components/hodge/grassmannianHodge.js";
-import { hodgeCompleteIntersection } from "/components/hodge/completeIntersectionHodgeNumbers.js";
 
-// Evaluate polynomials in variables d_1..d_r (like your grassmannian approach)
-function evalASTBigInt(node, scope) {
-  if (node.isConstantNode) {
-    return BigInt(node.value);
-  } else if (node.isSymbolNode) {
-    if (scope[node.name] !== undefined) {
-      return scope[node.name];
-    } else {
-      throw new Error("Undefined symbol: " + node.name);
-    }
-  } else if (node.isOperatorNode) {
-    const op = node.op;
-    const args = node.args.map(arg => evalASTBigInt(arg, scope));
-    switch (op) {
-      case '+': return args[0] + args[1];
-      case '-': return args[0] - args[1];
-      case '*': return args[0] * args[1];
-      case '/': return args[0] / args[1];
-      case '^': {
-        const exponent = parseInt(args[1].toString(), 10);
-        return args[0] ** BigInt(exponent);
-      }
-      default:
-        throw new Error("Unsupported operator: " + op);
-    }
-  } else if (node.isParenthesisNode) {
-    return evalASTBigInt(node.content, scope);
-  } else {
-    throw new Error("Unsupported node type: " + node.type);
-  }
-}
-
-function evaluatePolynomial(polyStr, degrees) {
-  const fracRegex = /^\s*\(([-+]?\d+)\/(\d+)\)\s*\*\s*/;
-  const match = polyStr.match(fracRegex);
-  let numerator = 1n, denominator = 1n;
-  let bodyStr = polyStr;
-  if (match) {
-    numerator = BigInt(match[1]);
-    denominator = BigInt(match[2]);
-    bodyStr = polyStr.slice(match[0].length);
-  }
-  const ast = math.parse(bodyStr);
-  const scope = {};
-  degrees.forEach((deg, i) => {
-    scope[`d_${i+1}`] = BigInt(deg);
-  });
-  let val = evalASTBigInt(ast, scope);
-  val = (val * numerator) / denominator;
-  if (val<0n) val = -val;
-  return val.toString();
-}
-
-function constructMiddleRow(dimension, polyValues) {
-  // same logic as grassmannian.js
-  const isOdd = (dimension % 2===1);
-  const neededLen = isOdd ? (Math.floor(dimension/2)+1) : (dimension/2 +1);
-  const truncated = polyValues.slice(0,neededLen);
-  const row = [...truncated];
-  if (isOdd) {
-    // mirror everything
-    for (let i= truncated.length-1; i>=0; i--){
-      row.push(truncated[i]);
-    }
-  } else {
-    // skip last
-    for (let i= truncated.length-2; i>=0; i--){
-      row.push(truncated[i]);
-    }
-  }
-  return row;
-}
-
-function safeBigInt(x) {
-  if (typeof x==="number") return BigInt(x);
-  if (typeof x==="string") return BigInt(x.replace(/[ ,]/g,""));
-  return BigInt(x.toString());
-}
-
-let flagHodgeData=null, grassmannianHodgeData=null;
+let flagHodgeData = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const respF = await fetch("/components/hodge/flag_hodge_numbers_factored.json");
-    flagHodgeData = await respF.json();
-  } catch(e){ console.error("Could not load flag_hodge_numbers_factored.json:", e); }
-
-  try {
-    const respG = await fetch("/components/hodge/grassmannian_hodge_numbers_factored.json");
-    grassmannianHodgeData = await respG.json();
-  } catch(e){ console.error("Could not load grassmannian_hodge_numbers_factored.json:", e); }
+    const response = await fetch("/components/hodge/flag_hodge_numbers_factored.json");
+    flagHodgeData = await response.json();
+  } catch (err) {
+    console.error("Could not load flag_hodge_numbers_factored.json:", err);
+  }
 
   const dimsInput = document.getElementById("dims-input");
+  dimsInput.value = "1,1,1"; // Default example changed to [1,1,1]
+
   const rSlider = document.getElementById("r-slider-flag");
   const rValue = document.getElementById("r-value-flag");
-  const degreeToggles = document.getElementById("degree-toggles-flag");
+  const degreeTogglesContainer = document.getElementById("degree-toggles-flag");
   const diamondContainer = document.getElementById("diamond-container-flag");
   const flagDescription = document.getElementById("flag-description");
 
-  dimsInput.value="1,1,1"; // default
-
-  function syncSliderAndTextbox(slider, textbox, onChange, maxV=50) {
+  function syncSliderAndTextbox(slider, textbox, onChange, maxValue = 50) {
     slider.addEventListener("input", () => {
       textbox.value = slider.value;
       onChange();
     });
-    textbox.addEventListener("input", () => {
-      const val = Math.max(0, Math.min(parseInt(textbox.value)||0, maxV));
-      textbox.value=val;
-      slider.value=val;
+    slider.addEventListener("change", () => {
+      textbox.value = slider.value;
       onChange();
     });
-    slider.addEventListener("change", () => {
-      textbox.value= slider.value;
+    textbox.addEventListener("input", () => {
+      const value = Math.max(0, Math.min(parseInt(textbox.value) || 0, maxValue));
+      textbox.value = value;
+      slider.value = value;
       onChange();
+    });
+    textbox.addEventListener("blur", () => {
+      if (textbox.value === "") {
+        textbox.value = slider.value;
+      }
     });
   }
 
   function updateDegreeTogglesFlag(r) {
-    while (degreeToggles.children.length>r) {
-      degreeToggles.removeChild(degreeToggles.lastChild);
+    while (degreeTogglesContainer.children.length > r) {
+      degreeTogglesContainer.removeChild(degreeTogglesContainer.lastChild);
     }
-    while (degreeToggles.children.length<r) {
-      const idx = degreeToggles.children.length;
+    while (degreeTogglesContainer.children.length < r) {
+      const idx = degreeTogglesContainer.children.length;
       const rowDiv = document.createElement("div");
-      rowDiv.className="degree-toggle";
+      rowDiv.className = "degree-toggle";
       const label = document.createElement("label");
-      label.innerText=`Hypersurface ${idx+1}:`;
+      label.innerText = `Multidegree of Hypersurface ${idx + 1} (comma-separated):`;
       const input = document.createElement("input");
-      input.type="text";
-      input.value="2";
-      input.className="hodge-input";
+      input.type = "text";
+      input.value = "1,2"; // example default
+      input.className = "hodge-input";
       input.addEventListener("input", updateDiamondFlag);
+
       rowDiv.appendChild(label);
       rowDiv.appendChild(input);
-      degreeToggles.appendChild(rowDiv);
+      degreeTogglesContainer.appendChild(rowDiv);
     }
   }
 
-  function renderDiamond(diamond2D, desc) {
-    flagDescription.innerText = desc;
-    diamondContainer.innerHTML="";
-    diamond2D.forEach(row => {
-      const rowDiv = document.createElement("div");
-      rowDiv.className="diamond-row";
-      row.forEach(val => {
-        const cell = document.createElement("span");
-        cell.className="diamond-value";
-        cell.innerText= val.toString();
-        rowDiv.appendChild(cell);
-      });
-      diamondContainer.appendChild(rowDiv);
-    });
+  // Evaluate a polynomial in variables d_1..d_r,e_1..e_r using a BigInt-based approach.
+  function evalASTBigInt(node, scope) {
+    if (node.isConstantNode) {
+      return BigInt(node.value);
+    } else if (node.isSymbolNode) {
+      if (scope[node.name] !== undefined) {
+        return scope[node.name];
+      } else {
+        throw new Error("Undefined symbol: " + node.name);
+      }
+    } else if (node.isOperatorNode) {
+      const op = node.op;
+      const args = node.args.map(arg => evalASTBigInt(arg, scope));
+      switch (op) {
+        case '+': return args[0] + args[1];
+        case '-': return args[0] - args[1];
+        case '*': return args[0] * args[1];
+        case '/': return args[0] / args[1];
+        case '^': {
+          const exponent = parseInt(args[1].toString(), 10);
+          return args[0] ** BigInt(exponent);
+        }
+        default:
+          throw new Error("Unsupported operator: " + op);
+      }
+    } else if (node.isParenthesisNode) {
+      return evalASTBigInt(node.content, scope);
+    } else {
+      throw new Error("Unsupported node type: " + node.type);
+    }
   }
 
-  // The main update function
+  function evaluateFlagPolynomial(polyStr, dVals, eVals) {
+    // Handle possible prefactor like (a/b)*(...)
+    const fracRegex = /^\s*\(([-+]?\d+)\/(\d+)\)\s*\*\s*/;
+    const match = polyStr.match(fracRegex);
+    let constantNumerator = 1n;
+    let constantDenom = 1n;
+    let remainingStr = polyStr;
+    if (match) {
+      constantNumerator = BigInt(match[1]);
+      constantDenom = BigInt(match[2]);
+      remainingStr = polyStr.slice(match[0].length);
+    }
+    const ast = math.parse(remainingStr);
+    const scope = {};
+    dVals.forEach((val, i) => {
+      scope[`d_${i+1}`] = BigInt(val);
+    });
+    eVals.forEach((val, i) => {
+      scope[`e_${i+1}`] = BigInt(val);
+    });
+    let val = evalASTBigInt(ast, scope);
+    val = (val * constantNumerator) / constantDenom;
+    if (val < 0n) val = -val;
+    return val.toString();
+  }
+
+  function buildFullRowFromHalf(halfVals, neededLength) {
+    const arr = [...halfVals];
+    const isOdd = (neededLength % 2 === 1);
+    if (isOdd) {
+      const mirrorPart = arr.slice(0, arr.length - 1).reverse();
+      return arr.concat(mirrorPart);
+    } else {
+      const mirrorPart = arr.slice().reverse();
+      return arr.concat(mirrorPart);
+    }
+  }
+
   function updateDiamondFlag() {
-    const dimsStr = dimsInput.value.trim();
-    const dims = dimsStr.split(",").map(x=> parseInt(x.trim())).filter(n=>!isNaN(n));
-    const r = parseInt(rValue.value,10)||0;
+    // 1) Parse dims
+    const dimsRaw = dimsInput.value.trim();
+    const dims = dimsRaw.split(",").map(x => parseInt(x.trim())).filter(n => !isNaN(n));
+    
+    // 2) parse r
+    const r = parseInt(rValue.value, 10) || 0;
     updateDegreeTogglesFlag(r);
 
-    // r=0 => base variety
-    if (r===0){
-      if (dims.length===2){
-        // Grassmannian
-        const k = dims[0];
-        const n = dims[0]+dims[1];
-        const base = hodgeGrassmannian(k,n);
-        renderDiamond(base, `Base Grassmannian Gr(${k},${n}), r=0`);
-      } else {
-        // partial flag
-        const base = hodgeFlag(dims);
-        renderDiamond(base, `Base partial flag [${dims}], r=0`);
-      }
+    // Build a short phrase about dims
+    const dimsPhrase = `Fl(${dims.join(",")})`;
+
+    if (r === 0) {
+      const diamond = hodgeFlag(dims);
+      // Title: "Hodge diamond for Fl(...)"
+      renderDiamond(
+        diamond,
+        `Hodge diamond for ${dimsPhrase}`,
+        diamondContainer
+      );
       return;
     }
 
-    // r>0
-    if (dims.length===2){
-      handleGrassmannianCase(dims,r);
-    } else if (dims.length===3){
-      handlePartialFlagCase(dims,r);
-    } else {
-      diamondContainer.innerHTML=`<p class="error">dims=[${dims}] & r>0 => only len=2 or 3 supported</p>`;
-    }
-  }
+    // If r=1 => "Hodge diamond for a hypersurface of multidegree ... in Fl(...)"
+    // If r>1 => "Hodge diamond for a complete intersection of r hypersurfaces of multidegree ... in Fl(...)"
 
-  /*****************************************
-   * handleGrassmannianCase
-   *****************************************/
-  function handleGrassmannianCase(dims,r) {
-    // dims=[k, n-k]
-    const rowDivs = Array.from(degreeToggles.children);
-    if (rowDivs.length!==r) {
-      diamondContainer.innerHTML=`<p class="error">Mismatch in # toggles vs r</p>`;
+    if (dims.length === 2) {
+      diamondContainer.innerHTML = `<p class="error">For len(dims)=2, use the Grassmannian calculator.</p>`;
       return;
     }
-    // parse each row as single integer
-    const degrees=[];
-    for (let i=0; i<r; i++){
-      const valStr = rowDivs[i].querySelector("input").value.trim();
-      const deg = parseInt(valStr,10);
-      if (isNaN(deg)){
-        diamondContainer.innerHTML=`<p class="error">Invalid deg for hypersurface #${i+1}</p>`;
+    if (dims.length > 3) {
+      diamondContainer.innerHTML = `<p class="error">Hodge numbers for len(dims) > 3 not yet supported.</p>`;
+      return;
+    }
+    if (dims.length !== 3) {
+      diamondContainer.innerHTML = `<p class="error">Invalid dims. Expecting length 3 or less. Got [${dims}].</p>`;
+      return;
+    }
+
+    // parse the (d_i,e_i)
+    const rowDivs = Array.from(degreeTogglesContainer.children);
+    if (rowDivs.length !== r) {
+      diamondContainer.innerHTML = `<p class="error">Mismatch: # of multi-degree rows != r.</p>`;
+      return;
+    }
+    let dVals = [];
+    let eVals = [];
+    for (let i = 0; i < r; i++) {
+      const input = rowDivs[i].querySelector("input");
+      if (!input) {
+        diamondContainer.innerHTML = `<p class="error">No input found for hypersurface #${i+1}.</p>`;
         return;
       }
-      degrees.push(deg);
-    }
-    const k= dims[0];
-    const n= dims[0]+dims[1];
-    // dimension = k*(n-k) - r
-    const dimension= k*(n-k) - r;
-    if (dimension<0){
-      diamondContainer.innerHTML=`<p class="error">Dimension <0 => r too big</p>`;
-      return;
-    }
-    const totalRows= 2*dimension+1;
-
-    // base diamond
-    const baseDiamond = hodgeGrassmannian(k,n);
-
-    // Special check for k=1 or k=n-1 => we do hodgeCompleteIntersection
-    // exactly as your grassmannian.js does
-    // else we do the polynomials from "grassmannianHodgeData"
-
-    const key = `${k},${n},${r}`;
-    let middleValues=[];
-    if (k===1 || k===n-1) {
-      // In that scenario your code calls "hodgeCompleteIntersection(degrees, n-1)"
-      // That returns an array of polynomials or direct hodgeNumbers?
-      middleValues= hodgeCompleteIntersection(degrees, n-1);
-      // This might be a direct numeric array or partial. 
-      // You might need to adapt to the same shape as the polynomials from JSON.
-      // We'll assume it's an array of length dimension+1. Then we skip "constructMiddleRow".
-      if (middleValues.length< (dimension+1)) {
-        diamondContainer.innerHTML=`<p class="error">hodgeCompleteIntersection() returned fewer values than needed</p>`;
-        return;
-      }
-    } else {
-      if (!grassmannianHodgeData || !(key in grassmannianHodgeData)){
-        diamondContainer.innerHTML=`<p class="error">No data for key="${key}" in grassmannian_hodge_numbers_factored.json</p>`;
-        return;
-      }
-      const polynomials = grassmannianHodgeData[key];
-      // Evaluate each => array
-      const evaluated= polynomials.map(pStr => evaluatePolynomial(pStr, degrees));
-      // Then do constructMiddleRow
-      middleValues= constructMiddleRow(dimension, evaluated);
-    }
-
-    // Now sum with baseDiamond row #dimension
-    const finalDiamond=[];
-    for (let i=0; i< totalRows; i++){
-      const rowLen= (i<dimension)? (i+1): (2*dimension-i+1);
-      const rowArr=[];
-      for (let j=0; j<rowLen; j++){
-        if (i< dimension){
-          rowArr.push( baseDiamond[i]?.[j]||0 );
-        } else if (i=== dimension){
-          let baseVal= safeBigInt(baseDiamond[dimension]?.[j]||0);
-          let polyVal= safeBigInt(middleValues[j]||0);
-          rowArr.push( (baseVal+polyVal).toString() );
-        } else {
-          const mirrorI= 2*dimension - i;
-          rowArr.push( baseDiamond[mirrorI]?.[j]||0 );
-        }
-      }
-      finalDiamond.push(rowArr);
-    }
-
-    renderDiamond(finalDiamond,
-      `Complete intersection in Gr(${k},${n}), r=${r}, degrees=[${degrees}]`
-    );
-  }
-
-  /*****************************************
-   * handlePartialFlagCase
-   *****************************************/
-  function handlePartialFlagCase(dims,r) {
-    const rowDivs = Array.from(degreeToggles.children);
-    if (rowDivs.length!==r) {
-      diamondContainer.innerHTML=`<p class="error">Mismatch # toggles vs r in partialFlagCase.</p>`;
-      return;
-    }
-    const dVals=[], eVals=[];
-    for (let i=0; i<r; i++){
-      const valStr= rowDivs[i].querySelector("input").value.trim();
-      const arr= valStr.split(",").map(x=> parseInt(x.trim())).filter(x=>!isNaN(x));
-      if (arr.length!==2){
-        diamondContainer.innerHTML=`<p class="error">Hypersurface #${i+1} => need 2 ints</p>`;
+      const arr = input.value.split(",").map(x => parseInt(x.trim())).filter(x => !isNaN(x));
+      if (arr.length !== 2) {
+        diamondContainer.innerHTML = `<p class="error">Each hypersurface needs 2 integers: (d_i,e_i). Found: ${input.value}.</p>`;
         return;
       }
       dVals.push(arr[0]);
       eVals.push(arr[1]);
     }
-    // dimension => sum(dims) => ...
+
+    // Summarize the "multidegree" in a string
+    // e.g. if r=1 => "(d1,e1)", if r>1 => "((d1,e1),(d2,e2))" or something
+    let multiDegStr = "";
+    if (r === 1) {
+      multiDegStr = `(${dVals[0]},${eVals[0]})`;
+    } else {
+      const pairs = [];
+      for (let i = 0; i < r; i++) {
+        pairs.push(`(${dVals[i]},${eVals[i]})`);
+      }
+      multiDegStr = pairs.join(", ");
+    }
+
+    // Build the JSON key
+    const key = `[${dims.join(", ")}],${r}`;
+    if (!flagHodgeData || !(key in flagHodgeData)) {
+      diamondContainer.innerHTML = `<p class="error">No data in JSON for key="${key}".</p>`;
+      return;
+    }
+    const hodgePolys = flagHodgeData[key];
+
+    // Dimension
+    let dimF = 0;
     const n = dims.reduce((a,b)=>a+b,0);
-    let dimF=0, mp=0;
-    for (let i=0; i<dims.length;i++){
-      const mi= mp+ dims[i];
-      dimF+= (n-mi)*(mi-mp);
-      mp= mi;
+    let mprev = 0;
+    for (let i=0; i<dims.length; i++){
+      const mi = mprev + dims[i];
+      dimF += (n - mi)*(mi - mprev);
+      mprev = mi;
     }
-    const dimension= dimF-r;
-    if (dimension<0){
-      diamondContainer.innerHTML=`<p class="error">Dimension<0 => r too big</p>`;
+    const dimensionCI = dimF - r;
+    if (dimensionCI < 0) {
+      diamondContainer.innerHTML = `<p class="error">Error: dimension < 0. Possibly r too large.</p>`;
       return;
     }
-    const totalRows=2*dimension+1;
+    const totalRows = 2*dimensionCI + 1;
 
-    // base diamond
-    const baseDiamond= hodgeFlag(dims);
+    // Evaluate polynomials
+    const halfValues = hodgePolys.map(polyStr => evaluateFlagPolynomial(polyStr, dVals, eVals));
+    const middleRowLength = dimensionCI + 1;
+    const fullMiddleRowValues = buildFullRowFromHalf(halfValues, middleRowLength);
 
-    // build key => "[a,b,c],r"
-    const key= `[${dims.join(", ")}],${r}`;
-    if (!flagHodgeData || !(key in flagHodgeData)){
-      diamondContainer.innerHTML=`<p class="error">No partial-flag data for key="${key}"</p>`;
-      return;
-    }
-    const polynomials= flagHodgeData[key];
-    // Evaluate each => with "d_i,e_i"
-    // We'll do a short approach:
-    function evaluateFlagPoly(polyStr, dVals, eVals) {
-      // parse with math.js, building scope {d_1..d_r, e_1..e_r}, etc.
-      // We'll do something quick:
-      return "1000"; // placeholder
-    }
-    const rawEvals= polynomials.map(pStr => evaluateFlagPoly(pStr,dVals,eVals));
-    // Then mirror them => same approach => constructMiddleRow(dimension, rawEvals)
-    const middleRow= constructMiddleRow(dimension, rawEvals);
+    // Build base diamond (r=0)
+    const baseDiamond = hodgeFlag(dims);
 
-    // sum with baseDiamond row #dimension
-    const finalDiamond=[];
+    // Merge them
+    const finalDiamond = [];
     for (let i=0; i< totalRows; i++){
-      const rowLen= (i<dimension)? i+1: (2*dimension - i+1);
-      const rowArr=[];
-      for (let j=0; j<rowLen; j++){
-        if (i<dimension){
-          rowArr.push(baseDiamond[i]?.[j]||0);
-        } else if (i=== dimension){
-          let baseVal= safeBigInt(baseDiamond[dimension]?.[j]||0);
-          let polVal= safeBigInt(middleRow[j]||0);
-          rowArr.push( (baseVal+ polVal).toString() );
+      const rowSize = (i<=dimensionCI)? (i+1) : (2*dimensionCI - i +1);
+      const rowArr = [];
+      for (let j=0; j<rowSize; j++){
+        if (i < dimensionCI){
+          if (i< dimF) {
+            rowArr.push(baseDiamond[i]?.[j] || 0);
+          } else {
+            rowArr.push(0);
+          }
+        } else if (i === dimensionCI){
+          let baseVal = 0n;
+          if (dimF < baseDiamond.length) {
+            baseVal = BigInt(baseDiamond[dimF]?.[j] || 0);
+          }
+          let addedVal = 0n;
+          if (fullMiddleRowValues[j]) {
+            addedVal = BigInt(fullMiddleRowValues[j]);
+          }
+          rowArr.push((baseVal + addedVal).toString());
         } else {
-          const mirrorI= 2*dimension- i;
-          rowArr.push(baseDiamond[mirrorI]?.[j]||0);
+          const mirrorI = 2*dimensionCI - i;
+          if (mirrorI < dimF) {
+            rowArr.push(baseDiamond[mirrorI]?.[j] || 0);
+          } else {
+            rowArr.push(0);
+          }
         }
       }
       finalDiamond.push(rowArr);
     }
 
-    renderDiamond(finalDiamond, 
-      `Complete intersection in Fl(${dims.join(",")}), r=${r}`);
+    // Title:
+    let desc = "";
+    if (r === 1) {
+      desc = `Hodge diamond for a hypersurface of multidegree ${multiDegStr} in ${dimsPhrase}`;
+    } else {
+      desc = `Hodge diamond for a complete intersection of ${r} hypersurfaces of multidegree ${multiDegStr} in ${dimsPhrase}`;
+    }
+
+    renderDiamond(finalDiamond, desc, diamondContainer);
   }
 
-  function syncEverything() {
-    updateDiamondFlag();
+  function renderDiamond(diamond2D, title, container) {
+    flagDescription.innerHTML = title;
+    container.innerHTML = "";
+    diamond2D.forEach(row => {
+      const rowDiv = document.createElement("div");
+      rowDiv.className = "diamond-row";
+      row.forEach(val => {
+        const cell = document.createElement("span");
+        cell.className = "diamond-value";
+        cell.innerText = val.toString();
+        rowDiv.appendChild(cell);
+      });
+      container.appendChild(rowDiv);
+    });
   }
 
-  syncSliderAndTextbox(rSlider, rValue, syncEverything,10);
-  dimsInput.addEventListener("input", syncEverything);
+  syncSliderAndTextbox(rSlider, rValue, updateDiamondFlag, 10);
+  dimsInput.addEventListener("input", updateDiamondFlag);
 
-  syncEverything();
-
-  document.getElementById("flag-container").updateCalculator = syncEverything;
+  updateDiamondFlag();
+  document.getElementById("flag-container").updateCalculator = updateDiamondFlag;
 });
