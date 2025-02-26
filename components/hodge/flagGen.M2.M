@@ -1,4 +1,4 @@
-needsPackage "Schubert2";
+
 
 -- Function to compute Hodge numbers for a complete intersection of r hypersurfaces in Fl(dims) with len(dims) = 3
 needsPackage "Schubert2";
@@ -52,6 +52,6 @@ exportDatabaseJSON = (db, filename) -> (
 );
 
 -- Test case: using nBound = 4 and rBound = 2.
-db = computeFlagHodgeNumbers(3,5, 2);
+db = computeFlagHodgeNumbers(6,6, 3);
 exportDatabaseJSON(db, "flag_hodge_numbers.txt");
 

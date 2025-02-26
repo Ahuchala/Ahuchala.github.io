@@ -4,7 +4,6 @@ let flagHodgeData = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // Load the JSON data with the polynomials for partial flags
     const response = await fetch("/components/hodge/flag_hodge_numbers_factored.json");
     flagHodgeData = await response.json();
   } catch (err) {
@@ -12,6 +11,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const dimsInput = document.getElementById("dims-input");
+  dimsInput.value = "1,1,1"; // Default example changed to [1,1,1]
+
   const rSlider = document.getElementById("r-slider-flag");
   const rValue = document.getElementById("r-value-flag");
   const degreeTogglesContainer = document.getElementById("degree-toggles-flag");
@@ -40,7 +41,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Create or remove the rows for each hypersurface’s multi-degree input.
   function updateDegreeTogglesFlag(r) {
     while (degreeTogglesContainer.children.length > r) {
       degreeTogglesContainer.removeChild(degreeTogglesContainer.lastChild);
@@ -121,6 +121,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     return val.toString();
   }
 
+  function buildFullRowFromHalf(halfVals, neededLength) {
+    const arr = [...halfVals];
+    const isOdd = (neededLength % 2 === 1);
+    if (isOdd) {
+      const mirrorPart = arr.slice(0, arr.length - 1).reverse();
+      return arr.concat(mirrorPart);
+    } else {
+      const mirrorPart = arr.slice().reverse();
+      return arr.concat(mirrorPart);
+    }
+  }
+
   function updateDiamondFlag() {
     // 1) Parse dims
     const dimsRaw = dimsInput.value.trim();
@@ -130,38 +142,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     const r = parseInt(rValue.value, 10) || 0;
     updateDegreeTogglesFlag(r);
 
-    // If r=0 => just show partial flag’s Hodge diamond
+    // Build a short phrase about dims
+    const dimsPhrase = `Fl(${dims.join(",")})`;
+
     if (r === 0) {
       const diamond = hodgeFlag(dims);
-      renderDiamond(diamond,
-        `Hodge diamond for partial flag [${dims}] (r=0)`,
+      // Title: "Hodge diamond for Fl(...)"
+      renderDiamond(
+        diamond,
+        `Hodge diamond for ${dimsPhrase}`,
         diamondContainer
       );
       return;
     }
 
-    // If r>0:
+    // If r=1 => "Hodge diamond for a hypersurface of multidegree ... in Fl(...)"
+    // If r>1 => "Hodge diamond for a complete intersection of r hypersurfaces of multidegree ... in Fl(...)"
+
     if (dims.length === 2) {
-      // Actually a Grassmannian -> show an error or direct user to the Grassmannian tab
-      diamondContainer.innerHTML = `<p class="error">For len(dims)=2, use the Grassmannian calculator. Not implemented here.</p>`;
+      diamondContainer.innerHTML = `<p class="error">For len(dims)=2, use the Grassmannian calculator.</p>`;
       return;
     }
-
     if (dims.length > 3) {
-      // Not supported
       diamondContainer.innerHTML = `<p class="error">Hodge numbers for len(dims) > 3 not yet supported.</p>`;
       return;
     }
-
     if (dims.length !== 3) {
-      diamondContainer.innerHTML = `<p class="error">Invalid dims. len(dims) should be 3 or less for partial flags. Got [${dims}].</p>`;
+      diamondContainer.innerHTML = `<p class="error">Invalid dims. Expecting length 3 or less. Got [${dims}].</p>`;
       return;
     }
 
-    // Now we do len(dims)=3. We'll parse each hypersurface's (d_i,e_i).
+    // parse the (d_i,e_i)
     const rowDivs = Array.from(degreeTogglesContainer.children);
     if (rowDivs.length !== r) {
-      diamondContainer.innerHTML = `<p class="error">Mismatch in # of multi-degree rows vs. r. Try again.</p>`;
+      diamondContainer.innerHTML = `<p class="error">Mismatch: # of multi-degree rows != r.</p>`;
       return;
     }
     let dVals = [];
@@ -174,25 +188,37 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       const arr = input.value.split(",").map(x => parseInt(x.trim())).filter(x => !isNaN(x));
       if (arr.length !== 2) {
-        diamondContainer.innerHTML = `<p class="error">Each hypersurface must have 2 integers: (d_i,e_i). Found: ${input.value}.</p>`;
+        diamondContainer.innerHTML = `<p class="error">Each hypersurface needs 2 integers: (d_i,e_i). Found: ${input.value}.</p>`;
         return;
       }
       dVals.push(arr[0]);
       eVals.push(arr[1]);
     }
 
-    // Build the JSON key "[dims],r"
+    // Summarize the "multidegree" in a string
+    // e.g. if r=1 => "(d1,e1)", if r>1 => "((d1,e1),(d2,e2))" or something
+    let multiDegStr = "";
+    if (r === 1) {
+      multiDegStr = `(${dVals[0]},${eVals[0]})`;
+    } else {
+      const pairs = [];
+      for (let i = 0; i < r; i++) {
+        pairs.push(`(${dVals[i]},${eVals[i]})`);
+      }
+      multiDegStr = pairs.join(", ");
+    }
+
+    // Build the JSON key
     const key = `[${dims.join(", ")}],${r}`;
     if (!flagHodgeData || !(key in flagHodgeData)) {
-      diamondContainer.innerHTML = `<p class="error">No data in flag_hodge_numbers_factored.json for "${key}".</p>`;
+      diamondContainer.innerHTML = `<p class="error">No data in JSON for key="${key}".</p>`;
       return;
     }
     const hodgePolys = flagHodgeData[key];
-    // These polynomials represent the first half (or partial) of the middle row => must mirror them.
 
-    // Compute dimension of the partial flag: 
+    // Dimension
     let dimF = 0;
-    const n = dims.reduce((a,b) => a+b,0);
+    const n = dims.reduce((a,b)=>a+b,0);
     let mprev = 0;
     for (let i=0; i<dims.length; i++){
       const mi = mprev + dims[i];
@@ -206,55 +232,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     const totalRows = 2*dimensionCI + 1;
 
-    // Evaluate each polynomial in hodgePolys => yields an array of half-row values
-    let halfValues = hodgePolys.map(polyStr => evaluateFlagPolynomial(polyStr, dVals, eVals));
-    // Mirror them to build the entire middle row
-    // For a dimensionCI = d, middle row has d+1 elements. 
-    // The JSON typically stores the first ⌊(d+1)/2⌋ or something. We'll assume halfValues = that half. 
-    // We must reconstruct the entire row. Let's do a typical approach: 
+    // Evaluate polynomials
+    const halfValues = hodgePolys.map(polyStr => evaluateFlagPolynomial(polyStr, dVals, eVals));
     const middleRowLength = dimensionCI + 1;
-    // If middleRowLength is even => the "middle" row is symmetrical around the center. 
-    // If middleRowLength is odd => same idea. We'll do the typical "grassmannian" style approach:
-    // e.g. if dimensionCI=4 => row has 5 elements => halfValues could be the 3 left elements? Then we mirror the first 2. 
-    // We'll define a helper:
-    function buildFullRowFromHalf(halfVals, neededLength) {
-      // Suppose neededLength = 5, halfVals = [H0, H1, H2]. Then we do middleRow = [H0, H1, H2, H1, H0].
-      // If neededLength=4, halfVals = [A,B], => row=[A,B,B,A].
-      const arr = [...halfVals];
-      // If neededLength is odd => the last element in halfVals is the real "center." We'll mirror everything except that last one
-      // If neededLength is even => there's no single center element => mirror everything. 
-      const isOdd = (neededLength % 2===1);
-      if (isOdd) {
-        // skip the last element in arr (the middle), mirror the rest
-        const mirrorPart = arr.slice(0, arr.length-1).reverse();
-        return arr.concat(mirrorPart);
-      } else {
-        // if even => we mirror everything
-        const mirrorPart = arr.slice().reverse();
-        return arr.concat(mirrorPart);
-      }
-    }
+    const fullMiddleRowValues = buildFullRowFromHalf(halfValues, middleRowLength);
 
-    let fullMiddleRowValues = buildFullRowFromHalf(halfValues, middleRowLength);
-
-    // Build base diamond for "flag" alone (r=0)
+    // Build base diamond (r=0)
     const baseDiamond = hodgeFlag(dims);
-    // That has 2*dimF+1 rows. We'll splice in the middle row (#dimF) with the computed row. 
-    // Then we produce final diamond with 2*dimensionCI+1 rows. 
+
+    // Merge them
     const finalDiamond = [];
     for (let i=0; i< totalRows; i++){
-      const rowSize = (i<=dimensionCI)? (i+1) : (2*dimensionCI-i+1);
+      const rowSize = (i<=dimensionCI)? (i+1) : (2*dimensionCI - i +1);
       const rowArr = [];
       for (let j=0; j<rowSize; j++){
         if (i < dimensionCI){
-          // use baseDiamond if it exists. i < dimF => we can copy baseDiamond[i][j], else 0.
           if (i< dimF) {
             rowArr.push(baseDiamond[i]?.[j] || 0);
           } else {
             rowArr.push(0);
           }
-        } else if (i===dimensionCI){
-          // middle row => sum baseDiamond[dimF][j] with fullMiddleRowValues[j]
+        } else if (i === dimensionCI){
           let baseVal = 0n;
           if (dimF < baseDiamond.length) {
             baseVal = BigInt(baseDiamond[dimF]?.[j] || 0);
@@ -263,11 +261,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (fullMiddleRowValues[j]) {
             addedVal = BigInt(fullMiddleRowValues[j]);
           }
-          rowArr.push( (baseVal + addedVal).toString() );
+          rowArr.push((baseVal + addedVal).toString());
         } else {
-          // i>dimensionCI => mirror row => mirrorI=2*dimensionCI - i
           const mirrorI = 2*dimensionCI - i;
-          if (mirrorI<dimF) {
+          if (mirrorI < dimF) {
             rowArr.push(baseDiamond[mirrorI]?.[j] || 0);
           } else {
             rowArr.push(0);
@@ -277,11 +274,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       finalDiamond.push(rowArr);
     }
 
-    renderDiamond(
-      finalDiamond,
-      `Hodge diamond for a complete intersection in Fl(${dims}) with r=${r} hypersurfaces`,
-      diamondContainer
-    );
+    // Title:
+    let desc = "";
+    if (r === 1) {
+      desc = `Hodge diamond for a hypersurface of multidegree ${multiDegStr} in ${dimsPhrase}`;
+    } else {
+      desc = `Hodge diamond for a complete intersection of ${r} hypersurfaces of multidegree ${multiDegStr} in ${dimsPhrase}`;
+    }
+
+    renderDiamond(finalDiamond, desc, diamondContainer);
   }
 
   function renderDiamond(diamond2D, title, container) {
@@ -300,15 +301,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Sync slider <-> number input
   syncSliderAndTextbox(rSlider, rValue, updateDiamondFlag, 10);
-
-  // Listen for changes in dims
   dimsInput.addEventListener("input", updateDiamondFlag);
 
-  // On page load
   updateDiamondFlag();
-
-  // Make it available for the general toggle logic in scripts.js
   document.getElementById("flag-container").updateCalculator = updateDiamondFlag;
 });
