@@ -23,7 +23,7 @@ computeFlagHodgeNumbers = (nLowBound, nHighBound, rBound) -> (
         P = partitions(n);
         for p in P do (
             dims = toList p;
-            if (#dims > 2) then (
+            if (#dims > 2) and (#dims < 4)then (
                 for r from 1 to rBound do (
                     key = "(" | toString(dims) | ", " | toString(r) | ")";
                     hodge = flagHodgeNumbers(dims, r);
@@ -52,6 +52,6 @@ exportDatabaseJSON = (db, filename) -> (
 );
 
 -- Test case: using nBound = 4 and rBound = 2.
-db = computeFlagHodgeNumbers(3,4, 2);
+db = computeFlagHodgeNumbers(3,5, 2);
 exportDatabaseJSON(db, "flag_hodge_numbers.txt");
 
