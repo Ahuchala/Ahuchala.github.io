@@ -4,10 +4,9 @@
 needsPackage "Schubert2";
 flagHodgeNumbers = (dims, r) -> (
     G = flagBundle(dims, base join(d_1..d_r,e_1..e_r));
-    Q = G.QuotientBundles;
-    L1 = det(Q#1);
-    L2 = det(Q#2);
-    X = sectionZeroLocus sum for i from 1 to r list (L1 tensor d_i) * (L2 tensor e_i);
+    (L1,L2,L3) = bundles(G);
+
+    X = sectionZeroLocus sum for i from 1 to r list (dual(L1) tensor d_i) * (L3 tensor e_i);
     OmG = cotangentBundle G;
     OmX = cotangentBundle X;
     hodgeNumbers = for i from 0 to floor(dim(X)/2) list (
@@ -52,6 +51,6 @@ exportDatabaseJSON = (db, filename) -> (
 );
 
 -- Test case: using nBound = 4 and rBound = 2.
-db = computeFlagHodgeNumbers(6,6, 3);
+db = computeFlagHodgeNumbers(5,5, 2);
 exportDatabaseJSON(db, "flag_hodge_numbers.txt");
 
