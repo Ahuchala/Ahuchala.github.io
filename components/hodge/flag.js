@@ -1,146 +1,290 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const dimsInput = document.getElementById("dims-input");
-    const rSlider = document.getElementById("r-slider-flag");
-    const rValue = document.getElementById("r-value-flag");
-    const degreeToggles = document.getElementById("degree-toggles-flag");
-    const diamondContainer = document.getElementById("diamond-container-flag");
-    const flagDescription = document.getElementById("flag-description");
-  
-    // Sync a slider and its corresponding number input.
-    function syncSliderAndTextbox(slider, textbox, onChange, maxValue = 50) {
-      slider.addEventListener("input", () => {
-        textbox.value = slider.value;
-        onChange();
-      });
-      slider.addEventListener("change", () => {
-        textbox.value = slider.value;
-        onChange();
-      });
-      textbox.addEventListener("input", () => {
-        const value = Math.max(0, Math.min(parseInt(textbox.value) || 0, maxValue));
-        textbox.value = value;
-        slider.value = value;
-        onChange();
-      });
-      textbox.addEventListener("blur", () => {
-        if (textbox.value === "") {
-          textbox.value = slider.value;
-        }
-      });
-    }
-  
-    // Update the degree toggles based on the number of hypersurfaces (r).
-    function updateDegreeTogglesFlag(r) {
-      const currentCount = degreeToggles.children.length;
-      if (r > currentCount) {
-        for (let i = currentCount; i < r; i++) {
-          const container = document.createElement("div");
-          container.className = "degree-toggle";
-          const label = document.createElement("label");
-          label.innerText = `Degree of Hypersurface ${i + 1}:`;
-          const input = document.createElement("input");
-          input.type = "number";
-          input.min = "1";
-          input.max = "50";
-          input.value = "2";
-          input.className = "hodge-input";
-          input.addEventListener("input", updateDiamondFlag);
-          container.appendChild(label);
-          container.appendChild(input);
-          degreeToggles.appendChild(container);
-        }
-      } else if (r < currentCount) {
-        for (let i = currentCount - 1; i >= r; i--) {
-          degreeToggles.removeChild(degreeToggles.children[i]);
-        }
-      }
-    }
-  
-    // Update the flag variety diamond and its title.
-    function updateDiamondFlag() {
-      // Parse the list of dimensions from the textbox (e.g. "1,1,1,1")
-      const dimsRaw = dimsInput.value.trim();
-      const dimsArray = dimsRaw.split(",").map(s => parseInt(s.trim())).filter(n => !isNaN(n));
-  
-      // Compute dim F = ∑₍i<j₎ dᵢ*dⱼ.
-      let dimF = 0;
-      for (let i = 0; i < dimsArray.length; i++) {
-        for (let j = i + 1; j < dimsArray.length; j++) {
-          dimF += dimsArray[i] * dimsArray[j];
-        }
-      }
-  
-      // Parse the number of hypersurfaces r.
-      const r = parseInt(rValue.value, 10) || 0;
-      updateDegreeTogglesFlag(r);
-  
-      // Gather the degree values.
-      let degrees = [];
-      Array.from(degreeToggles.children).forEach(container => {
-        const input = container.querySelector("input");
-        if (input) degrees.push(parseInt(input.value));
-      });
-  
-      // Update the description title.
-      const multidegreeStr = degrees.length > 0 ? "(" + degrees.join(", ") + ")" : "";
-      const dimsStr = dimsArray.length > 0 ? "[" + dimsArray.join(", ") + "]" : "";
-      flagDescription.innerHTML = `Hodge diamond of a complete intersection of multidegree ${multidegreeStr} for partial flag of dimensions ${dimsStr}`;
-  
-      // Compute the number of rows: 2*(dimF - r) + 1.
-      let d = dimF - r;
-      if (d < 0) d = 0;
-      let rows = 2 * d + 1;
-      if (rows < 1) rows = 1;
-  
-      // Build a symmetric diamond of zeros.
-      diamondContainer.innerHTML = "";
-      for (let i = 0; i < rows; i++) {
-        const rowDiv = document.createElement("div");
-        rowDiv.className = "diamond-row";
-        // For 0 ≤ i ≤ d, use i+1 entries; for i > d, use rows - i entries.
-        let numCells = (i <= d) ? i + 1 : rows - i;
-        for (let j = 0; j < numCells; j++) {
-          const cell = document.createElement("span");
-          cell.className = "diamond-value";
-          cell.innerText = "0";
-          rowDiv.appendChild(cell);
-        }
-        diamondContainer.appendChild(rowDiv);
-      }
-    }
-  
-    // Set up syncing for the hypersurface slider and number input.
-    syncSliderAndTextbox(rSlider, rValue, updateDiamondFlag, 10);
-    dimsInput.addEventListener("input", updateDiamondFlag);
-  
-    // Initial update.
-    updateDiamondFlag();
-  
-    // Register the update function with the container for generic toggle logic.
-    document.getElementById("flag-container").updateCalculator = updateDiamondFlag;
-  });
-  
-  import { hodgeFlag } from "/components/hodge/flagHodge.js";
+import { hodgeFlag } from "/components/hodge/flagHodge.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  // DOM element selectors.
   const dimsInput = document.getElementById("dims-input");
+  const rSlider = document.getElementById("r-slider-flag");
+  const rValue = document.getElementById("r-value-flag");
+  const degreeToggles = document.getElementById("degree-toggles-flag");
   const diamondContainer = document.getElementById("diamond-container-flag");
   const flagDescription = document.getElementById("flag-description");
 
+  // Set default values.
+  dimsInput.value = "1,1,1";
+  rValue.value = "2";
+  rSlider.value = "2";
+
+  // Load the precomputed Hodge numbers JSON for complete intersections.
+  let flagHodgeData = {};
+  try {
+    const response = await fetch("/components/hodge/flag_hodge_numbers_factored.json");
+    flagHodgeData = await response.json();
+  } catch (error) {
+    console.error("Error loading flag_hodge_numbers_factored.json:", error);
+  }
+
+  // Utility: synchronize a slider with its textbox.
+  function syncSliderAndTextbox(slider, textbox, onChange, maxValue = 50) {
+    slider.addEventListener("input", () => {
+      textbox.value = slider.value;
+      onChange();
+    });
+    slider.addEventListener("change", () => {
+      textbox.value = slider.value;
+      onChange();
+    });
+    textbox.addEventListener("input", () => {
+      const value = Math.max(0, Math.min(parseInt(textbox.value) || 0, maxValue));
+      textbox.value = value;
+      slider.value = value;
+      onChange();
+    });
+    textbox.addEventListener("blur", () => {
+      if (textbox.value === "") {
+        textbox.value = slider.value;
+      }
+    });
+  }
+
+  // Update the degree toggles.
+  // Each hypersurface gets a text input expecting (dims.length - 1) comma-separated numbers.
+  function updateDegreeTogglesFlag(r, numComponents) {
+    const currentCount = degreeToggles.children.length;
+    if (r > currentCount) {
+      for (let i = currentCount; i < r; i++) {
+        const container = document.createElement("div");
+        container.className = "degree-toggle";
+        const label = document.createElement("label");
+        label.innerText = `Multidegree of Hypersurface ${i + 1} (enter ${numComponents} numbers, comma separated):`;
+        const input = document.createElement("input");
+        input.type = "text";
+        // Default to "1, 1" (for dims = 1,1,1, since numComponents = dims.length - 1 = 2)
+        input.value = Array(numComponents).fill("1").join(", ");
+        input.className = "hodge-input";
+        input.addEventListener("input", updateDiamondFlag);
+        container.appendChild(label);
+        container.appendChild(input);
+        degreeToggles.appendChild(container);
+      }
+    } else if (r < currentCount) {
+      for (let i = currentCount - 1; i >= r; i--) {
+        degreeToggles.removeChild(degreeToggles.children[i]);
+      }
+    }
+  }
+
+  // --- BigInt-based polynomial evaluation ---
+  // Recursively evaluate the AST generated by math.parse.
+  function evalASTBigInt(node, scope) {
+    if (node.isConstantNode) {
+      return BigInt(node.value);
+    } else if (node.isSymbolNode) {
+      if (scope[node.name] !== undefined) {
+        return scope[node.name];
+      } else {
+        throw new Error("Undefined symbol: " + node.name);
+      }
+    } else if (node.isOperatorNode) {
+      const op = node.op;
+      if (node.args.length === 1) {
+        // Handle unary operators.
+        const argVal = evalASTBigInt(node.args[0], scope);
+        if (op === "-") {
+          return -argVal;
+        } else if (op === "+") {
+          return argVal;
+        } else {
+          throw new Error("Unsupported unary operator: " + op);
+        }
+      } else if (node.args.length === 2) {
+        const left = evalASTBigInt(node.args[0], scope);
+        const right = evalASTBigInt(node.args[1], scope);
+        switch (op) {
+          case '+': return left + right;
+          case '-': return left - right;
+          case '*': return left * right;
+          case '/': return left / right;
+          case '^': {
+            const exponent = Number(right);
+            return left ** BigInt(exponent);
+          }
+          default:
+            throw new Error("Unsupported operator: " + op);
+        }
+      } else {
+        throw new Error("Operator with unexpected number of arguments: " + node.args.length);
+      }
+    } else if (node.isParenthesisNode) {
+      return evalASTBigInt(node.content, scope);
+    } else {
+      throw new Error("Unsupported node type: " + node.type);
+    }
+  }
+
+  // Evaluate a polynomial string.
+  // For a hypersurface in a flag with dims.length==3, each hypersurface contributes 2 numbers.
+  // flatDegrees should thus have length = 2*r.
+  function evaluatePolynomial(polynomial, flatDegrees) {
+    const fracRegex = /^\s*\(([-+]?\d+)\/(\d+)\)\s*\*\s*/;
+    const match = polynomial.match(fracRegex);
+    let constantNumerator = 1n;
+    let constantDenom = 1n;
+    let remainingStr = polynomial;
+    if (match) {
+      constantNumerator = BigInt(match[1]);
+      constantDenom = BigInt(match[2]);
+      remainingStr = polynomial.slice(match[0].length);
+    }
+    const ast = math.parse(remainingStr);
+    let scope = {};
+    // For each hypersurface, assign the first entry to d_i and the second to e_i.
+    for (let i = 0; i < flatDegrees.length; i += 2) {
+      scope[`d_${(i/2) + 1}`] = BigInt(flatDegrees[i]);
+      scope[`e_${(i/2) + 1}`] = BigInt(flatDegrees[i+1]);
+    }
+    const prodValue = evalASTBigInt(ast, scope);
+    const finalValue = (prodValue * constantNumerator) / constantDenom;
+    return finalValue < 0n ? (-finalValue).toString() : finalValue.toString();
+  }
+  // --- End polynomial evaluation ---
+
+  // Construct a symmetric full row from the given half–row.
+  // expectedLength is the length of the final symmetric row.
+  // If expectedLength is odd, we take the first ceil(n/2) entries and then mirror the first floor(n/2).
+  // If even, we take the first (n/2) entries and mirror them.
+  function constructMiddleRow(expectedLength, halfRow) {
+    const isOdd = expectedLength % 2 === 1;
+    const L = isOdd ? Math.floor(expectedLength / 2) + 1 : expectedLength / 2;
+    const truncated = halfRow.slice(0, L);
+    const fullRow = truncated.slice();
+    if (isOdd) {
+      for (let i = L - 2; i >= 0; i--) {
+        fullRow.push(truncated[i]);
+      }
+    } else {
+      for (let i = L - 1; i >= 0; i--) {
+        fullRow.push(truncated[i]);
+      }
+    }
+    return fullRow;
+  }
+
+  // Main update function.
   function updateDiamondFlag() {
-    // Parse the list of dimensions from the textbox (expected as "1,1,1,1", etc.)
+    // Parse dims input (e.g. "1,1,1").
     const dimsRaw = dimsInput.value.trim();
     const dims = dimsRaw.split(",").map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+    if (dims.length < 2) {
+      flagDescription.innerText = "Please enter at least two dimensions.";
+      diamondContainer.innerHTML = "";
+      return;
+    }
 
-    // For now, assume r = 0 and compute the flag Hodge diamond.
-    const diamond = hodgeFlag(dims);
+    // Compute the dimension of the flag variety: dimF = sum_{i<j} dims[i] * dims[j].
+    let dimF = 0;
+    for (let i = 0; i < dims.length; i++) {
+      for (let j = i + 1; j < dims.length; j++) {
+        dimF += dims[i] * dims[j];
+      }
+    }
 
-    // Update the description title.
-    flagDescription.innerHTML = `Hodge diamond for partial flag of dimensions [${dims.join(", ")}]`;
+    // Parse the number r of hypersurfaces.
+    const r = parseInt(rValue.value, 10) || 0;
+    const numComponents = dims.length - 1; // Each hypersurface must have this many numbers.
+    updateDegreeTogglesFlag(r, numComponents);
+
+    // Update the description.
+    let multidegreeDesc = "";
+    if (r > 0) {
+      let degreesDesc = [];
+      Array.from(degreeToggles.children).forEach((container) => {
+        const input = container.querySelector("input");
+        if (input) {
+          degreesDesc.push("[" + input.value + "]");
+        }
+      });
+      multidegreeDesc = `complete intersection of hypersurfaces with multidegrees ${degreesDesc.join(", ")}`;
+    } else {
+      multidegreeDesc = "flag variety (no hypersurfaces)";
+    }
+    flagDescription.innerHTML = `Hodge diamond of a ${multidegreeDesc} for partial flag of dimensions [${dims.join(", ")}]`;
+
+    // For complete intersections, Lefschetz tells us the interesting dimension is d = dimF – r.
+    let d = dimF - r;
+    if (d < 0) d = 0;
+    const rows = 2 * d + 1;
+
+    // Get the ambient flag diamond computed by hodgeFlag.
+    const baseDiamond = hodgeFlag(dims);
+    // Use the first (d+1) rows (to later mirror the top half).
+    const truncatedBase = baseDiamond.slice(0, d + 1);
+
+    let finalDiamond = [];
+
+    if (r > 0) {
+      // Build the key using dims (with spaces as in the JSON) and r.
+      const key = "[" + dims.join(", ") + "]," + r;
+      if (!(key in flagHodgeData)) {
+        diamondContainer.innerHTML = `<p class="error">Error: No precomputed Hodge data for key "${key}" found.</p>`;
+        return;
+      }
+      const polyArray = flagHodgeData[key];
+      // Gather hypersurface multidegree values.
+      let flatDegrees = [];
+      let valid = true;
+      Array.from(degreeToggles.children).forEach((container) => {
+        const input = container.querySelector("input");
+        if (input) {
+          const parts = input.value.split(",").map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+          if (parts.length !== numComponents) {
+            valid = false;
+          } else {
+            flatDegrees.push(...parts);
+          }
+        }
+      });
+      if (!valid) {
+        diamondContainer.innerHTML = `<p class="error">Error: Each hypersurface multidegree must have exactly ${numComponents} numbers.</p>`;
+        return;
+      }
+      // Evaluate each polynomial to get the half–row for the primitive middle row.
+      let halfMiddleRow = polyArray.map(poly => {
+        try {
+          return BigInt(evaluatePolynomial(poly, flatDegrees));
+        } catch (e) {
+          console.error("Error evaluating polynomial:", poly, e);
+          return 0n;
+        }
+      });
+      // Construct a symmetric primitive middle row.
+      // Note: the ambient middle row has length d+1.
+      let primitiveMiddleRow = constructMiddleRow(d + 1, halfMiddleRow);
+      // Get the base middle row (from the ambient flag diamond) at index d.
+      let baseMiddleRow = truncatedBase[d].map(val => BigInt(val));
+      // Add the two parts entrywise.
+      let combinedMiddle = baseMiddleRow.map((val, idx) => val + (primitiveMiddleRow[idx] || 0n));
+
+      // Build the final diamond: use the truncated base rows for rows < d,
+      // the combined middle row for row d, and mirror the lower half.
+      for (let i = 0; i < rows; i++) {
+        let rowValues;
+        if (i < d) {
+          rowValues = truncatedBase[i];
+        } else if (i === d) {
+          rowValues = combinedMiddle.map(x => x.toString());
+        } else {
+          rowValues = truncatedBase[rows - i - 1];
+        }
+        finalDiamond.push(rowValues);
+      }
+    } else {
+      // If r is 0, simply use the ambient flag diamond.
+      finalDiamond = baseDiamond;
+    }
 
     // Render the diamond.
     diamondContainer.innerHTML = "";
-    diamond.forEach(row => {
+    finalDiamond.forEach(row => {
       const rowDiv = document.createElement("div");
       rowDiv.className = "diamond-row";
       row.forEach(val => {
@@ -153,11 +297,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Set up syncing for the r slider and its textbox.
+  syncSliderAndTextbox(rSlider, rValue, updateDiamondFlag, 10);
   dimsInput.addEventListener("input", updateDiamondFlag);
 
   // Initial update.
   updateDiamondFlag();
 
-  // Register the update function with the container (if using generic toggle logic).
+  // Register update function with the flag container (if needed elsewhere).
   document.getElementById("flag-container").updateCalculator = updateDiamondFlag;
 });
