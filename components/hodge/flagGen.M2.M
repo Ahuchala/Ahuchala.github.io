@@ -51,6 +51,6 @@ exportDatabaseJSON = (db, filename) -> (
 );
 
 -- Test case: using nBound = 4 and rBound = 2.
-db = computeFlagHodgeNumbers(3,4, 2);
+db = computeFlagHodgeNumbers(3,5, 3);
 exportDatabaseJSON(db, "flag_hodge_numbers.txt");
 
