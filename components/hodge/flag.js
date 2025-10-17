@@ -247,6 +247,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         diamondContainer.innerHTML = `<p class="error">Error: Each hypersurface multidegree must have exactly ${numComponents} numbers.</p>`;
         return;
       }
+      // Check ampleness: For each hypersurface of bidegree (a, b), require 2a > b.
+      for (let i = 0; i < flatDegrees.length; i += 2) {
+        const a = flatDegrees[i];
+        const b = flatDegrees[i + 1];
+        if (2 * a <= b) {
+          diamondContainer.innerHTML = `<p class="error">Hypersurface ${i/2+1} with bidegree (${a}, ${b}) is not ample (requires 2a > b).</p>`;
+          return;
+        }
+      }
       // Evaluate each polynomial to get the half–row for the primitive middle row.
       let halfMiddleRow = polyArray.map(poly => {
         try {
