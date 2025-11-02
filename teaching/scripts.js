@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const timelineData = [
+        { term: "Fall 2025", role: "Instructor", course: "Math 251: Calculus I" },
+        { term: "Spring 2025", role: "Grader", course: "Math 636: Algebraic Topology" },
         { term: "Winter 2025", role: "Instructor", course: "Math 251: Calculus I" },
         { term: "Fall 2024", role: "Instructor", course: "Math 251: Calculus I" },
         { term: "Spring 2024", role: "Grader", course: "Math 458: Cryptography and Math 607: Applied Mathematics" },
