@@ -56,7 +56,44 @@
                 My work focuses on computing Hasse-Weil zeta functions of smooth hypersurfaces and complete intersections in Grassmannians using $p$-adic cohomology.
             </p>
             <p>
-                My code for these computations is available on <a href="https://github.com/Ahuchala/ZetaFunctions" target="_blank">GitHub</a>.
+                A preprint of my paper with Fern Gossow on bounded core partitions and the Borel-Weil-Bott theorem is available <a href="https://arxiv.org/pdf/2510.17239">here</a>. An implementation of some results is under construction on my website.
+            </p>
+            <p>
+                I'm currently working on a paper with Arya Yae to construct an explicit Griffiths residue map for smooth hypersurfaces in Grassmannians.
+            </p>
+
+            
+                <div class="section">
+                    <h2>Zeta Functions</h2>
+                    We recall the definition of the Hasse-Weil zeta function of a projective variety $X$ over $\mathbb F_q$ :
+$$\zeta_{X}(t) := \exp\left(\sum_{m\geq 1}\#X\left(\mathbb F_{q^m}\right)\dfrac{t^m}{m}\right)$$
+
+Consider the zeta function of a complete intersection of a cubic and a quadric over $\mathbb P^3$. <a href="/hodge">The Hodge diamond calculator on my website</a> uses the adjunction formula and Riemann-Roch theorem to calculate that this is a nonhyperelliptic curve of genus 4. As an example, let $$\mathcal Z = \textbf{Proj}\left( \mathbb F_{17}[x,y,z,w]\,/\,(x^3 + y^3 + z^3 +w^3- xyz ,\,\,x^2 + 2y^2 + 3z^2 + 4w^2)\right)$$
+I wrote a novel <a href="https://github.com/Ahuchala/ZetaFunctions/blob/main/complete_intersection_zeta.sage">zeta function calculator for smooth complete intersections over $\mathbb F_p$</a> extending the <a href="https://arxiv.org/pdf/1806.00368">$p$-adic algorithm of Kedlaya et al </a> for smooth hypersurfaces. The zeta function of $\mathcal Z$ is (see also figure below)
+$$\zeta_\mathcal Z(t) = \dfrac{1-4t+3t^2 - 11t^3 + 120t^4 - 187t^5 + 867t^6 - 19652t^7 + 83521t^8}{(1-t)(1-17t)}
+$$
+This can be verified via the Weil conjectures and a point counting algorithm because $p=17$ is relatively small, but $p$-adic algorithms continue to work for larger primes for which point counts become infeasible. I am interested in extending this work to complete intersections in Grassmannians.
+                  <section class="gallery">
+                    <!-- Thumbnail will be dynamically loaded here (by /research/scripts.js) -->
+                  </section>
+                </div>
+
+                
+            
+              <!-- Modal -->
+              <div id="image-modal" class="modal">
+                <div class="modal-content">
+                  <span class="close">&times;</span> <!-- Close button inside modal-content -->
+                  <img id="modal-image" src="" alt="">
+                  <div class="modal-text">
+                    <h2 id="modal-title"></h2>
+                    <p id="modal-description"></p>
+                  </div>
+                </div>
+              </div>
+
+            <p>
+                My code for zeta function computations is available on <a href="https://github.com/Ahuchala/ZetaFunctions" target="_blank">GitHub</a>.
             </p>
         </section>
 
@@ -64,157 +101,8 @@
         <section class="section">
             <h2>Hodge Diamond Calculator</h2>
             <p>
-                This applet computes the Hodge diamond of a few classes of interesting varieties over $\mathbb C$, such as smooth complete intersections in projective space and Grassmannians, as well as abelian varieties.
+                <a href="/hodge">This applet</a> computes the Hodge diamond of a few classes of interesting varieties over $\mathbb C$, such as smooth complete intersections in projective space and Grassmannians, as well as abelian varieties.
             </p>
-            <!-- Toggle Menu -->
-            <div id="toggle-menu">
-                <button id="toggle-complete-intersection" class="toggle-button pressed">Complete Intersections in $\mathbb P^n$</button>
-                <button id="toggle-abelian-variety" class="toggle-button">Abelian Varieties</button>
-                <button id="toggle-grassmannian" class="toggle-button">Complete Intersections in $\text{Gr}(k,n)$</button>
-                <button id="toggle-flag" class="toggle-button">Flag Varieties</button>
-            </div>
-        
-            <!-- Calculator Containers -->
-            <div id="complete-intersection-container" class="calculator-container">
-                <section class="section">
-                    <h2>Preset Examples</h2>
-                    <div id="preset-buttons">
-                        <button class="preset-button" data-n="2" data-k="1" data-degrees="3">
-                            Elliptic Curve (Cubic in $\mathbb{P}^2$)
-                        </button>
-                        <button class="preset-button" data-n="3" data-k="2" data-degrees="2,2">
-                            Elliptic Curve (Two Quadrics in $\mathbb{P}^3$)
-                        </button>
-                        <button class="preset-button" data-n="3" data-k="1" data-degrees="4">
-                            K3 Surface (Quartic in $\mathbb{P}^3$)
-                        </button>
-                        <button class="preset-button" data-n="4" data-k="2" data-degrees="3,2">
-                            K3 Surface (Cubic and Quadric in $\mathbb{P}^4$)
-                        </button>
-                        <button class="preset-button" data-n="5" data-k="3" data-degrees="2,2,2">
-                            K3 Surface (Three Quadrics in $\mathbb{P}^5$)
-                        </button>
-                        <button class="preset-button" data-n="5" data-k="1" data-degrees="3">
-                            Cubic Fourfold (Cubic in $\mathbb{P}^5$)
-                        </button>
-                    </div>
-                </section>
-                <div id="hodge-container">
-                    <div id="inputs">
-                        <h3>Complete Intersection Calculator</h3>
-                        <div class="input-row">
-                          <label for="n-slider">Dimension of Projective Space (\(n\)):</label>
-                          <input type="range" id="n-slider" min="1" max="10" value="4">
-                          <input type="number" id="n-value" min="1" max="50" value="4" class="hodge-input">
-                        </div>
-                        <div class="input-row">
-                          <label for="k-slider">Number of Hypersurfaces (\(k\)):</label>
-                          <input type="range" id="k-slider" min="0" max="10" value="2">
-                          <input type="number" id="k-value" min="0" value="2" class="hodge-input">
-                        </div>
-                        <div class="input-row">
-                          <div id="degree-toggles"></div>
-                        </div>
-                      </div>
-                    <div id="diamond-box">
-                        <div class="hodge-diamond-description"></div>
-                        <div id="diamond-container">
-                            <p class="placeholder">The Hodge diamond will be displayed here.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        
-            <div id="abelian-variety-container" class="calculator-container" style="display: none;">
-                <section class="section">
-                    <h2>Preset Examples</h2>
-                    <div id="preset-buttons-abelian">
-                        <button class="preset-button" data-g="1">
-                            Elliptic Curve (\( g = 1 \))
-                        </button>
-                        <button class="preset-button" data-g="2">
-                            Abelian Surface ($g=2$)
-                        </button>
-                    </div>
-                </section>
-                <div id="hodge-container">
-                    <div id="inputs">
-                        <h3>Abelian Variety Calculator</h3>
-                        <div class="input-row">
-                            <label for="g-slider">Genus ($g$):</label>
-                            <input type="range" id="g-slider" min="1" max="10" value="2">
-                            <input type="number" id="g-value" min="1" max="50" value="2" class="hodge-input">
-                        </div>
-                    </div>
-                    <div id="diamond-box">
-                        <div class="hodge-diamond-description"></div>
-                        <div id="diamond-container-abelian">
-                            <p class="placeholder">The Hodge diamond will be displayed here.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="grassmannian-container" class="calculator-container" style="display: none;">
-                <div id="hodge-container">
-                    <div id="inputs">
-                        <h3>Grassmannian Calculator</h3>
-                        <div class="input-row">
-                            <label for="n-slider-grassmannian">Dimension of Ambient Space (\(n\)):</label>
-                            <input type="range" id="n-slider-grassmannian" min="1" max="10" value="4">
-                            <input type="number" id="n-value-grassmannian" min="1" max="50" value="4" class="hodge-input">
-                        </div>
-                        <div class="input-row">
-                            <label for="k-slider-grassmannian">Dimension of Subspace (\(k\)):</label>
-                            <input type="range" id="k-slider-grassmannian" min="1" max="10" value="2">
-                            <input type="number" id="k-value-grassmannian" min="1" max="50" value="2" class="hodge-input">
-                        </div>
-                        <div class="input-row">
-                            <label for="r-slider-grassmannian">Number of Hypersurfaces (\(r\)):</label>
-                            <input type="range" id="r-slider-grassmannian" min="0" max="10" value="2">
-                            <input type="number" id="r-value-grassmannian" min="0" max="50" value="2" class="hodge-input">
-                        </div>
-                        <div class="input-row">
-                            <div id="degree-toggles-grassmannian"></div>
-                        </div>
-                    </div>
-                    <div id="diamond-box">
-                        <div class="hodge-diamond-description"></div>
-                        <div id="diamond-container-grassmannian">
-                            <p class="placeholder">The Hodge diamond will be displayed here.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Flag Calculator Container -->
-            <div id="flag-container" class="calculator-container" style="display: none;">
-                <div id="hodge-container">
-                  <div id="inputs">
-                    <h3 id="flag-title">Flag Variety Calculator</h3>
-                    <div class="input-row">
-                      <label for="dims-input">List of Dimensions (e.g. 1,1,1,1):</label>
-                      <input type="text" id="dims-input" value="1,1,1,1" class="hodge-input">
-                    </div>
-                    <div class="input-row">
-                      <label for="r-slider-flag">Number of Hypersurfaces (r):</label>
-                      <input type="range" id="r-slider-flag" min="0" max="10" value="1">
-                      <input type="number" id="r-value-flag" min="0" value="1" class="hodge-input">
-                    </div>
-                    <div class="input-row">
-                      <div id="degree-toggles-flag"></div>
-                    </div>
-                  </div>
-                  <div id="diamond-box">
-                    <div class="hodge-diamond-description" id="flag-description"></div>
-                    <div id="diamond-container-flag">
-                      <p class="placeholder">The Hodge diamond will be displayed here.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-  
         </section>
 
         <!-- Past Work -->

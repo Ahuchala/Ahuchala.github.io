@@ -19,7 +19,7 @@ export function header() {
           <ul class="navbar-items">
             <li><a href="/index.html">Home</a></li>
             <li><a href="/gallery">Gallery</a></li>
-            <li><a href="/hodgediamond">Hodge Diamond Calculator</a></li>
+            <li><a href="/hodge">Hodge Diamond Calculator</a></li>
             <li><a href="/research">Research</a></li>
             <li><a href="/teaching">Teaching</a></li>
             <li><a href="/oeis">OEIS</a></li>

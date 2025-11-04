@@ -2,6 +2,17 @@
 
 export const images = [
     {
+      thumbnail: '/images/thumbnails/zetafunction.webp',
+      full: '/images/gallery/zetafunction.png',
+      alt: 'Zeta Function',
+      title: 'Zeta Function',
+      description: /* html */`
+        <p>Complex plot of the Hasse-Weil zeta function of a complete intersection of a cubic and a quadric over $\\mathbb F_{17}$. I wrote the code for the complex arithmetic used to render this on 
+        <a href="https://cruzgodar.com/applets/complex-maps/?glsl-textarea=cdiv%28ONE-4.0*cpow%28z%252C1.0%29%252B3.0*cpow%28z%252C2.0%29%2520-%252011.0*cpow%28z%252C3.0%29%2520%252B%2520120.0*cpow%28z%252C4.0%29%2520-%2520187.0*cpow%28z%252C5.0%29%2520%252B%2520867.0*cpow%28z%252C6.0%29%2520-%252019652.0*cpow%28z%252C7.0%29%2520%252B%252083521.0*cpow%28z%252C8.0%29%252Ccmul%28ONE-z%252CONE-17.0*z%29%29%252F1.0">Cruz Godar's website.</a>
+        </p>
+      `
+    },
+    {
       thumbnail: '/images/thumbnails/tile.webp',
       full: '/images/gallery/tile.PNG',
       alt: 'Tile Pattern',
