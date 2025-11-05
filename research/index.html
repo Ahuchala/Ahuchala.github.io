@@ -73,7 +73,7 @@ $$\zeta_{X}(t) := \exp\left(\sum_{m\geq 1}\#X\left(\mathbb F_{q^m}\right)\dfrac{
 
 Consider the zeta function of a complete intersection of a cubic and a quadric over $\mathbb P^3$. <a href="/hodge">The Hodge diamond calculator on my website</a> uses the adjunction formula and Riemann-Roch theorem to calculate that this is a nonhyperelliptic curve of genus 4. As an example, let $$\mathcal Z = \textbf{Proj}\left( \mathbb F_{17}[x,y,z,w]\,/\,(x^3 + y^3 + z^3 +w^3- xyz ,\,\,x^2 + 2y^2 + 3z^2 + 4w^2)\right)$$
 I wrote a novel <a href="https://github.com/Ahuchala/ZetaFunctions/blob/main/complete_intersection_zeta.sage">zeta function calculator for smooth complete intersections over $\mathbb F_p$</a> extending the <a href="https://arxiv.org/pdf/1806.00368">$p$-adic algorithm of Kedlaya et al </a> for smooth hypersurfaces. The zeta function of $\mathcal Z$ is (see also figure below)
-$$\zeta_\mathcal Z(t) = \dfrac{1-4t+3t^2 - 11t^3 + 120t^4 - 187t^5 + 867t^6 - 19652t^7 + 83521t^8}{(1-t)(1-17t)}
+$$\zeta_\mathcal Z(t) = \dfrac{1-4t+3t^2 + 74t^3 - 458t^4 + 1258t^5 + 867t^6 - 19652t^7 + 83521t^8}{(1-t)(1-17t)}
 $$
 This can be verified via the Weil conjectures and a point counting algorithm because $p=17$ is relatively small, but $p$-adic algorithms continue to work for larger primes for which point counts become infeasible. I am interested in extending this work to complete intersections in Grassmannians.
                   <section class="gallery">
