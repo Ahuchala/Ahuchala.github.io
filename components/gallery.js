@@ -7,8 +7,29 @@ export const images = [
       alt: 'Zeta Function',
       title: 'Zeta Function',
       description: /* html */`
-        <p>Complex plot of the Hasse-Weil zeta function of a complete intersection of a cubic and a quadric over $\\mathbb F_{17}$. I wrote the code for the complex arithmetic used to render this on 
+        <p>Complex plot of the Hasse-Weil zeta function of a complete intersection of a cubic and a quadric over $\\mathbb F_{17}$. The zeta function of a variety over $\\mathbb F_p$ is related to the generating function of its point counts over $\\mathbb F_{p^n}$ <a href="/research">(more details are on my research page).</a> I think it would be interesting to build an applet to visualize more zeta functions.
+        </p>
+
+        <p>I wrote the code for the complex arithmetic used to render this on 
         <a href="https://cruzgodar.com/applets/complex-maps/?glsl-textarea=cdiv%28ONE-4.0*cpow%28z%252C1.0%29%252B3.0*cpow%28z%252C2.0%29%2520-%252011.0*cpow%28z%252C3.0%29%2520%252B%2520120.0*cpow%28z%252C4.0%29%2520-%2520187.0*cpow%28z%252C5.0%29%2520%252B%2520867.0*cpow%28z%252C6.0%29%2520-%252019652.0*cpow%28z%252C7.0%29%2520%252B%252083521.0*cpow%28z%252C8.0%29%252Ccmul%28ONE-z%252CONE-17.0*z%29%29%252F1.0">Cruz Godar's website.</a>
+        </p>
+      `
+    },
+    {
+      thumbnail: '/images/thumbnails/museum_small.webp',
+      full: '/images/gallery/museum_small.PNG',
+      alt: 'Museum 9k',
+      title: 'Museum Submission',
+      description: /* html */`
+        <p> 
+          Imagine trying to balance an incredibly tall pile of sand on top of just a single grain. Naturally, it will try to topple over. Remove four grains of sand from the pile, and add one grain to the north, south, east, and west of the pile. Keep repeating this process to the first pile of sand you started with, and to all of the other piles created from toppling, until all of the sand is no more than 3 grains high. You've got yourself an abelian sandpile! (It's called abelian because the order you topple the grains doesn't matter.)
+        </p>
+        <p>
+          Self-similar patterns are evident when you color the sandpile by height. Here, blue was for no grains, bright red for one grain, black for two, and dark red for three. Sandpiles retain their shape as you add more grains&mdash;this one has $2^{30}$ grains! This took about a month to render using CUDA on an Nvidia GTX 1070.
+        </p>
+        <p>
+          Sandpiles may be defined on arbitrary graphs if you're careful about specifying which nodes are sinks&mdash;this example is for the rectangular grid graph, plus a sink vertex for the boundary. The set of all sandpiles form a commutative monoid under pointwise addition (followed by toppling), and taking its Grothendieck group produces an abelian group called the sandpile group. I originally became interested in sandpiles because of the matrix tree theorem, which says that the number of spanning trees of a graph is equal to the size of its sandpile group. 
+          
         </p>
       `
     },
@@ -19,33 +40,8 @@ export const images = [
       title: 'Tile Pattern',
       description: /* html */`
         <p>A tiled image where each box was an abelian sandpile constrained 
-        to a smaller box than normal (with no sink).
+        to a smaller box than normal (with no sink). See the image titled "Museum Submission" for more details on sandpiles.
         </p>
-      `
-    },
-    {
-      thumbnail: '/images/thumbnails/museum_small.webp',
-      full: '/images/gallery/museum_small.PNG',
-      alt: 'Museum 9k',
-      title: 'Museum Submission',
-      description: /* html */`
-        <p>A $9,000 \\times 9,000$ abelian sandpile with millions of grains. This, along with a zoomed 
-        in version, was originally submitted to the Jordan Schnitzer Museum of Art in 2020 and was 
-        <a href="https://mpembed.com/show/?m=FGvT8EzPQpy&mpu=885">displayed in their virtual gallery</a> 
-        until the museum was able to resume in-person operation in 2021. Also currently on display in gate A 
-        of the Eugene airport. It was also 
-        <a href="https://www.girlsangle.org/page/bulletin-archive/GABv15n01E.pdf">
-        published in Girls' Angle magazine</a>, a magazine aimed to increase engagement of girls in math.</p>
-        
-        <p><em>Original Caption: This piece attempts to capture the spirit of the infinite and print it on a 
-        single page. It uses what's called an Abelian Sandpile model, which is a fractal that colors "grains 
-        of sand" by their slope. A fractal is a kind of mathematical picture with a repeated motif no matter 
-        how far in or out you zoom. The Abelian Sandpile model achieves this by stacking a large number of 
-        grains of sand in the center of a grid, and then "topples" it onto the adjacent 4 tiles. The taller 
-        the pile of sand at the start, the more times you can topple, and the closer to the illusion of infinity 
-        you get. Adding color depicting the different heights of sand helps us visualize the resulting fractal 
-        structure.
-        </em></p>
       `
     },
     {
@@ -57,7 +53,7 @@ export const images = [
         <p>When toppling a billion (actually $2^{30}$) grains of sand, the center of an abelian sandpile 
         revealed an interesting mandala-like pattern at high zoom and resolution. This image was 
         <a href="https://mpembed.com/show/?m=FGvT8EzPQpy&mpu=885">also displayed in the JSMA virtual gallery</a> 
-        and <a href="https://www.girlsangle.org/page/bulletin-archive/GABv15n01E.pdf">appeared in Girls' Angle magazine</a>.
+        and <a href="https://www.girlsangle.org/page/bulletin-archive/GABv15n01E.pdf">appeared in Girls' Angle magazine</a>. See the image titled "Museum Submission" for more details on sandpiles.
         </p>
       `
     },
@@ -68,7 +64,7 @@ export const images = [
       title: 'Cross Pattern',
       description: /* html */`
         <p>A sandpile with little room to topple (and no sink). A tiled version of a similar image appears
-        later in the gallery.</p>
+        later in the gallery. See the image titled "Museum Submission" for more details on sandpiles.</p>
       `
     },
     {
@@ -79,7 +75,7 @@ export const images = [
       description: /* html */`
         <p>An abelian sandpile implementation that accidentally had a race condition. I terminated the 
         program early when I realized it was bugged, and it made this unique pattern. The multiple bands 
-        are from coloring the tile height mod 4.</p>
+        are from coloring the tile height mod 4. See the image titled "Museum Submission" for more details on sandpiles.</p>
       `
     },
     {
@@ -102,7 +98,7 @@ export const images = [
       alt: 'Julia',
       title: 'Julia Set',
       description: /* html */`
-        <p>A sandpile run through GNU Image Manipulation Program (GIMP)'s Julia filter.</p>
+        <p>A sandpile run through GNU Image Manipulation Program (GIMP)'s Julia filter. See the image titled "Museum Submission" for more details on sandpiles.</p>
       `
     },
     {
@@ -124,7 +120,7 @@ export const images = [
       alt: 'Husky',
       title: 'Husky Pattern',
       description: /* html */`
-        <p>A sandpile a little too big for its bounding box.</p>
+        <p>A sandpile a little too big for its bounding box. See the image titled "Museum Submission" for more details on sandpiles.</p>
       `
     },
     {
@@ -153,7 +149,7 @@ export const images = [
       description: /* html */`
         <p> Another race condition in an abelian sandpile implementation, causing an asymmetry in toppling. 
         It terminated early and produced this cracked-screen-like image. The bands of color are from coloring 
-        pile height mod 4 (some piles remained taller than 4).</p>
+        pile height mod 4 (some piles remained taller than 4). See the image titled "Museum Submission" for more details on sandpiles.</p>
       `
     },
     {
@@ -162,7 +158,7 @@ export const images = [
       alt: 'Julia 3',
       title: 'Julia Variant',
       description: /* html */`
-        <p>Another sandpile run through GIMP's Julia filter.</p>
+        <p>Another sandpile run through GIMP's Julia filter. See the image titled "Museum Submission" for more details on sandpiles.</p>
       `
     },
     {
@@ -171,7 +167,7 @@ export const images = [
       alt: 'Tile Pattern 2',
       title: 'Tile Pattern II',
       description: /* html */`
-        <p>Tiling a sandpile similar to the cross pattern.</p>
+        <p>Tiling a sandpile similar to the cross pattern. See the image titled "Museum Submission" for more details on sandpiles.</p>
       `
     },
     {
@@ -190,7 +186,7 @@ export const images = [
       alt: 'Sand 3k',
       title: 'Sand 3k',
       description: /* html */`
-        <p>A $3,000 \\times 3,000$ sandpile that was also a little bit too big for its bounding box.</p>
+        <p>A $3,000 \\times 3,000$ sandpile that was also a little bit too big for its bounding box. See the image titled "Museum Submission" for more details on sandpiles.</p>
       `
     },
     {
