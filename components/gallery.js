@@ -17,7 +17,7 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/museum_small.webp',
-      full: '/images/gallery/museum_small.PNG',
+      full: '/images/gallery/museum_small.png8',
       alt: 'Museum 9k',
       title: 'Museum Submission',
       description: /* html */`
