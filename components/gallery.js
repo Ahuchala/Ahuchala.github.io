@@ -46,7 +46,7 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/billion_center.webp',
-      full: '/images/gallery/billion_center.png',
+      full: '/images/gallery/billion_center.png8',
       alt: 'Billion Center',
       title: 'Billion Center',
       description: /* html */`
@@ -143,7 +143,7 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/cracked.webp',
-      full: '/images/gallery/cracked.PNG',
+      full: '/images/gallery/cracked.png8',
       alt: 'Cracked',
       title: 'Cracked Glass',
       description: /* html */`
@@ -182,7 +182,7 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/sand23_3k.webp',
-      full: '/images/gallery/sand23_3k.png',
+      full: '/images/gallery/sand23_3k.png8',
       alt: 'Sand 3k',
       title: 'Sand 3k',
       description: /* html */`
