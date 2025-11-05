@@ -22,7 +22,7 @@ export function initModal() {
         modalImage.alt = title;
         modalTitle.innerHTML = title;
         modalDescription.innerHTML = description;
-  
+        
         if (window.MathJax) {
           MathJax.typesetPromise([modalDescription]);
         }
@@ -112,5 +112,3 @@ export function initModal() {
       localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
     });
   }
-  
-  
