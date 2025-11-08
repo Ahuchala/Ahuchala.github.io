@@ -10,28 +10,63 @@ document.addEventListener("DOMContentLoaded", async () => {
   const diamondContainerTwisted = document.getElementById("diamond-container-twisted");
 
   const syncSliderAndTextbox = (slider, textbox, onChange) => {
-    slider.addEventListener("input", () => {
+  let syncing = false; // prevent feedback loops
+
+  // When the SLIDER moves, force the textbox to exactly the slider value.
+  slider.addEventListener("input", () => {
+    if (syncing) return;
+    syncing = true;
+    const v = Number(slider.value);
+    textbox.value = String(v);
+    onChange();
+    syncing = false;
+  });
+
+  // Optionally keep this if you care about slider's "change" (mouseup) too:
+  slider.addEventListener("change", () => {
+    if (syncing) return;
+    syncing = true;
+    const v = Number(slider.value);
+    textbox.value = String(v);
+    onChange();
+    syncing = false;
+  });
+
+  // When the TEXTBOX changes, don't force weird fallbacks.
+  // If it's a valid number, clamp ONLY to the textbox's own min/max,
+  // and move the slider ONLY if within the slider's range.
+  textbox.addEventListener("input", () => {
+    if (syncing) return;
+    const parsed = Number(textbox.value);
+    if (!Number.isFinite(parsed)) return; // don't coerce to min/max on partial input
+
+    const tbMin = Number(textbox.min);
+    const tbMax = Number(textbox.max);
+    const clampedTb = Math.max(tbMin, Math.min(parsed, tbMax));
+
+    const slMin = Number(slider.min);
+    const slMax = Number(slider.max);
+
+    syncing = true;
+    textbox.value = String(clampedTb);
+
+    // Only move the slider if inside its range; otherwise leave it at its end.
+    if (clampedTb >= slMin && clampedTb <= slMax) {
+      slider.value = String(clampedTb);
+    }
+    onChange();
+    syncing = false;
+  });
+
+  textbox.addEventListener("blur", () => {
+    if (textbox.value === "") {
+      // On blur, snap empty to current slider (no jumps)
       textbox.value = slider.value;
-      onChange();
-    });
-    slider.addEventListener("change", () => {
-      textbox.value = slider.value;
-      onChange();
-    });
-    textbox.addEventListener("input", () => {
-      const textMin = parseInt(textbox.min);
-      const textMax = parseInt(textbox.max);
-      const sliderMin = parseInt(slider.min);
-      const sliderMax = parseInt(slider.max);
-      const value = Math.max(textMin, Math.min(parseInt(textbox.value) || textMin, textMax));
-      textbox.value = value;
-      slider.value = Math.max(sliderMin, Math.min(value, sliderMax));
-      onChange();
-    });
-    textbox.addEventListener("blur", () => {
-      if (textbox.value === "") textbox.value = slider.value;
-    });
-  };
+    }
+  });
+};
+
+
 
   const updateDiamondTwisted = () => {
     const n = parseInt(nValueTwisted.value);

@@ -116,20 +116,30 @@ function transposePartition(lambda) {
 // =======================================================
 export function hodgeTwisted(k, n, t) {
   const nMinusK = n - k;
+  const N = k * (n - k);
+
+  // --- Serre duality: for t<0, map via (i,j) -> (N-i, N-j) using the +|t| case
+  if (t < 0) {
+    const pos = hodgeTwisted(k, n, -t); // compute at positive twist
+    return (pos || []).map(({ i, j, lambda, beta, dimension }) => ({
+      i: N - i,
+      j: N - j,
+      lambda: lambda || [],
+      beta: beta || [],
+      dimension,
+    }));
+  }
 
   // --- t = 0 shortcut via q-binomial coefficients (all mass on i=j)
   if (t === 0) {
     const coeffs = qBinomialCoeffs(n, k); // coeffs[j] = # of partitions of size j in k×(n−k)
-    const N = k * (n - k);
     const out = [];
     for (let j = 0; j <= N; j++) {
       const c = coeffs[j] | 0;
       if (c !== 0) {
-        // console.log(`t=0  →  h^{${j},${j}} += ${c}`);
         out.push({ i: j, j, lambda: [], beta: [], dimension: c });
       }
     }
-    // console.log(`t=0: produced ${out.length} diagonal entries via q-binomial.`);
     return out;
   }
 
@@ -180,13 +190,8 @@ export function hodgeTwisted(k, n, t) {
     const muSize = mu.reduce((a, b) => a + b, 0);
     const i = j - muSize; // t-interior size
 
-    // console.log(
-    //   `λ=(${lambda.join(",") || "∅"})  i=${i}  j=${j}  β=[${beta.join(", ")}]  dim=${dimension}`
-    // );
-
     results.push({ i, j, lambda, beta, dimension });
   }
 
-  // console.log(`Found ${results.length} valid t-cores for (k=${k}, n=${n}, t=${t}).`);
   return results;
 }
