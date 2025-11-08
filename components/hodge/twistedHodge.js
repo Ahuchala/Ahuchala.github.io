@@ -27,7 +27,7 @@ function schurDimension(beta) {
     }
   }
 
-  // pairwise gcd cancellations
+  // gcd cancellations
   for (let i = 0; i < num.length; i++) {
     for (let j = 0; j < den.length; j++) {
       const g = gcd(num[i], den[j]);
@@ -40,41 +40,36 @@ function schurDimension(beta) {
 
   const numProd = num.reduce((p, x) => p * x, 1);
   const denProd = den.reduce((p, x) => p * x, 1);
-  return numProd / denProd; // exact integer
+  return numProd / denProd;
 }
 
-// --- q-binomial (Gaussian binomial) coefficients: [q^d] C(n,k)_q for 0<=d<=N
+// --- q-binomial (Gaussian binomial) coefficients
 function qBinomialCoeffs(n, k) {
   const N = k * (n - k);
   let poly = new Array(N + 1).fill(0);
   poly[0] = 1;
 
-  // C(n,k)_q = Π_{i=1..k} (1 - q^{n-k+i}) / (1 - q^i)
   for (let i = 1; i <= k; i++) {
-    const a = (n - k + i);
-
-    // multiply by (1 - q^a)
+    const a = n - k + i;
     const poly2 = new Array(N + 1).fill(0);
     for (let d = 0; d <= N; d++) {
       poly2[d] += poly[d];
       if (d + a <= N) poly2[d + a] -= poly[d];
     }
 
-    // divide by (1 - q^i) via series 1 + q^i + q^{2i} + ...
     const next = new Array(N + 1).fill(0);
     for (let d = 0; d <= N; d++) {
       let s = 0;
       for (let x = d; x >= 0; x -= i) s += poly2[x];
       next[d] = s;
     }
-
     poly = next;
   }
 
-  return poly; // coeffs[d] = [q^d] C(n,k)_q
+  return poly;
 }
 
-// --- t-skew: correct inverse μ ↦ λ (t-core)
+// --- t-skew: μ ↦ λ (t-core)
 function tSkew(mu, t) {
   const m = [...mu];
   const n = m.length;
@@ -87,9 +82,9 @@ function tSkew(mu, t) {
   return l;
 }
 
-// --- generate all (t−1)-bounded partitions in (t−1)×k
+// --- bounded partitions in (t−1)×maxLen
 function* boundedPartitions(maxPart, maxLen) {
-  yield []; // include empty partition
+  yield [];
   function* rec(maxVal, len, prefix) {
     if (len >= maxLen) return;
     for (let next = Math.min(maxVal, maxPart); next > 0; next--) {
@@ -112,33 +107,31 @@ function transposePartition(lambda) {
 }
 
 // =======================================================
-// Main export: enumerates valid t-core λ inside k×(n−k)
+// Main export
 // =======================================================
 export function hodgeTwisted(k, n, t) {
   const nMinusK = n - k;
   const N = k * (n - k);
 
-  // --- Serre duality: for t<0, map via (i,j) -> (N-i, N-j) using the +|t| case
+  // --- Serre duality for t<0
   if (t < 0) {
-    const pos = hodgeTwisted(k, n, -t); // compute at positive twist
+    const pos = hodgeTwisted(k, n, -t);
     return (pos || []).map(({ i, j, lambda, beta, dimension }) => ({
       i: N - i,
       j: N - j,
-      lambda: lambda || [],
-      beta: beta || [],
+      lambda,
+      beta,
       dimension,
     }));
   }
 
-  // --- t = 0 shortcut via q-binomial coefficients (all mass on i=j)
+  // --- t = 0: q-binomial shortcut
   if (t === 0) {
-    const coeffs = qBinomialCoeffs(n, k); // coeffs[j] = # of partitions of size j in k×(n−k)
+    const coeffs = qBinomialCoeffs(n, k);
     const out = [];
     for (let j = 0; j <= N; j++) {
       const c = coeffs[j] | 0;
-      if (c !== 0) {
-        out.push({ i: j, j, lambda: [], beta: [], dimension: c });
-      }
+      if (c !== 0) out.push({ i: j, j, lambda: [], beta: [], dimension: c });
     }
     return out;
   }
@@ -146,49 +139,48 @@ export function hodgeTwisted(k, n, t) {
   const results = [];
   const seen = new Set();
 
-  // μ inside (t−1)×k
+  // --- μ inside (t−1)×(n−k)
   for (const mu of boundedPartitions(t - 1, k)) {
     const lambda = tSkew(mu, t);
 
-    // must fit in box k×(n−k): λ has ≤ k rows; each part ≤ n−k
+    // must fit in box k×(n−k)
     if (lambda.length > k || Math.max(0, ...lambda) > nMinusK) continue;
 
     const key = lambda.join(",");
     if (seen.has(key)) continue;
     seen.add(key);
 
-    // α = (−rev(λᵀ), λ−t)
+    // --- α = (−rev(λᵀ), λ−t)
     const lamT = transposePartition(lambda);
 
-    // left = −rev(λᵀ) padded to length k  (columns)
-    const left = Array(k).fill(0);
+    // left = −rev(λᵀ) padded to length n−k
+    const left = Array(nMinusK).fill(0);
     const revLamT = [...lamT].reverse();
-    for (let i = 0; i < Math.min(revLamT.length, k); i++) {
-      left[k - revLamT.length + i] = -revLamT[i];
+    for (let i = 0; i < Math.min(revLamT.length, nMinusK); i++) {
+      left[nMinusK - revLamT.length + i] = -revLamT[i];
     }
 
-    // right = (λ − t) padded to length n−k  (rows)
-    const right = [...lambda, ...Array(Math.max(0, nMinusK - lambda.length)).fill(0)].map(x => x - t);
+    // right = (λ − t) padded to length k
+    const right = [...lambda, ...Array(Math.max(0, k - lambda.length)).fill(0)].map(x => x - t);
 
-    const alpha = [...left, ...right]; // total length n = k + (n−k)
+    const alpha = [...left, ...right]; // length = n
 
-    // check distinctness of α+(n,…,1)
+    // --- distinctness of α+(n,…,1)
     const shift = Array.from({ length: n }, (_, i) => n - i);
     const shifted = alpha.map((x, i) => x + shift[i]);
     const distinct = new Set(shifted);
     if (distinct.size !== shifted.length) continue;
 
-    // β = sort(α + ρ) − ρ, with ρ = (n−1,…,0)
+    // --- β = sort(α + ρ) − ρ
     const rho = Array.from({ length: n }, (_, i) => n - i - 1);
     const alphaPlusRho = alpha.map((x, i) => x + rho[i]);
     const sorted = [...alphaPlusRho].sort((a, b) => b - a);
     const beta = sorted.map((x, i) => x - rho[i]);
 
     const dimension = schurDimension(beta);
-
     const j = lambda.reduce((a, b) => a + b, 0);
     const muSize = mu.reduce((a, b) => a + b, 0);
-    const i = j - muSize; // t-interior size
+    const i = j - muSize;
 
     results.push({ i, j, lambda, beta, dimension });
   }
