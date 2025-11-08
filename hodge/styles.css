@@ -184,3 +184,9 @@
     margin-left: 100px;
     margin-right: 100px;
 }
+
+#diamond-container-twisted {
+    display: flex;
+    flex-direction: column-reverse; /* bottom row i+j=0 now appears at bottom */
+    align-items: center;
+}

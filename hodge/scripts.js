@@ -4,11 +4,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const toggleAbelianVariety = document.getElementById("toggle-abelian-variety");
     const toggleGrassmannian = document.getElementById("toggle-grassmannian");
     const toggleFlag = document.getElementById("toggle-flag");
+    const toggleTwisted = document.getElementById("toggle-twisted");
 
     const completeIntersectionContainer = document.getElementById("complete-intersection-container");
     const abelianVarietyContainer = document.getElementById("abelian-variety-container");
     const grassmannianContainer = document.getElementById("grassmannian-container");
     const flagContainer = document.getElementById("flag-container");
+    const twistedContainer = document.getElementById("twisted-container");
 
     const setActiveToggle = (active, ...inactives) => {
       active.classList.add("pressed");
@@ -20,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
       abelianVarietyContainer.style.display = "none";
       grassmannianContainer.style.display = "none";
       flagContainer.style.display = "none";
+      twistedContainer.style.display = "none";
       container.style.display = "block";
       // If the container has a registered update function, call it.
       if (typeof container.updateCalculator === "function") {
@@ -30,19 +33,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     toggleCompleteIntersection.addEventListener("click", () => {
       showContainer(completeIntersectionContainer);
-      setActiveToggle(toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian, toggleFlag);
+      setActiveToggle(toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian, toggleFlag,toggleTwisted);
     });
     toggleAbelianVariety.addEventListener("click", () => {
       showContainer(abelianVarietyContainer);
-      setActiveToggle(toggleAbelianVariety, toggleCompleteIntersection, toggleGrassmannian, toggleFlag);
+      setActiveToggle(toggleAbelianVariety, toggleCompleteIntersection, toggleGrassmannian, toggleFlag,toggleTwisted);
     });
     toggleGrassmannian.addEventListener("click", () => {
       showContainer(grassmannianContainer);
-      setActiveToggle(toggleGrassmannian, toggleCompleteIntersection, toggleAbelianVariety, toggleFlag);
+      setActiveToggle(toggleGrassmannian, toggleCompleteIntersection, toggleAbelianVariety, toggleFlag,toggleTwisted);
     });
     toggleFlag.addEventListener("click", () => {
       showContainer(flagContainer);
-      setActiveToggle(toggleFlag, toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian);
+      setActiveToggle(toggleFlag, toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian,toggleTwisted);
+    });
+    toggleTwisted.addEventListener("click", () => {
+      showContainer(twistedContainer);
+      setActiveToggle(toggleTwisted, toggleFlag, toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian);
     });
 
 
@@ -165,6 +172,21 @@ document.addEventListener("DOMContentLoaded", () => {
           descriptionText = `Hodge diamond for a complete intersection of multidegree ${multidegreeStr} in a partial flag of dimensions [${dims}]`;
         }
       }
+      // For Twisted Hodge Numbers:
+      else if (twistedContainer && twistedContainer.style.display !== "none") {
+        const nValueEl = document.getElementById("n-value-twisted");
+        const kValueEl = document.getElementById("k-value-twisted");
+        const tValueEl = document.getElementById("t-value-twisted");
+        if (!nValueEl || !kValueEl || !tValueEl) return;
+        const n = nValueEl.value;
+        const k = kValueEl.value;
+        const t = parseInt(tValueEl.value, 10);
+        if ( t === 0) {
+          descriptionText = `Hodge diamond for \\(\\text{Gr}(${k},${n})\\)`;
+        } else {
+          descriptionText = `Hodge diamond for \\(\\Omega_{\\text{Gr}(${k},${n})}\\otimes\\mathcal O_{\\text{Gr}(${k},${n})}(${t})\\)`;
+        }
+      }
       else {
         descriptionText = "";
       }
@@ -231,6 +253,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (gValueEl) gValueEl.addEventListener("input", updateHodgeDiamondDescription);
   
+
+    // For Twisted Hodge Numbers:
+    const nSliderT = document.getElementById("n-slider-twisted");
+    const nValueT = document.getElementById("n-value-twisted");
+    const kSliderT = document.getElementById("k-slider-twisted");
+    const kValueT = document.getElementById("k-value-twisted");
+    const tSliderT = document.getElementById("t-slider-twisted");
+    const tValueT = document.getElementById("t-value-twisted");
+    if (nSliderT) {
+      nSliderT.addEventListener("input", () => requestAnimationFrame(updateHodgeDiamondDescription));
+      nSliderT.addEventListener("change", () => requestAnimationFrame(updateHodgeDiamondDescription));
+    }
+    if (nValueT) nValueT.addEventListener("input", updateHodgeDiamondDescription);
+    if (kSliderT) {
+      kSliderT.addEventListener("input", () => requestAnimationFrame(updateHodgeDiamondDescription));
+      kSliderT.addEventListener("change", () => requestAnimationFrame(updateHodgeDiamondDescription));
+    }
+    if (kValueT) kValueT.addEventListener("input", updateHodgeDiamondDescription);
+    if (tSliderT) {
+      tSliderT.addEventListener("input", () => requestAnimationFrame(updateHodgeDiamondDescription));
+      tSliderT.addEventListener("change", () => requestAnimationFrame(updateHodgeDiamondDescription));
+    }
+    if (tValueT) tValueT.addEventListener("input", updateHodgeDiamondDescription);
+  
+
     const presetButtons = document.querySelectorAll(".preset-button");
     presetButtons.forEach(button => {
       button.addEventListener("click", () => {
