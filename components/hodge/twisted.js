@@ -44,8 +44,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  console.clear();
-  console.log(`=== Computing twisted Hodge data for (k=${k}, n=${n}, t=${t}) ===`);
+  // console.clear();
+  // console.log(`=== Computing twisted Hodge data for (k=${k}, n=${n}, t=${t}) ===`);
 
   // hodgeTwisted returns { i, j, lambda, beta, dimension }
   const results = hodgeTwisted(k, n, t);
@@ -83,8 +83,8 @@ for (const { i, j, dimension } of results || []) {
 }
 
 
-  console.log(`Displayed diamond (2N+1 = ${2 * N + 1} rows), left→right = h^{0,r}…h^{r,0}.`);
-  console.log("=== End computation ===");
+  // console.log(`Displayed diamond (2N+1 = ${2 * N + 1} rows), left→right = h^{0,r}…h^{r,0}.`);
+  // console.log("=== End computation ===");
 };
 
 

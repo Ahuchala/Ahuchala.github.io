@@ -126,13 +126,13 @@ export function hodgeTwisted(k, n, t) {
     const muSize = mu.reduce((a, b) => a + b, 0);
     const i = j - muSize; // t-interior size
 
-    console.log(
-      `λ=(${lambda.join(",") || "∅"})  i=${i}  j=${j}  β=[${beta.join(", ")}]  dim=${dimension}`
-    );
+    // console.log(
+    //   `λ=(${lambda.join(",") || "∅"})  i=${i}  j=${j}  β=[${beta.join(", ")}]  dim=${dimension}`
+    // );
 
     results.push({ i, j, lambda, beta, dimension });
   }
 
-  console.log(`Found ${results.length} valid t-cores for (k=${k}, n=${n}, t=${t}).`);
+//   console.log(`Found ${results.length} valid t-cores for (k=${k}, n=${n}, t=${t}).`);
   return results;
 }
