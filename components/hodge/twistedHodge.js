@@ -43,6 +43,37 @@ function schurDimension(beta) {
   return numProd / denProd; // exact integer
 }
 
+// --- q-binomial (Gaussian binomial) coefficients: [q^d] C(n,k)_q for 0<=d<=N
+function qBinomialCoeffs(n, k) {
+  const N = k * (n - k);
+  let poly = new Array(N + 1).fill(0);
+  poly[0] = 1;
+
+  // C(n,k)_q = Π_{i=1..k} (1 - q^{n-k+i}) / (1 - q^i)
+  for (let i = 1; i <= k; i++) {
+    const a = (n - k + i);
+
+    // multiply by (1 - q^a)
+    const poly2 = new Array(N + 1).fill(0);
+    for (let d = 0; d <= N; d++) {
+      poly2[d] += poly[d];
+      if (d + a <= N) poly2[d + a] -= poly[d];
+    }
+
+    // divide by (1 - q^i) via series 1 + q^i + q^{2i} + ...
+    const next = new Array(N + 1).fill(0);
+    for (let d = 0; d <= N; d++) {
+      let s = 0;
+      for (let x = d; x >= 0; x -= i) s += poly2[x];
+      next[d] = s;
+    }
+
+    poly = next;
+  }
+
+  return poly; // coeffs[d] = [q^d] C(n,k)_q
+}
+
 // --- t-skew: correct inverse μ ↦ λ (t-core)
 function tSkew(mu, t) {
   const m = [...mu];
@@ -56,7 +87,7 @@ function tSkew(mu, t) {
   return l;
 }
 
-// --- generate all (t−1)-bounded partitions in (t−1)×(n−k)
+// --- generate all (t−1)-bounded partitions in (t−1)×k
 function* boundedPartitions(maxPart, maxLen) {
   yield []; // include empty partition
   function* rec(maxVal, len, prefix) {
@@ -85,13 +116,31 @@ function transposePartition(lambda) {
 // =======================================================
 export function hodgeTwisted(k, n, t) {
   const nMinusK = n - k;
+
+  // --- t = 0 shortcut via q-binomial coefficients (all mass on i=j)
+  if (t === 0) {
+    const coeffs = qBinomialCoeffs(n, k); // coeffs[j] = # of partitions of size j in k×(n−k)
+    const N = k * (n - k);
+    const out = [];
+    for (let j = 0; j <= N; j++) {
+      const c = coeffs[j] | 0;
+      if (c !== 0) {
+        // console.log(`t=0  →  h^{${j},${j}} += ${c}`);
+        out.push({ i: j, j, lambda: [], beta: [], dimension: c });
+      }
+    }
+    // console.log(`t=0: produced ${out.length} diagonal entries via q-binomial.`);
+    return out;
+  }
+
   const results = [];
   const seen = new Set();
 
+  // μ inside (t−1)×k
   for (const mu of boundedPartitions(t - 1, k)) {
     const lambda = tSkew(mu, t);
 
-    // must fit in box k×(n−k)
+    // must fit in box k×(n−k): λ has ≤ k rows; each part ≤ n−k
     if (lambda.length > k || Math.max(0, ...lambda) > nMinusK) continue;
 
     const key = lambda.join(",");
@@ -100,13 +149,18 @@ export function hodgeTwisted(k, n, t) {
 
     // α = (−rev(λᵀ), λ−t)
     const lamT = transposePartition(lambda);
-    const left = Array(nMinusK).fill(0);
+
+    // left = −rev(λᵀ) padded to length k  (columns)
+    const left = Array(k).fill(0);
     const revLamT = [...lamT].reverse();
-    for (let i = 0; i < Math.min(revLamT.length, nMinusK); i++) {
-      left[nMinusK - revLamT.length + i] = -revLamT[i];
+    for (let i = 0; i < Math.min(revLamT.length, k); i++) {
+      left[k - revLamT.length + i] = -revLamT[i];
     }
-    const right = [...lambda, ...Array(Math.max(0, k - lambda.length)).fill(0)].map(x => x - t);
-    const alpha = [...left, ...right];
+
+    // right = (λ − t) padded to length n−k  (rows)
+    const right = [...lambda, ...Array(Math.max(0, nMinusK - lambda.length)).fill(0)].map(x => x - t);
+
+    const alpha = [...left, ...right]; // total length n = k + (n−k)
 
     // check distinctness of α+(n,…,1)
     const shift = Array.from({ length: n }, (_, i) => n - i);
@@ -114,8 +168,8 @@ export function hodgeTwisted(k, n, t) {
     const distinct = new Set(shifted);
     if (distinct.size !== shifted.length) continue;
 
-    // --- Correct β construction: sort(α+ρ) − ρ
-    const rho = Array.from({ length: n }, (_, i) => n - i - 1); // (n−1,…,0)
+    // β = sort(α + ρ) − ρ, with ρ = (n−1,…,0)
+    const rho = Array.from({ length: n }, (_, i) => n - i - 1);
     const alphaPlusRho = alpha.map((x, i) => x + rho[i]);
     const sorted = [...alphaPlusRho].sort((a, b) => b - a);
     const beta = sorted.map((x, i) => x - rho[i]);
@@ -133,6 +187,6 @@ export function hodgeTwisted(k, n, t) {
     results.push({ i, j, lambda, beta, dimension });
   }
 
-//   console.log(`Found ${results.length} valid t-cores for (k=${k}, n=${n}, t=${t}).`);
+  // console.log(`Found ${results.length} valid t-cores for (k=${k}, n=${n}, t=${t}).`);
   return results;
 }
