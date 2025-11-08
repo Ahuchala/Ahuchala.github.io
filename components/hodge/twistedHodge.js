@@ -88,7 +88,7 @@ export function hodgeTwisted(k, n, t) {
   const results = [];
   const seen = new Set();
 
-  for (const mu of boundedPartitions(t - 1, nMinusK)) {
+  for (const mu of boundedPartitions(t - 1, k)) {
     const lambda = tSkew(mu, t);
 
     // must fit in box k×(n−k)
