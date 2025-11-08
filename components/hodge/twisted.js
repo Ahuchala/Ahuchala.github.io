@@ -1,129 +1,153 @@
+// =======================================================
+// /components/hodge/twisted.js
+// =======================================================
+
 import { hodgeTwisted } from "/components/hodge/twistedHodge.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const nSliderTwisted = document.getElementById("n-slider-twisted");
   const kSliderTwisted = document.getElementById("k-slider-twisted");
   const tSliderTwisted = document.getElementById("t-slider-twisted");
-  const nValueTwisted = document.getElementById("n-value-twisted");
-  const kValueTwisted = document.getElementById("k-value-twisted");
-  const tValueTwisted = document.getElementById("t-value-twisted");
+  const nValueTwisted  = document.getElementById("n-value-twisted");
+  const kValueTwisted  = document.getElementById("k-value-twisted");
+  const tValueTwisted  = document.getElementById("t-value-twisted");
   const diamondContainerTwisted = document.getElementById("diamond-container-twisted");
 
-  const syncSliderAndTextbox = (slider, textbox, onChange) => {
-  let syncing = false; // prevent feedback loops
+  // ---- helpers
+  const toInt = v => {
+    const x = Number(v);
+    return Number.isFinite(x) ? Math.trunc(x) : NaN;
+  };
 
-  // When the SLIDER moves, force the textbox to exactly the slider value.
-  slider.addEventListener("input", () => {
-    if (syncing) return;
-    syncing = true;
-    const v = Number(slider.value);
-    textbox.value = String(v);
-    onChange();
-    syncing = false;
-  });
+  // Force reflow (used for Chrome/Safari slider redraw quirk)
+  const forceReflow = el => {
+    el.style.display = "none";
+    void el.offsetHeight;
+    el.style.display = "";
+  };
 
-  // Optionally keep this if you care about slider's "change" (mouseup) too:
-  slider.addEventListener("change", () => {
-    if (syncing) return;
-    syncing = true;
-    const v = Number(slider.value);
-    textbox.value = String(v);
-    onChange();
-    syncing = false;
-  });
+  // Keep k <= n at the DOM-attribute level (so native clamping works)
+  const syncKMaxToN = () => {
+    const n = toInt(nValueTwisted.value);
+    if (!Number.isFinite(n)) return;
 
-  // When the TEXTBOX changes, don't force weird fallbacks.
-  // If it's a valid number, clamp ONLY to the textbox's own min/max,
-  // and move the slider ONLY if within the slider's range.
-  textbox.addEventListener("input", () => {
-    if (syncing) return;
-    const parsed = Number(textbox.value);
-    if (!Number.isFinite(parsed)) return; // don't coerce to min/max on partial input
+    // Update max attributes
+    kSliderTwisted.max = String(n);
+    kValueTwisted.max  = String(n);
 
-    const tbMin = Number(textbox.min);
-    const tbMax = Number(textbox.max);
-    const clampedTb = Math.max(tbMin, Math.min(parsed, tbMax));
-
-    const slMin = Number(slider.min);
-    const slMax = Number(slider.max);
-
-    syncing = true;
-    textbox.value = String(clampedTb);
-
-    // Only move the slider if inside its range; otherwise leave it at its end.
-    if (clampedTb >= slMin && clampedTb <= slMax) {
-      slider.value = String(clampedTb);
+    // If current value exceeds new max, clamp and visually re-render
+    if (toInt(kSliderTwisted.value) > n) {
+      kSliderTwisted.value = String(n);
+      kValueTwisted.value  = String(n);
+      forceReflow(kSliderTwisted); // visually update slider range
     }
-    onChange();
-    syncing = false;
-  });
+  };
 
-  textbox.addEventListener("blur", () => {
-    if (textbox.value === "") {
-      // On blur, snap empty to current slider (no jumps)
-      textbox.value = slider.value;
-    }
-  });
-};
+  // Clamp k to [k.min, n] and ensure both inputs match
+  const clampKToN = () => {
+    const n = toInt(nValueTwisted.value);
+    if (!Number.isFinite(n)) return;
+    const kMin = toInt(kSliderTwisted.min) || 1;
+    let k = toInt(kValueTwisted.value);
+    if (!Number.isFinite(k)) k = kMin;
+    if (k > n) k = n;
+    if (k < kMin) k = kMin;
+    kSliderTwisted.value = String(k);
+    kValueTwisted.value  = String(k);
+  };
 
+  let syncing = false;
+  const syncPair = (slider, input, afterClamp = () => {}) => {
+    // Slider → Input
+    slider.addEventListener("input", () => {
+      if (syncing) return;
+      syncing = true;
+      const v = toInt(slider.value);
+      if (Number.isFinite(v)) input.value = String(v);
+      afterClamp();
+      updateDiamondTwisted();
+      syncing = false;
+    });
 
+    // Input → Slider
+    input.addEventListener("input", () => {
+      if (syncing) return;
+      const raw = toInt(input.value);
+      if (!Number.isFinite(raw)) return; // ignore incomplete typing
+      const sMin = toInt(slider.min);
+      const sMax = toInt(slider.max);
+      const clamped = Math.max(sMin, Math.min(raw, sMax));
+      syncing = true;
+      input.value  = String(clamped);
+      slider.value = String(clamped);
+      afterClamp();
+      updateDiamondTwisted();
+      syncing = false;
+    });
 
+    // Stabilize empty input on blur
+    input.addEventListener("blur", () => {
+      if (input.value === "") input.value = slider.value;
+    });
+  };
+
+  // ---- main compute + render
   const updateDiamondTwisted = () => {
-    const n = parseInt(nValueTwisted.value);
-    const k = parseInt(kValueTwisted.value);
-    const t = parseInt(tValueTwisted.value);
+    // Keep k in range before any math
+    syncKMaxToN();
+    clampKToN();
+
+    const n = toInt(nValueTwisted.value);
+    const k = toInt(kValueTwisted.value);
+    const t = toInt(tValueTwisted.value);
 
     const N = k * (n - k);
-    if (N < 0 || isNaN(n) || isNaN(k) || isNaN(t)) {
+    if (!Number.isFinite(n) || !Number.isFinite(k) || !Number.isFinite(t) || N < 0) {
       diamondContainerTwisted.innerHTML = `<p class="error">Error: Invalid parameters.</p>`;
       return;
     }
 
-    // hodgeTwisted returns { i, j, lambda, beta, dimension }
     const results = hodgeTwisted(k, n, t);
 
-    // h^{i,j} = sum of dimensions, stored as BigInt
+    // Aggregate h^{i,j} as BigInt
     const hij = Array.from({ length: N + 1 }, () => Array(N + 1).fill(0n));
-
-    for (const { i, j, dimension } of results || []) {
-      if (i >= 0 && j >= 0 && i <= N && j <= N) {
-        const dimBig = (typeof dimension === "bigint") ? dimension : BigInt(dimension);
-        hij[i][j] += dimBig; // BigInt-safe addition
+    for (const r of results || []) {
+      const i = r.i, j = r.j, dim = r.dimension;
+      if (
+        Number.isInteger(i) && Number.isInteger(j) &&
+        i >= 0 && j >= 0 && i <= N && j <= N
+      ) {
+        const dimBig = typeof dim === "bigint" ? dim : BigInt(dim);
+        hij[i][j] += dimBig;
       }
     }
 
-    // Build 2N+1 rows. Row r shows h^{0,r}, h^{1,r-1}, ..., h^{r,0}.
-    // Include rows for i+j > N as well (so full diamond appears).
+    // Render 2N+1 rows: row r shows h^{0,r}, h^{1,r-1}, ..., h^{r,0}
     diamondContainerTwisted.innerHTML = "";
-
     for (let r = 0; r <= 2 * N; r++) {
       const row = document.createElement("div");
       row.className = "diamond-row";
-
       const iMin = Math.max(0, r - N);
       const iMax = Math.min(r, N);
-
       for (let i = iMin; i <= iMax; i++) {
         const j = r - i;
-        let val = 0n;
-
-        if (i >= 0 && i <= N && j >= 0 && j <= N) {
-          val = hij[i][j];
-        }
-
-        const valueCell = document.createElement("span");
-        valueCell.className = "diamond-value";
-        valueCell.innerText = val.toString();
-        row.appendChild(valueCell);
+        const val = (hij[i] && hij[i][j]) ? hij[i][j] : 0n;
+        const cell = document.createElement("span");
+        cell.className = "diamond-value";
+        cell.innerText = val.toString();
+        row.appendChild(cell);
       }
-
       diamondContainerTwisted.appendChild(row);
     }
   };
 
-  syncSliderAndTextbox(nSliderTwisted, nValueTwisted, updateDiamondTwisted);
-  syncSliderAndTextbox(kSliderTwisted, kValueTwisted, updateDiamondTwisted);
-  syncSliderAndTextbox(tSliderTwisted, tValueTwisted, updateDiamondTwisted);
+  // ---- wiring
+  syncPair(nSliderTwisted, nValueTwisted, () => { syncKMaxToN(); clampKToN(); });
+  syncPair(kSliderTwisted, kValueTwisted, () => { clampKToN(); });
+  syncPair(tSliderTwisted, tValueTwisted);
 
+  // Initialize once
+  syncKMaxToN();
+  clampKToN();
   updateDiamondTwisted();
 });
