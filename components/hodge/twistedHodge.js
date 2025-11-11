@@ -177,7 +177,7 @@ export function hodgeTwisted(k, n, t) {
 
       const dimension = schurDimension(beta);
       const j = lambda.reduce((a, b) => a + b, 0);
-      const i = 0; // by request for t >= n
+      const i = 0;
 
       results.push({ i, j, lambda, beta, dimension });
     }

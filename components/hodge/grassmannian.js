@@ -45,26 +45,19 @@ document.addEventListener("DOMContentLoaded", async () =>
 	};
 
 	// --- BigInt-based evaluation ---
+
 	function evalASTBigInt(node, scope)
 	{
 		if (node.isConstantNode)
 		{
 			return BigInt(node.value);
 		}
-		
 		else if (node.isSymbolNode)
 		{
 			if (scope[node.name] !== undefined)
-			{
 				return scope[node.name];
-			}
-			
-			else
-			{
-				throw new Error("Undefined symbol: " + node.name);
-			}
+			throw new Error("Undefined symbol: " + node.name);
 		}
-		
 		else if (node.isOperatorNode)
 		{
 			const op = node.op;
@@ -76,27 +69,33 @@ document.addEventListener("DOMContentLoaded", async () =>
 				case "*": return args[0] * args[1];
 				case "/": return args[0] / args[1];
 				case "^":
-				{
-					const exponent = parseInt(args[1].toString(), 10);
-					return args[0] ** BigInt(exponent);
-				}
+					return args[0] ** BigInt(Number(args[1]));
+				case "unaryMinus": return -args[0];
+				case "unaryPlus":  return args[0];
 				default:
 					throw new Error("Unsupported operator: " + op);
 			}
 		}
-		
 		else if (node.isParenthesisNode)
 		{
 			return evalASTBigInt(node.content, scope);
 		}
-		
-		else
-		{
-			throw new Error("Unsupported node type: " + node.type);
-		}
+		throw new Error("Unsupported node type: " + node.type);
 	}
 
-	// Evaluate a polynomial string of the form "(a/b) * ( ... )"
+	function rewriteIntegersToSymbols(expr)
+	{
+		const constMap = {};
+		let idx = 0;
+		const rewritten = expr.replace(/\b\d+\b/g, (m) =>
+		{
+			const key = `C_${idx++}`;
+			constMap[key] = BigInt(m);
+			return key;
+		});
+		return { rewritten, constMap };
+	}
+
 	function evaluatePolynomial(polynomial, degrees)
 	{
 		const fracRegex = /^\s*\(([-+]?\d+)\/(\d+)\)\s*\*\s*/;
@@ -104,43 +103,39 @@ document.addEventListener("DOMContentLoaded", async () =>
 		let constantNumerator = 1n;
 		let constantDenom = 1n;
 		let remainingStr = polynomial;
+
 		if (match)
 		{
 			constantNumerator = BigInt(match[1]);
 			constantDenom = BigInt(match[2]);
-			remainingStr = polynomial.slice(match[0].length);
+			remainingStr = polynomial.slice(match[0].length).trim();
 		}
-		const ast = math.parse(remainingStr);
-		let scope = {};
+
+		const { rewritten, constMap } = rewriteIntegersToSymbols(remainingStr);
+		const ast = math.parse(rewritten);
+
+		const scope = { ...constMap };
 		degrees.forEach((deg, index) =>
 		{
-			scope[`d_${index + 1}`] = BigInt(deg);
+			const d = Number.isFinite(deg) ? BigInt(deg) : 1n;
+			scope[`d_${index + 1}`] = d;
 		});
+
 		const prodValue = evalASTBigInt(ast, scope);
 		const finalValue = (prodValue * constantNumerator) / constantDenom;
 		const absFinal = finalValue < 0n ? -finalValue : finalValue;
 		return absFinal.toString();
 	}
-	// --- End BigInt-based evaluation ---
+	// --- End BigInt-based evaluation (fixed) ---
 
-	// Helper: safely convert a value to BigInt, stripping commas.
 	function safeBigInt(val)
 	{
 		if (typeof val === "number")
-		{
 			return BigInt(Math.floor(val));
-		}
-		
 		else if (typeof val === "string")
-		{
-			// Remove commas and spaces, then convert.
 			return BigInt(val.replace(/[, ]/g, ""));
-		}
-		
 		else
-		{
 			return BigInt(val.toString().replace(/[, ]/g, ""));
-		}
 	}
 
 	const updateDegreeTogglesGrassmannian = (r) =>
@@ -165,17 +160,14 @@ document.addEventListener("DOMContentLoaded", async () =>
 				degreeTogglesGrassmannian.appendChild(toggleContainer);
 			}
 		}
-		
 		else if (r < currentCount)
 		{
 			for (let i = currentCount - 1; i >= r; i--)
-			{
 				degreeTogglesGrassmannian.children[i].remove();
-			}
 		}
 	};
 
-	const constructMiddleRow = (dimension, jsonData) =>
+	function constructMiddleRow(dimension, jsonData)
 	{
 		const isOdd = dimension % 2 === 1;
 		const requiredLength = isOdd ? Math.floor(dimension / 2) + 1 : dimension / 2 + 1;
@@ -184,26 +176,20 @@ document.addEventListener("DOMContentLoaded", async () =>
 		if (isOdd)
 		{
 			for (let i = truncatedData.length - 1; i >= 0; i--)
-			{
 				middleRow.push(truncatedData[i]);
-			}
 		}
-		
 		else
 		{
 			for (let i = truncatedData.length - 2; i >= 0; i--)
-			{
 				middleRow.push(truncatedData[i]);
-			}
 		}
 		return middleRow;
-	};
+	}
 
 	const updateDiamondGrassmannian = () =>
 	{
 		const n = parseInt(nValueGrassmannian.value);
 		const kInput = parseInt(kValueGrassmannian.value);
-		// For the diamond computation we use k = min(kInput, n - kInput)
 		const k = Math.min(kInput, n - kInput);
 		const r = parseInt(rValueGrassmannian.value);
 		const dimension = k * (n - k) - r;
@@ -217,7 +203,6 @@ document.addEventListener("DOMContentLoaded", async () =>
 
 		if (r === 0)
 		{
-			// When r === 0, simply use hodgeGrassmannian(min(k,n-k), n)
 			const fullHodgeNumbers = hodgeGrassmannian(k, n);
 			for (let i = 0; i < rows; i++)
 			{
@@ -236,19 +221,16 @@ document.addEventListener("DOMContentLoaded", async () =>
 			return;
 		}
 
-		// When r > 0:
 		const degrees = Array.from(degreeTogglesGrassmannian.querySelectorAll(".hodge-input"))
 			.map(input => parseInt(input.value))
 			.sort((a, b) => b - a);
+
 		let hodgeNumbersForDegrees;
 		const key = `${k},${n},${r}`;
 		const isCompleteIntersection = (k === 1 || k === n - 1);
 
 		if (isCompleteIntersection)
-		{
 			hodgeNumbersForDegrees = hodgeCompleteIntersection(degrees, n - 1);
-		}
-		
 		else if (key in hodgeData)
 		{
 			const hodgePolynomials = hodgeData[key];
@@ -256,7 +238,6 @@ document.addEventListener("DOMContentLoaded", async () =>
 				evaluatePolynomial(poly, degrees)
 			);
 		}
-		
 		else
 		{
 			diamondContainerGrassmannian.innerHTML = `<p class="error">Error: No data found for Gr(${k},${n}) with ${r} hypersurfaces.</p>`;
@@ -265,8 +246,8 @@ document.addEventListener("DOMContentLoaded", async () =>
 		}
 
 		const middleRow = constructMiddleRow(dimension, hodgeNumbersForDegrees);
-		// again use (min(k,n-k), n)
 		const fullHodgeNumbers = hodgeGrassmannian(k, n);
+
 		for (let i = 0; i < rows; i++)
 		{
 			const row = document.createElement("div");
@@ -279,26 +260,17 @@ document.addEventListener("DOMContentLoaded", async () =>
 				if (i === dimension)
 				{
 					if (isCompleteIntersection)
-					{
-						// For complete intersections in projective space, use the value directly
 						valueCell.innerText = middleRow[j] || "0";
-					}
-					
 					else
 					{
-						// For general Grassmannians, add the correction term
 						const grassmannianValue = fullHodgeNumbers[i]?.[j] || 0;
 						const jsonValue = middleRow[j] || "0";
 						const sum = safeBigInt(grassmannianValue) + safeBigInt(jsonValue);
 						valueCell.innerText = sum.toString();
 					}
 				}
-				
 				else if (i < dimension)
-				{
 					valueCell.innerText = fullHodgeNumbers[i]?.[j] || "0";
-				}
-				
 				else
 				{
 					const mirrorRow = rows - i - 1;
@@ -310,7 +282,6 @@ document.addEventListener("DOMContentLoaded", async () =>
 		}
 	};
 
-	// Attach slider/textbox sync for Grassmannians:
 	syncSliderAndTextbox(nSliderGrassmannian, nValueGrassmannian, updateDiamondGrassmannian);
 	syncSliderAndTextbox(kSliderGrassmannian, kValueGrassmannian, updateDiamondGrassmannian);
 	syncSliderAndTextbox(rSliderGrassmannian, rValueGrassmannian, () =>
