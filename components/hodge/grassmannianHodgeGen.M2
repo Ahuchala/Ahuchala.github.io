@@ -23,12 +23,12 @@ grassmannianHodgeNumbersCI = (k, n, r) -> (
 
 
 -- compute all hodge numbers for O(d_1,d_2,...,d_r) in Gr(k,n)
-buildDatabase = (nMin, nMax, kMin, rMin, rMax) -> (
+buildDatabase = (nMin, nMax, kMin, kMax, rMin, rMax) -> (
     database = {};
     
 
     for n from nMin to nMax list (
-        for k from kMin to floor(n / 2) list (
+        for k from kMin to kMax list (
             for r from rMin to rMax list ( -- why did we can use other methods to solve for when r = 1
                 if k*(n-k)-r > 0 then (
                     try (
@@ -77,8 +77,8 @@ exportDatabase = (db, filename) -> (
     close file;
 );
 
--- nMin, nMax, kMin, rMin, rMax
-db = buildDatabase(9,10,2,1,3);
+-- nMin, nMax, kMin, kMax, rMin, rMax
+db = buildDatabase(11,11,2,2,1,1);
 exportDatabase(db, "grassmannian_hodge_numbers.txt");
 
 
