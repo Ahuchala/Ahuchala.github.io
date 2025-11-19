@@ -190,3 +190,8 @@
     flex-direction: column-reverse; /* bottom row i+j=0 now appears at bottom */
     align-items: center;
 }
+/* alternate color for zero-valued Hodge cells when enabled */
+.zero-alt-on .is-zero {
+  color: var(--zero-highlight, #9aa0a6) !important; /* tweak variable/color as you like */
+}
+.zero-alt-on .is-zero { fill: var(--zero-highlight, #9aa0a6) !important; }

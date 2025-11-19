@@ -285,5 +285,64 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   
+    // ----- Zero-color toggle  -----
+    const zeroToggle = document.getElementById("zero-color-toggle");
+
+    // All diamond roots we render into (no changes to your renderers)
+    const diamondRoots = [
+      document.getElementById("diamond-container"),
+      document.getElementById("diamond-container-abelian"),
+      document.getElementById("diamond-container-grassmannian"),
+      document.getElementById("diamond-container-flag"),
+      document.getElementById("diamond-container-twisted"),
+    ].filter(Boolean);
+
+    // Mark any element whose visible text is exactly "0"
+    function labelZeros(root) {
+      if (!root) return;
+      // Be robust: scan text-bearing nodes and mark the element that shows the "0"
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+      const toMark = new Set();
+      while (true) {
+        const n = walker.nextNode();
+        if (!n) break;
+        const txt = n.nodeValue && n.nodeValue.trim();
+        if (txt === "0") {
+          const host = n.parentElement;
+          if (host) toMark.add(host);
+        }
+      }
+      toMark.forEach(el => el.classList.add("is-zero"));
+    }
+
+    // Relabel zeros in all diamonds
+    function relabelAllZeros() {
+      diamondRoots.forEach(labelZeros);
+    }
+
+    // Mutation observer: whenever a diamond updates, (re)label zeros if toggle is on
+    const observers = diamondRoots.map(root => {
+      const obs = new MutationObserver(() => {
+        if (document.body.classList.contains("zero-alt-on")) labelZeros(root);
+      });
+      obs.observe(root, { childList: true, subtree: true });
+      return obs;
+    });
+
+    // Toggle behavior: add/remove a body class; (re)label on enable
+    if (zeroToggle) {
+      zeroToggle.addEventListener("change", () => {
+        const on = zeroToggle.checked;
+        document.body.classList.toggle("zero-alt-on", on);
+        if (on) relabelAllZeros();
+      });
+    }
+
+    // Initial pass if someone prechecks via server-side defaults or saved state
+    if (zeroToggle?.checked) {
+      document.body.classList.add("zero-alt-on");
+      relabelAllZeros();
+    }
+
     updateHodgeDiamondDescription();
 });
