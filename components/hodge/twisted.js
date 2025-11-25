@@ -1,5 +1,5 @@
 // =======================================================
-// /components/hodge/twisted.js
+// /components/hodge/twisted.js — blank-friendly inputs, k≤n sync
 // =======================================================
 
 import { hodgeTwisted } from "/components/hodge/twistedHodge.js";
@@ -13,49 +13,73 @@ document.addEventListener("DOMContentLoaded", () => {
   const tInput  = document.getElementById("t-value-twisted");
   const diamond = document.getElementById("diamond-container-twisted");
 
-  const toInt = (v) => {
-    const x = Number(v);
-    return Number.isFinite(x) ? Math.trunc(x) : NaN;
+  // --- helpers ---
+  const intOrNull = (el) => {
+    const s = (el?.value ?? "").trim();
+    if (s === "") return null;
+    const v = Number(s);
+    return Number.isFinite(v) ? Math.trunc(v) : null;
+  };
+  const clampNum = (v, lo, hi) => {
+    if (typeof lo === "number") v = Math.max(lo, v);
+    if (typeof hi === "number") v = Math.min(hi, v);
+    return v;
+  };
+  const normalizeInput = (el) => {
+    const v = intOrNull(el);
+    if (v === null) return null;
+    const lo = Number(el.min ?? "-9007199254740991");
+    const hi = Number(el.max ?? "9007199254740991");
+    const c = clampNum(v, lo, hi);
+    if (String(c) !== el.value) el.value = String(c);
+    return c;
   };
 
-  // --- Slider vs Textbox Ranges ---
-  nSlider.min = "1"; nSlider.max = "10";
-  kSlider.min = "1"; kSlider.max = "10";
+  // --- Slider vs Textbox ranges ---
+  nSlider.min = "1";   nSlider.max = "10";
+  kSlider.min = "1";   kSlider.max = "10";
   tSlider.min = "-10"; tSlider.max = "10";
 
-  nInput.min = "1"; nInput.max = "50";
-  kInput.min = "1"; kInput.max = "50";
-  tInput.min = "-50"; tInput.max = "50";
+  nInput.min = "1";    nInput.max = "50";
+  kInput.min = "1";    // kInput.max ties to n dynamically
+  tInput.min = "-50";  tInput.max = "50";
 
-  // --- Clamp input to its min/max
-  function clamp(el) {
-    const min = Number(el.min);
-    const max = Number(el.max);
-    let v = Number(el.value);
-    if (isNaN(v)) v = min;
-    if (v < min) v = min;
-    if (v > max) v = max;
-    el.value = String(v);
-    return v;
+  function applyKBoundsFromN() {
+    const nVal = intOrNull(nInput);
+    const nClamp = (nVal === null) ? 10 : clampNum(nVal, 1, 50);
+    kSlider.max = String(Math.min(10, nClamp));
+    kInput.max  = String(nClamp);
   }
 
-  function syncKMaxToN() {
-    const n = clamp(nInput);
-    kSlider.max = Math.min(10, n);  // slider limited to 10 or n, whichever smaller
-    kInput.max = String(n);         // textbox can go up to n
-    clamp(kSlider);
-    clamp(kInput);
-  }
-
+  // --- render ---
   function render() {
-    const n = clamp(nInput);
-    const k = Math.min(clamp(kInput), n);
-    const t = clamp(tInput);
-    kInput.value = k;
-    kSlider.value = Math.min(k, Number(kSlider.max));
+    applyKBoundsFromN();
+
+    const nRaw = intOrNull(nInput);
+    const kRaw = intOrNull(kInput);
+    const tRaw = intOrNull(tInput);
+
+    if (nRaw === null || kRaw === null || tRaw === null) {
+      diamond.innerHTML = `<p class="placeholder">Set n, k, t to see the twisted Hodge diamond.</p>`;
+      return;
+    }
+
+    const n = clampNum(nRaw, 1, 50);
+    const k = clampNum(kRaw, 1, Math.min(n, 50));
+    const t = clampNum(tRaw, -50, 50);
+
+    // keep sliders consistent (don’t stomp textboxes)
+    const ns = clampNum(n, Number(nSlider.min), Number(nSlider.max));
+    if (String(ns) !== nSlider.value) nSlider.value = String(ns);
+
+    const ks = clampNum(k, Number(kSlider.min), Number(kSlider.max));
+    if (String(ks) !== kSlider.value) kSlider.value = String(ks);
+
+    const ts = clampNum(t, Number(tSlider.min), Number(tSlider.max));
+    if (String(ts) !== tSlider.value) tSlider.value = String(ts);
 
     const N = k * (n - k);
-    if (N < 0 || !Number.isFinite(N)) {
+    if (!Number.isFinite(N) || N < 0) {
       diamond.innerHTML = `<p class="error">Invalid parameters</p>`;
       return;
     }
@@ -85,26 +109,55 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- Sync slider <-> textbox
+  // --- link slider <-> textbox (blank-friendly) ---
   function link(slider, input, after = () => {}) {
+    // slider -> input
     slider.addEventListener("input", () => {
       input.value = slider.value;
       after();
       render();
     });
+    slider.addEventListener("change", () => {
+      input.value = slider.value;
+      after();
+      render();
+    });
+
+    // textbox typing (allow blank)
     input.addEventListener("input", () => {
-      const v = clamp(input);
-      if (v >= Number(slider.min) && v <= Number(slider.max))
-        slider.value = v;
+      const v = intOrNull(input);
+      if (v === null) { after(); render(); return; }
+      const lo = Number(slider.min);
+      const hi = Number(slider.max);
+      const c  = clampNum(v, lo, hi);
+      if (String(c) !== slider.value) slider.value = String(c);
+      after();
+      render();
+    });
+
+    // textbox blur (normalize if numeric; keep blank as blank)
+    input.addEventListener("blur", () => {
+      const v = normalizeInput(input);
+      if (v !== null) {
+        const lo = Number(slider.min);
+        const hi = Number(slider.max);
+        const c  = clampNum(v, lo, hi);
+        if (String(c) !== slider.value) slider.value = String(c);
+      }
       after();
       render();
     });
   }
 
-  link(nSlider, nInput, syncKMaxToN);
-  link(kSlider, kInput);
-  link(tSlider, tInput);
+  function afterN() {
+    applyKBoundsFromN();
+  }
 
-  syncKMaxToN();
+  link(nSlider, nInput, afterN);
+  link(kSlider, kInput, () => {});
+  link(tSlider, tInput, () => {});
+
+  // initial
+  applyKBoundsFromN();
   render();
 });

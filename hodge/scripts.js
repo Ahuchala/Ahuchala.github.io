@@ -158,20 +158,41 @@ document.addEventListener("DOMContentLoaded", () => {
         const rValueFlag = document.getElementById("r-value-flag");
         const degreeToggles = document.getElementById("degree-toggles-flag");
         if (!dimsInput || !rValueFlag || !degreeToggles) return;
-        const dims = dimsInput.value;
+
+        // Normalize dims to "1, 1, 1" style
+        const dimsList = dimsInput.value
+          .split(",")
+          .map(s => s.trim())
+          .filter(s => s !== "");
+        const dimsStr = dimsList.join(", ");
+
         const r = parseInt(rValueFlag.value, 10);
-        const degreeInputs = Array.from(degreeToggles.querySelectorAll("input.hodge-input"));
-        if (degreeInputs.length === 0) {
-          descriptionText = `Hodge diamond for a partial flag of dimensions [${dims}]`;
+        const degreeInputs = Array.from(
+          degreeToggles.querySelectorAll("input.hodge-input")
+        );
+
+        if (!Number.isFinite(r) || r === 0 || degreeInputs.length === 0) {
+          // No hypersurfaces / ambient flag only
+          descriptionText = `Hodge diamond for a partial flag of dimensions [${dimsStr}]`;
         } else if (degreeInputs.length === 1) {
-          const degree = degreeInputs[0].value;
-          descriptionText = `Hodge diamond for a hypersurface of degree ${degree} in a partial flag of dimensions [${dims}]`;
+          // Single hypersurface: treat its entry as a multidegree block
+          const block = (degreeInputs[0].value || "").trim();
+          descriptionText =
+            `Hodge diamond for a hypersurface of multidegree [${block}] ` +
+            `in a partial flag of dimensions [${dimsStr}]`;
         } else {
-          const degrees = degreeInputs.map(input => input.value);
-          const multidegreeStr = "(" + degrees.join(", ") + ")";
-          descriptionText = `Hodge diamond for a complete intersection of multidegree ${multidegreeStr} in a partial flag of dimensions [${dims}]`;
+          // r ≥ 2 hypersurfaces: show them as [a,b], [c,d], ...
+          const blocks = degreeInputs.map(inp => {
+            const txt = (inp.value || "").trim();
+            return `[${txt}]`;
+          });
+          descriptionText =
+            `Hodge diamond for a complete intersection (r=${r}) ` +
+            `in a partial flag of dimensions [${dimsStr}] ` +
+            `with multidegrees ${blocks.join(", ")}`;
         }
       }
+
       // For Twisted Hodge Numbers:
       else if (twistedContainer && twistedContainer.style.display !== "none") {
         const nValueEl = document.getElementById("n-value-twisted");
