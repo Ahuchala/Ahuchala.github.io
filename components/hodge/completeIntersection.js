@@ -3,43 +3,70 @@ import { hodgeCompleteIntersection } from "/components/hodge/completeIntersectio
 document.addEventListener("DOMContentLoaded", () => {
     const nSlider = document.getElementById("n-slider");
     const kSlider = document.getElementById("k-slider");
-    const nValue = document.getElementById("n-value");
-    const kValue = document.getElementById("k-value");
+    const nValue  = document.getElementById("n-value");
+    const kValue  = document.getElementById("k-value");
     const degreeToggles = document.getElementById("degree-toggles");
     const diamondContainer = document.getElementById("diamond-container");
 
     const presetButtons = document.querySelectorAll(".preset-button");
-    let lastUserSetK = parseInt(kSlider.value); // Tracks the last user-set value of `k`
+    let lastUserSetK = parseInt(kSlider.value, 10) || 0; // Tracks last user-set value of k
 
-    const syncSliderAndTextbox = (slider, textbox, onChange, maxValue = 50) => {
+    // --- slider/textbox sync that allows blank, with configurable min/max ---
+    const syncSliderAndTextbox = (slider, textbox, onChange, minVal = 0, maxVal = 50) => {
+        // slider → textbox
         slider.addEventListener("input", () => {
-            textbox.value = slider.value;
+            const v = Number(slider.value);
+            const clamped = Math.max(minVal, Math.min(v, maxVal));
+            slider.value = String(clamped);
+            textbox.value = String(clamped);
             onChange();
         });
 
+        // textbox typing: allow blank, don't touch the slider or diamond until numeric
         textbox.addEventListener("input", () => {
-            const value = Math.max(1, Math.min(parseInt(textbox.value) || 1, maxValue));
-            textbox.value = value;
-            slider.value = Math.min(value, parseInt(slider.max));
+            const raw = textbox.value.trim();
+            if (raw === "") {
+                // user is mid-edit; keep current diamond
+                return;
+            }
+            let num = parseInt(raw, 10);
+            if (!Number.isFinite(num)) {
+                num = minVal;
+            }
+            const clamped = Math.max(minVal, Math.min(num, maxVal));
+            textbox.value = String(clamped);
+            slider.value = String(Math.max(minVal, Math.min(clamped, Number(slider.max))));
             onChange();
         });
 
+        // on blur: if still blank, restore from slider; otherwise normalize
         textbox.addEventListener("blur", () => {
-            if (textbox.value === "") {
-                textbox.value = slider.value;
+            let raw = textbox.value.trim();
+            if (raw === "") {
+                raw = slider.value;
             }
+            let num = parseInt(raw, 10);
+            if (!Number.isFinite(num)) {
+                num = minVal;
+            }
+            const clamped = Math.max(minVal, Math.min(num, maxVal));
+            textbox.value = String(clamped);
+            slider.value = String(Math.max(minVal, Math.min(clamped, Number(slider.max))));
+            onChange();
         });
     };
 
     const updateKSlider = () => {
-        const n = parseInt(nValue.value) || 1;
-        const newK = Math.min(lastUserSetK, n); // Ensure `k` is within valid bounds
-        kSlider.max = Math.min(10, n); // `k` slider maxes out at `n` or 10 (UI cap)
-        kSlider.value = newK; // Update the slider value
-        kValue.value = newK; // Sync textbox
-        updateDegreeToggles(newK); // Update degree toggles to match new `k`
+        const n = parseInt(nValue.value, 10);
+        const safeN = Number.isFinite(n) ? n : 0;
+        const newK = Math.min(lastUserSetK, safeN);  // ensure 0 ≤ k ≤ n
+
+        kSlider.max = String(Math.min(10, safeN));   // slider max = min(10, n)
+        kSlider.value = String(newK);
+        kValue.value  = String(newK);
+
+        updateDegreeToggles(newK);
     };
-    
 
     const updateDegreeToggles = (k) => {
         const currentCount = degreeToggles.children.length;
@@ -72,16 +99,61 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const updateDiamond = () => {
-        const n = parseInt(nValue.value);
-        const k = parseInt(kValue.value);
+        const n = parseInt(nValue.value, 10);
+        const k = parseInt(kValue.value, 10);
+
+        // Basic sanity check on n, k
+        if (!Number.isFinite(n) || !Number.isFinite(k) || n < 0 || k < 0) {
+            diamondContainer.innerHTML =
+                `<p class="placeholder">Enter n and k (or use sliders) to see the Hodge diamond.</p>`;
+            return;
+        }
+
         const rows = 2 * (n - k) + 1;
         const targetRowIndex = n - k;
 
+        // If rows is nonsense (e.g. k > n), just show a placeholder
+        if (rows <= 0 || targetRowIndex < 0) {
+            diamondContainer.innerHTML =
+                `<p class="placeholder">Choose n and k with 0 ≤ k ≤ n to see the Hodge diamond.</p>`;
+            return;
+        }
+
         diamondContainer.innerHTML = "";
 
+        // Helper: read and validate degrees array (positive integers)
+        const readDegrees = () => {
+            const inputs = Array.from(
+                degreeToggles.querySelectorAll(".hodge-input")
+            );
+            if (inputs.length === 0) {
+                return { ok: false, degrees: [] };
+            }
+            const degrees = [];
+            for (const inp of inputs) {
+                const raw = (inp.value ?? "").trim();
+                if (raw === "") {
+                    return { ok: false, degrees: [] };
+                }
+                const d = parseInt(raw, 10);
+                // Degrees must be ≥ 1
+                if (!Number.isFinite(d) || d <= 0) {
+                    return { ok: false, degrees: [] };
+                }
+                degrees.push(d);
+            }
+            return { ok: true, degrees };
+        };
+
+        // Special case: k = n → 0-dim complete intersection (finite set of points)
         if (k === n) {
-            const degrees = Array.from(degreeToggles.querySelectorAll(".hodge-input"))
-                .map((input) => parseInt(input.value));
+            const { ok, degrees } = readDegrees();
+            if (!ok) {
+                diamondContainer.innerHTML =
+                    `<p class="placeholder">Enter positive degrees for all hypersurfaces to see the Hodge diamond.</p>`;
+                return;
+            }
+
             const product = degrees.reduce((acc, degree) => acc * degree, 1);
 
             const singleRow = document.createElement("div");
@@ -96,6 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        // Special case: k = 0 → projective space P^n
         if (k === 0) {
             for (let j = 0; j < rows; j++) {
                 const row = document.createElement("div");
@@ -129,10 +202,23 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const degrees = Array.from(degreeToggles.querySelectorAll(".hodge-input"))
-            .map((input) => parseInt(input.value));
+        // General complete intersection case: 1 ≤ k ≤ n-1
+        const { ok, degrees } = readDegrees();
+        if (!ok) {
+            diamondContainer.innerHTML =
+                `<p class="placeholder">Enter positive degrees for all ${k} hypersurfaces to see the Hodge diamond.</p>`;
+            return;
+        }
 
-        const hodgeNumbers = hodgeCompleteIntersection(degrees, n);
+        let hodgeNumbers;
+        try {
+            hodgeNumbers = hodgeCompleteIntersection(degrees, n);
+        } catch (e) {
+            console.error("hodgeCompleteIntersection error:", e);
+            diamondContainer.innerHTML =
+                `<p class="placeholder">Unable to compute the Hodge diamond for these parameters.</p>`;
+            return;
+        }
 
         for (let j = 0; j < rows; j++) {
             const row = document.createElement("div");
@@ -153,7 +239,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (j === targetRowIndex) {
                     const symmetricIndex = targetRowIndex - i;
-                    valEl.innerText = hodgeNumbers[i] || hodgeNumbers[symmetricIndex] || 0;
+                    valEl.innerText =
+                        hodgeNumbers[i] ??
+                        hodgeNumbers[symmetricIndex] ??
+                        0;
                 } else {
                     const condition = 2 * i === Math.min(j, 2 * (n - k) - j);
                     valEl.innerText = condition ? "1" : "0";
@@ -173,16 +262,17 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const loadPreset = (n, k, degrees) => {
-        nValue.value = n;
-        nSlider.value = Math.min(n, nSlider.max);
-        lastUserSetK = k; // Remember the preset `k`
+        nValue.value = String(n);
+        nSlider.value = String(Math.min(n, Number(nSlider.max)));
+
+        lastUserSetK = k; // Remember the preset k
         updateKSlider();
         updateDegreeToggles(k);
 
         const inputs = degreeToggles.querySelectorAll(".hodge-input");
         degrees.forEach((deg, i) => {
             if (inputs[i]) {
-                inputs[i].value = deg;
+                inputs[i].value = String(deg);
             }
         });
 
@@ -191,28 +281,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
     presetButtons.forEach(button => {
         button.addEventListener("click", () => {
-            // Check if the button has the required attributes for complete intersections
-
             if (!button.dataset.n || !button.dataset.k || !button.dataset.degrees) return;
 
-            const n = parseInt(button.dataset.n);
-            const k = parseInt(button.dataset.k);
+            const n = parseInt(button.dataset.n, 10);
+            const k = parseInt(button.dataset.k, 10);
             const degrees = button.dataset.degrees.split(",").map(Number);
             loadPreset(n, k, degrees);
         });
     });
 
     // Initialize sliders and textboxes
-    syncSliderAndTextbox(nSlider, nValue, () => {
-        updateKSlider();
-        updateDiamond();
-    }, 50);
+    syncSliderAndTextbox(
+        nSlider,
+        nValue,
+        () => {
+            updateKSlider();
+            updateDiamond();
+        },
+        0,  // allow n = 0
+        50
+    );
 
-    syncSliderAndTextbox(kSlider, kValue, () => {
-        lastUserSetK = parseInt(kValue.value); // Update remembered `k`
-        updateDegreeToggles(parseInt(kValue.value));
-        updateDiamond();
-    });
+    syncSliderAndTextbox(
+        kSlider,
+        kValue,
+        () => {
+            lastUserSetK = parseInt(kValue.value, 10) || 0;
+            updateDegreeToggles(lastUserSetK);
+            updateDiamond();
+        },
+        0,  // allow k = 0
+        50
+    );
 
     // Default preset
     loadPreset(4, 2, [3, 2]);

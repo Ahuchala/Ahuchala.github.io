@@ -6,55 +6,78 @@ document.addEventListener("DOMContentLoaded", () => {
     const diamondContainerAbelian = document.getElementById("diamond-container-abelian");
     const presetButtonsAbelian = document.getElementById("preset-buttons-abelian");
 
-
+    // --- allow blank textbox while typing ---
     const syncSliderAndTextbox = (slider, textbox, onChange, maxValue = 50) => {
+
+        // slider → textbox
         slider.addEventListener("input", () => {
             textbox.value = slider.value;
             onChange();
         });
 
+        // textbox typing (allow blank)
         textbox.addEventListener("input", () => {
-            const value = Math.max(1, Math.min(parseInt(textbox.value) || 1, maxValue));
-            textbox.value = value;
-            slider.value = Math.min(value, slider.max);
+            const raw = textbox.value.trim();
+
+            // blank: show placeholder & don't move slider
+            if (raw === "") {
+                diamondContainerAbelian.innerHTML =
+                  `<p class="placeholder">Enter a genus g to see the Hodge diamond.</p>`;
+                return;
+            }
+
+            // numeric:
+            let v = parseInt(raw);
+            if (!Number.isFinite(v)) v = 1;
+            v = Math.max(1, Math.min(v, maxValue));
+
+            textbox.value = v;
+            slider.value = Math.min(v, slider.max);
+
+            onChange();
+        });
+
+        // on blur: normalize blank → 1
+        textbox.addEventListener("blur", () => {
+            if (textbox.value.trim() === "") textbox.value = "1";
+            let v = parseInt(textbox.value);
+            if (!Number.isFinite(v)) v = 1;
+            v = Math.max(1, Math.min(v, maxValue));
+            textbox.value = v;
+            slider.value = Math.min(v, slider.max);
             onChange();
         });
     };
 
     const updateDiamondAbelian = () => {
         const g = parseInt(gValue.value);
-        const diamond = hodgeAbelianVariety(g); // Get the Hodge numbers
 
+        if (!Number.isFinite(g) || g < 1) {
+            diamondContainerAbelian.innerHTML =
+              `<p class="placeholder">Enter a genus g to see the Hodge diamond.</p>`;
+            return;
+        }
+
+        const diamond = hodgeAbelianVariety(g);
         diamondContainerAbelian.innerHTML = "";
 
-        const totalRows = 2 * g + 1; // Total rows in the diamond
+        const totalRows = 2 * g + 1;
 
         for (let i = 0; i < totalRows; i++) {
             const row = document.createElement("div");
             row.className = "diamond-row";
 
-            // Number of values in this row
             const numValues = g + 1 - Math.abs(g - i);
 
-            // Add spaces for centering the diamond row
-            // const spaces = Math.abs(g - i);
-            // for (let s = 0; s < spaces; s++) {
-            //     const space = document.createElement("span");
-            //     space.className = "diamond-space";
-            //     row.appendChild(space);
-            // }
-
-            // Add Hodge number values
             for (let j = 0; j < numValues; j++) {
-                const valueCell = document.createElement("span");
-                valueCell.className = "diamond-value";
-                valueCell.innerText = diamond[i]?.[j] || "0"; // Use the computed diamond values
-                row.appendChild(valueCell);
+                const cell = document.createElement("span");
+                cell.className = "diamond-value";
+                cell.innerText = diamond[i]?.[j] ?? "0";
+                row.appendChild(cell);
             }
 
             diamondContainerAbelian.appendChild(row);
         }
-        
     };
 
     const loadPresetAbelian = (g) => {
@@ -72,6 +95,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     syncSliderAndTextbox(gSlider, gValue, updateDiamondAbelian);
-    updateDiamondAbelian(); // Initialize on page load
-    
+    updateDiamondAbelian();
 });

@@ -104,25 +104,45 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- Unified Dynamic Hodge Diamond Description ---
     // Updates all elements with class "hodge-diamond-description" depending on which calculator is visible.
     function updateHodgeDiamondDescription() {
-      let descriptionText = "";
-      // For Complete Intersections in CP^n:
-      if (completeIntersectionContainer && completeIntersectionContainer.style.display !== "none") {
-        const nValueEl = document.getElementById("n-value");
-        const degreeToggles = document.getElementById("degree-toggles");
-        if (!nValueEl || !degreeToggles) return;
-        const n = nValueEl.value;
-        const degreeInputs = Array.from(degreeToggles.querySelectorAll("input.hodge-input"));
-        if (degreeInputs.length === 0) {
-          descriptionText = `Hodge diamond for \\(\\mathbb{CP}^${n}\\)`;
-        } else if (degreeInputs.length === 1) {
-          const degree = degreeInputs[0].value;
-          descriptionText = `Hodge diamond for a smooth hypersurface of degree ${degree} in \\(\\mathbb{CP}^${n}\\)`;
-        } else {
-          const degrees = degreeInputs.map(input => input.value);
-          const multidegreeStr = "(" + degrees.join(", ") + ")";
-          descriptionText = `Hodge diamond for a smooth complete intersection of multidegree ${multidegreeStr} in \\(\\mathbb{CP}^${n}\\)`;
-        }
+  let descriptionText = "";
+
+  // ----- Complete intersections in CP^n -----
+  if (completeIntersectionContainer && completeIntersectionContainer.style.display !== "none") {
+    const nValueEl = document.getElementById("n-value");
+    const degreeToggles = document.getElementById("degree-toggles");
+    if (!nValueEl || !degreeToggles) return;
+
+    const nRaw = nValueEl.value.trim();
+    const degreeInputs = Array.from(degreeToggles.querySelectorAll("input.hodge-input"));
+
+    // If n is blank or not a number, don't try to put it in a TeX exponent
+    if (nRaw === "" || isNaN(parseInt(nRaw, 10))) {
+      descriptionText = "Hodge diamond for a complete intersection in projective space";
+    } else {
+      const n = parseInt(nRaw, 10);
+
+      // Check if any degree input is blank / invalid
+      const degreesRaw = degreeInputs.map(inp => (inp.value ?? "").trim());
+      const anyBadDegree = degreesRaw.some(d => d === "" || isNaN(parseInt(d, 10)));
+
+      if (degreeInputs.length === 0 || anyBadDegree) {
+        // Generic fallback: don't mention degrees in TeX if they’re not sane
+        descriptionText = `Hodge diamond for a smooth complete intersection in \\(\\mathbb{CP}^{${n}}\\)`;
+      } else if (degreeInputs.length === 1) {
+        const degree = parseInt(degreesRaw[0], 10);
+        descriptionText =
+          `Hodge diamond for a smooth hypersurface of degree ${degree} in ` +
+          `\\(\\mathbb{CP}^{${n}}\\)`;
+      } else {
+        const degrees = degreesRaw.map(d => parseInt(d, 10));
+        const multidegreeStr = "(" + degrees.join(", ") + ")";
+        descriptionText =
+          `Hodge diamond for a smooth complete intersection of multidegree ${multidegreeStr} ` +
+          `in \\(\\mathbb{CP}^{${n}}\\)`;
       }
+    }
+  }
+
       // For Grassmannians:
       else if (grassmannianContainer && grassmannianContainer.style.display !== "none") {
         const nValueEl = document.getElementById("n-value-grassmannian");
