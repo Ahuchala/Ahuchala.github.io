@@ -33,19 +33,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     toggleCompleteIntersection.addEventListener("click", () => {
       showContainer(completeIntersectionContainer);
-      setActiveToggle(toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian, toggleFlag,toggleTwisted);
+      setActiveToggle(toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian, toggleFlag, toggleTwisted);
     });
     toggleAbelianVariety.addEventListener("click", () => {
       showContainer(abelianVarietyContainer);
-      setActiveToggle(toggleAbelianVariety, toggleCompleteIntersection, toggleGrassmannian, toggleFlag,toggleTwisted);
+      setActiveToggle(toggleAbelianVariety, toggleCompleteIntersection, toggleGrassmannian, toggleFlag, toggleTwisted);
     });
     toggleGrassmannian.addEventListener("click", () => {
       showContainer(grassmannianContainer);
-      setActiveToggle(toggleGrassmannian, toggleCompleteIntersection, toggleAbelianVariety, toggleFlag,toggleTwisted);
+      setActiveToggle(toggleGrassmannian, toggleCompleteIntersection, toggleAbelianVariety, toggleFlag, toggleTwisted);
     });
     toggleFlag.addEventListener("click", () => {
       showContainer(flagContainer);
-      setActiveToggle(toggleFlag, toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian,toggleTwisted);
+      setActiveToggle(toggleFlag, toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian, toggleTwisted);
     });
     toggleTwisted.addEventListener("click", () => {
       showContainer(twistedContainer);
@@ -356,15 +356,51 @@ document.addEventListener("DOMContentLoaded", () => {
       toMark.forEach(el => el.classList.add("is-zero"));
     }
 
+    // Mark the top half (excluding the middle row) of each diamond
+    function labelTopHalf(root) {
+      if (!root) return;
+
+      // Try to find row elements in the diamond. Adjust selectors if your row markup uses different class names.
+      let rows = Array.from(
+        root.querySelectorAll(".hodge-row, .diamond-row")
+      );
+
+      if (!rows.length) return;
+
+      // Sort rows by visual vertical position (top -> bottom),
+      // so this works even if DOM order is upside-down.
+      rows.sort((a, b) => {
+        const ra = a.getBoundingClientRect();
+        const rb = b.getBoundingClientRect();
+        return ra.top - rb.top;
+      });
+
+      const mid = Math.floor(rows.length / 2);
+
+      rows.forEach((row, idx) => {
+        if (idx < mid) {
+          row.classList.add("is-top-half");
+        } else {
+          row.classList.remove("is-top-half");
+        }
+      });
+    }
+
     // Relabel zeros in all diamonds
     function relabelAllZeros() {
       diamondRoots.forEach(labelZeros);
     }
 
-    // Mutation observer: whenever a diamond updates, (re)label zeros if toggle is on
+    function relabelAllTopHalf() {
+      diamondRoots.forEach(labelTopHalf);
+    }
+
+    // Mutation observer: whenever a diamond updates, (re)label zeros if toggle is on,
+    // and always keep top-half labels in sync.
     const observers = diamondRoots.map(root => {
       const obs = new MutationObserver(() => {
         if (document.body.classList.contains("zero-alt-on")) labelZeros(root);
+        labelTopHalf(root);
       });
       obs.observe(root, { childList: true, subtree: true });
       return obs;
@@ -379,10 +415,31 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // ----- Hide/show top half toggle -----
+    const hideTopHalfToggle = document.getElementById("hide-top-half-toggle");
+
+    if (hideTopHalfToggle) {
+      hideTopHalfToggle.addEventListener("change", () => {
+        const on = hideTopHalfToggle.checked;
+        document.body.classList.toggle("hide-top-half", on);
+        if (on) {
+          relabelAllTopHalf();
+        }
+      });
+    }
+
     // Initial pass if someone prechecks via server-side defaults or saved state
     if (zeroToggle?.checked) {
       document.body.classList.add("zero-alt-on");
       relabelAllZeros();
+    }
+
+    if (hideTopHalfToggle?.checked) {
+      document.body.classList.add("hide-top-half");
+      relabelAllTopHalf();
+    } else {
+      // Even if not hidden, we want the top-half labels present
+      relabelAllTopHalf();
     }
 
     updateHodgeDiamondDescription();
