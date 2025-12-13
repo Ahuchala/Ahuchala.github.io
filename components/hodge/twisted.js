@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- render ---
+    // --- render ---
   function render() {
     applyKBoundsFromN();
 
@@ -100,14 +101,27 @@ document.addEventListener("DOMContentLoaded", () => {
       for (let i = Math.max(0, r - N); i <= Math.min(r, N); i++) {
         const j = r - i;
         const val = hij[i]?.[j] ?? 0n;
+
         const span = document.createElement("span");
         span.className = "diamond-value";
         span.innerText = val.toString();
+
+        // --- NEW: attach coordinates for tooltip ---
+        // Here (i,j) are your Hodge indices with:
+        //   (0,0) = bottom entry
+        //   (N,0) = leftmost entry
+        //   (0,N) = rightmost entry
+        //   (N,N) = top entry
+        span.dataset.i = String(i);
+        span.dataset.j = String(j);
+        span.title = `(${i}, ${j})`;  // native hover box
+
         row.appendChild(span);
       }
       diamond.appendChild(row);
     }
   }
+
 
   // --- link slider <-> textbox (blank-friendly) ---
   function link(slider, input, after = () => {}) {
