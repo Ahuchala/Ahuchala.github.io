@@ -102,46 +102,41 @@ document.addEventListener("DOMContentLoaded", () => {
     updateAllPressedButtons();
   
     // --- Unified Dynamic Hodge Diamond Description ---
-    // Updates all elements with class "hodge-diamond-description" depending on which calculator is visible.
     function updateHodgeDiamondDescription() {
-  let descriptionText = "";
+      let descriptionText = "";
 
-  // ----- Complete intersections in CP^n -----
-  if (completeIntersectionContainer && completeIntersectionContainer.style.display !== "none") {
-    const nValueEl = document.getElementById("n-value");
-    const degreeToggles = document.getElementById("degree-toggles");
-    if (!nValueEl || !degreeToggles) return;
+      // ----- Complete intersections in CP^n -----
+      if (completeIntersectionContainer && completeIntersectionContainer.style.display !== "none") {
+        const nValueEl = document.getElementById("n-value");
+        const degreeToggles = document.getElementById("degree-toggles");
+        if (!nValueEl || !degreeToggles) return;
 
-    const nRaw = nValueEl.value.trim();
-    const degreeInputs = Array.from(degreeToggles.querySelectorAll("input.hodge-input"));
+        const nRaw = nValueEl.value.trim();
+        const degreeInputs = Array.from(degreeToggles.querySelectorAll("input.hodge-input"));
 
-    // If n is blank or not a number, don't try to put it in a TeX exponent
-    if (nRaw === "" || isNaN(parseInt(nRaw, 10))) {
-      descriptionText = "Hodge diamond for a complete intersection in projective space";
-    } else {
-      const n = parseInt(nRaw, 10);
+        if (nRaw === "" || isNaN(parseInt(nRaw, 10))) {
+          descriptionText = "Hodge diamond for a complete intersection in projective space";
+        } else {
+          const n = parseInt(nRaw, 10);
+          const degreesRaw = degreeInputs.map(inp => (inp.value ?? "").trim());
+          const anyBadDegree = degreesRaw.some(d => d === "" || isNaN(parseInt(d, 10)));
 
-      // Check if any degree input is blank / invalid
-      const degreesRaw = degreeInputs.map(inp => (inp.value ?? "").trim());
-      const anyBadDegree = degreesRaw.some(d => d === "" || isNaN(parseInt(d, 10)));
-
-      if (degreeInputs.length === 0 || anyBadDegree) {
-        // Generic fallback: don't mention degrees in TeX if they’re not sane
-        descriptionText = `Hodge diamond for a smooth complete intersection in \\(\\mathbb{CP}^{${n}}\\)`;
-      } else if (degreeInputs.length === 1) {
-        const degree = parseInt(degreesRaw[0], 10);
-        descriptionText =
-          `Hodge diamond for a smooth hypersurface of degree ${degree} in ` +
-          `\\(\\mathbb{CP}^{${n}}\\)`;
-      } else {
-        const degrees = degreesRaw.map(d => parseInt(d, 10));
-        const multidegreeStr = "(" + degrees.join(", ") + ")";
-        descriptionText =
-          `Hodge diamond for a smooth complete intersection of multidegree ${multidegreeStr} ` +
-          `in \\(\\mathbb{CP}^{${n}}\\)`;
+          if (degreeInputs.length === 0 || anyBadDegree) {
+            descriptionText = `Hodge diamond for a smooth complete intersection in \\(\\mathbb{CP}^{${n}}\\)`;
+          } else if (degreeInputs.length === 1) {
+            const degree = parseInt(degreesRaw[0], 10);
+            descriptionText =
+              `Hodge diamond for a smooth hypersurface of degree ${degree} in ` +
+              `\\(\\mathbb{CP}^{${n}}\\)`;
+          } else {
+            const degrees = degreesRaw.map(d => parseInt(d, 10));
+            const multidegreeStr = "(" + degrees.join(", ") + ")";
+            descriptionText =
+              `Hodge diamond for a smooth complete intersection of multidegree ${multidegreeStr} ` +
+              `in \\(\\mathbb{CP}^{${n}}\\)`;
+          }
+        }
       }
-    }
-  }
 
       // For Grassmannians:
       else if (grassmannianContainer && grassmannianContainer.style.display !== "none") {
@@ -179,7 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const degreeToggles = document.getElementById("degree-toggles-flag");
         if (!dimsInput || !rValueFlag || !degreeToggles) return;
 
-        // Normalize dims to "1, 1, 1" style
         const dimsList = dimsInput.value
           .split(",")
           .map(s => s.trim())
@@ -192,16 +186,13 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         if (!Number.isFinite(r) || r === 0 || degreeInputs.length === 0) {
-          // No hypersurfaces / ambient flag only
           descriptionText = `Hodge diamond for a partial flag of dimensions [${dimsStr}]`;
         } else if (degreeInputs.length === 1) {
-          // Single hypersurface: treat its entry as a multidegree block
           const block = (degreeInputs[0].value || "").trim();
           descriptionText =
             `Hodge diamond for a hypersurface of multidegree [${block}] ` +
             `in a partial flag of dimensions [${dimsStr}]`;
         } else {
-          // r ≥ 2 hypersurfaces: show them as [a,b], [c,d], ...
           const blocks = degreeInputs.map(inp => {
             const txt = (inp.value || "").trim();
             return `[${txt}]`;
@@ -232,7 +223,6 @@ document.addEventListener("DOMContentLoaded", () => {
         descriptionText = "";
       }
   
-      // Update all elements with class "hodge-diamond-description"
       document.querySelectorAll(".hodge-diamond-description").forEach(el => {
         el.innerHTML = descriptionText;
         if (window.MathJax && MathJax.typesetPromise) {
@@ -242,7 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   
     // --- Attach Event Listeners for Description Updates ---
-    // For Complete Intersections:
+    // (unchanged listeners omitted for brevity – keep your existing ones)
     const nSlider = document.getElementById("n-slider");
     const nValueEl = document.getElementById("n-value");
     const kSlider = document.getElementById("k-slider");
@@ -260,7 +250,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (kValueEl) kValueEl.addEventListener("input", updateHodgeDiamondDescription);
     if (degreeTogglesEl) degreeTogglesEl.addEventListener("input", updateHodgeDiamondDescription);
   
-    // For Grassmannians:
     const nSliderG = document.getElementById("n-slider-grassmannian");
     const nValueG = document.getElementById("n-value-grassmannian");
     const kSliderG = document.getElementById("k-slider-grassmannian");
@@ -285,7 +274,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (rValueG) rValueG.addEventListener("input", updateHodgeDiamondDescription);
     if (degreeTogglesG) degreeTogglesG.addEventListener("input", updateHodgeDiamondDescription);
   
-    // For Abelian Varieties:
     const gSlider = document.getElementById("g-slider");
     const gValueEl = document.getElementById("g-value");
     if (gSlider) {
@@ -295,7 +283,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (gValueEl) gValueEl.addEventListener("input", updateHodgeDiamondDescription);
   
 
-    // For Twisted Hodge Numbers:
     const nSliderT = document.getElementById("n-slider-twisted");
     const nValueT = document.getElementById("n-value-twisted");
     const kSliderT = document.getElementById("k-slider-twisted");
@@ -329,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ----- Zero-color toggle  -----
     const zeroToggle = document.getElementById("zero-color-toggle");
 
-    // All diamond roots we render into (no changes to your renderers)
+    // All diamond roots we render into
     const diamondRoots = [
       document.getElementById("diamond-container"),
       document.getElementById("diamond-container-abelian"),
@@ -338,10 +325,61 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("diamond-container-twisted"),
     ].filter(Boolean);
 
+    // NEW: annotate (i,j) coordinates + title for ALL diamonds
+    function annotateDiamondCoords(root) {
+      if (!root) return;
+
+      let rows = Array.from(
+        root.querySelectorAll(".hodge-row, .diamond-row")
+      );
+      if (!rows.length) return;
+
+      // sort top → bottom in screen coordinates
+      rows.sort((a, b) => {
+        const ra = a.getBoundingClientRect();
+        const rb = b.getBoundingClientRect();
+        return ra.top - rb.top;
+      });
+
+      const L = rows.length;
+      if (L % 2 === 0) return; // expect 2N+1 rows
+      const N = (L - 1) / 2;
+
+      rows.forEach((row, idxTop) => {
+        // r = i + j, with bottom row having r = 0
+        const r = (L - 1) - idxTop;  // bottom-most row → r = 0
+
+        const spans = Array.from(
+          row.querySelectorAll(".diamond-value, .hodge-cell, span")
+        ).filter(el => el.textContent && el.textContent.trim() !== "");
+        if (!spans.length) return;
+
+        const iMin = Math.max(0, r - N);
+        const iMax = Math.min(r, N);
+
+        // In your convention, **leftmost has largest i** (iMax),
+        // rightmost has smallest i (iMin).
+        spans.forEach((span, s) => {
+          const i = iMax - s;      // i decreases left → right
+          const j = r - i;
+
+          if (i < 0 || j < 0 || i > N || j > N) return;
+
+          span.dataset.i = String(i);
+          span.dataset.j = String(j);
+          span.title = `(${i}, ${j})`;  // native hover tooltip
+        });
+      });
+    }
+
+
+    function annotateAllDiamondCoords() {
+      diamondRoots.forEach(annotateDiamondCoords);
+    }
+
     // Mark any element whose visible text is exactly "0"
     function labelZeros(root) {
       if (!root) return;
-      // Be robust: scan text-bearing nodes and mark the element that shows the "0"
       const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
       const toMark = new Set();
       while (true) {
@@ -360,15 +398,11 @@ document.addEventListener("DOMContentLoaded", () => {
     function labelTopHalf(root) {
       if (!root) return;
 
-      // Try to find row elements in the diamond. Adjust selectors if your row markup uses different class names.
       let rows = Array.from(
         root.querySelectorAll(".hodge-row, .diamond-row")
       );
-
       if (!rows.length) return;
 
-      // Sort rows by visual vertical position (top -> bottom),
-      // so this works even if DOM order is upside-down.
       rows.sort((a, b) => {
         const ra = a.getBoundingClientRect();
         const rb = b.getBoundingClientRect();
@@ -386,7 +420,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Relabel zeros in all diamonds
     function relabelAllZeros() {
       diamondRoots.forEach(labelZeros);
     }
@@ -395,10 +428,10 @@ document.addEventListener("DOMContentLoaded", () => {
       diamondRoots.forEach(labelTopHalf);
     }
 
-    // Mutation observer: whenever a diamond updates, (re)label zeros if toggle is on,
-    // and always keep top-half labels in sync.
+    // Mutation observer: now also annotates coordinates
     const observers = diamondRoots.map(root => {
       const obs = new MutationObserver(() => {
+        annotateDiamondCoords(root);  // NEW
         if (document.body.classList.contains("zero-alt-on")) labelZeros(root);
         labelTopHalf(root);
       });
@@ -406,7 +439,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return obs;
     });
 
-    // Toggle behavior: add/remove a body class; (re)label on enable
     if (zeroToggle) {
       zeroToggle.addEventListener("change", () => {
         const on = zeroToggle.checked;
@@ -415,7 +447,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // ----- Hide/show top half toggle -----
     const hideTopHalfToggle = document.getElementById("hide-top-half-toggle");
 
     if (hideTopHalfToggle) {
@@ -428,7 +459,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // Initial pass if someone prechecks via server-side defaults or saved state
+    // Initial pass
+    annotateAllDiamondCoords();   // NEW
+
     if (zeroToggle?.checked) {
       document.body.classList.add("zero-alt-on");
       relabelAllZeros();
@@ -438,7 +471,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.classList.add("hide-top-half");
       relabelAllTopHalf();
     } else {
-      // Even if not hidden, we want the top-half labels present
       relabelAllTopHalf();
     }
 

@@ -187,7 +187,7 @@
 
 #diamond-container-twisted {
     display: flex;
-    flex-direction: column-reverse; /* bottom row i+j=0 now appears at bottom */
+    flex-direction: column; /* normal top→bottom */
     align-items: center;
 }
 /* alternate color for zero-valued Hodge cells when enabled */
