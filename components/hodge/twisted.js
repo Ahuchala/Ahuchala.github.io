@@ -198,9 +198,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     infoBox.style.display = "block";
     infoBox.innerHTML = `
-      <p><strong>Partitions contributing to (i, j) = (${i}, ${j}):</strong></p>
+      <p><strong>Partitions contributing to $H^{${j}}(\\Omega^{${i}}(t))$:</strong></p>
       <ul>${list}</ul>
     `;
+
+    // Re-typeset MathJax for the updated box
+    if (window.MathJax && MathJax.typesetPromise) {
+      MathJax.typesetPromise([infoBox]);
+    }
+
   });
 
 
