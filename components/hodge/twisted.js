@@ -13,6 +13,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const tInput  = document.getElementById("t-value-twisted");
   const diamond = document.getElementById("diamond-container-twisted");
 
+  // --- Create info box (twisted-only) ---
+  const infoBox = document.createElement("div");
+  infoBox.id = "twisted-info-box";
+  infoBox.className = "twisted-info-box";
+  infoBox.style.display = "none";
+  infoBox.innerHTML =
+    "<em>Click an entry in the twisted Hodge diamond to see contributing partitions.</em>";
+
+  if (diamond && diamond.parentNode) {
+    diamond.insertAdjacentElement("afterend", infoBox);
+  }
+
   // --- helpers ---
   const intOrNull = (el) => {
     const s = (el?.value ?? "").trim();
@@ -20,11 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const v = Number(s);
     return Number.isFinite(v) ? Math.trunc(v) : null;
   };
+
   const clampNum = (v, lo, hi) => {
     if (typeof lo === "number") v = Math.max(lo, v);
     if (typeof hi === "number") v = Math.min(hi, v);
     return v;
   };
+
   const normalizeInput = (el) => {
     const v = intOrNull(el);
     if (v === null) return null;
@@ -51,7 +65,9 @@ document.addEventListener("DOMContentLoaded", () => {
     kInput.max  = String(nClamp);
   }
 
-  // --- render ---
+  // ======================================================
+  // --- render twisted Hodge diamond + data for info box ---
+  // ======================================================
   function render() {
     applyKBoundsFromN();
 
@@ -60,7 +76,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const tRaw = intOrNull(tInput);
 
     if (nRaw === null || kRaw === null || tRaw === null) {
-      diamond.innerHTML = `<p class="placeholder">Set n, k, t to see the twisted Hodge diamond.</p>`;
+      diamond.innerHTML =
+        `<p class="placeholder">Set n, k, t to see the twisted Hodge diamond.</p>`;
+      infoBox.style.display = "none";
       return;
     }
 
@@ -68,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const k = clampNum(kRaw, 1, Math.min(n, 50));
     const t = clampNum(tRaw, -50, 50);
 
-    // keep sliders consistent (don’t stomp textboxes)
+    // keep sliders consistent
     const ns = clampNum(n, Number(nSlider.min), Number(nSlider.max));
     if (String(ns) !== nSlider.value) nSlider.value = String(ns);
 
@@ -81,34 +99,55 @@ document.addEventListener("DOMContentLoaded", () => {
     const N = k * (n - k);
     if (!Number.isFinite(N) || N < 0) {
       diamond.innerHTML = `<p class="error">Invalid parameters</p>`;
+      infoBox.style.display = "none";
       return;
     }
 
     const results = hodgeTwisted(k, n, t);
-    const hij = Array.from({ length: N + 1 }, () => Array(N + 1).fill(0n));
 
-    for (const { i, j, dimension } of results || []) {
+    // hij[i][j] = { total: BigInt, contributors: [] }
+    const hij = Array.from({ length: N + 1 }, () =>
+      Array.from({ length: N + 1 }, () => ({
+        total: 0n,
+        contributors: [],
+      }))
+    );
+
+    for (const { i, j, lambda, dimension } of results || []) {
       if (i >= 0 && j >= 0 && i <= N && j <= N) {
-        hij[i][j] += BigInt(dimension);
+        hij[i][j].total += BigInt(dimension);
+        hij[i][j].contributors.push({
+          lambda: lambda.slice(),
+          dimension,
+        });
       }
     }
 
+    // Build DOM
     diamond.innerHTML = "";
-    // TOP row first: r = 2N, then down to r = 0
+
+    // TOP row first (r = 2N), bottom row last (r = 0)
     for (let r = 2 * N; r >= 0; r--) {
       const row = document.createElement("div");
       row.className = "diamond-row";
 
       for (let i = Math.max(0, r - N); i <= Math.min(r, N); i++) {
         const j = r - i;
-        const val = hij[i]?.[j] ?? 0n;
+        const cell = hij[i][j];
+        const val = cell.total;
 
         const span = document.createElement("span");
         span.className = "diamond-value";
         span.innerText = val.toString();
 
-        // You *can* drop any old i/j/title logic here – the global annotator
-        // will overwrite them consistently for all diamonds.
+        // Encode partition contributions (twisted only)
+        if (cell.contributors.length > 0) {
+          span.dataset.twistedContrib = encodeURIComponent(
+            JSON.stringify(cell.contributors)
+          );
+        } else {
+          span.dataset.twistedContrib = "";
+        }
 
         row.appendChild(span);
       }
@@ -116,11 +155,56 @@ document.addEventListener("DOMContentLoaded", () => {
       diamond.appendChild(row);
     }
 
+    // Hide info box until user clicks something
+    infoBox.style.display = "none";
   }
+
+  // ======================================================
+  // --- twisted-diamond click handler ---
+  // ======================================================
+  diamond?.addEventListener("click", (event) => {
+    const target = event.target.closest(".diamond-value");
+    if (!target) return;
+
+    const encoded = target.dataset.twistedContrib || "";
+    let contrib = [];
+
+    if (encoded) {
+      try {
+        contrib = JSON.parse(decodeURIComponent(encoded));
+      } catch (e) {
+        console.error("Failed to decode twisted contrib:", e);
+      }
+    }
+
+    const i = target.dataset.i ?? "?";
+    const j = target.dataset.j ?? "?";
+
+    if (!contrib.length) {
+      infoBox.style.display = "block";
+      infoBox.innerHTML = `
+        <p><strong>(i, j) = (${i}, ${j})</strong> has no contributing partitions.</p>
+      `;
+      return;
+    }
+
+    const list = contrib
+      .map(({ lambda, dimension }) => {
+        const lamStr = lambda.length ? `(${lambda.join(", ")})` : "()";
+        return `<li>λ = ${lamStr}, dim = ${dimension}</li>`;
+      })
+      .join("");
+
+    infoBox.style.display = "block";
+    infoBox.innerHTML = `
+      <p><strong>Partitions contributing to (i, j) = (${i}, ${j})</strong></p>
+      <ul>${list}</ul>
+    `;
+  });
+
 
   // --- link slider <-> textbox (blank-friendly) ---
   function link(slider, input, after = () => {}) {
-    // slider -> input
     slider.addEventListener("input", () => {
       input.value = slider.value;
       after();
@@ -132,7 +216,6 @@ document.addEventListener("DOMContentLoaded", () => {
       render();
     });
 
-    // textbox typing (allow blank)
     input.addEventListener("input", () => {
       const v = intOrNull(input);
       if (v === null) { after(); render(); return; }
@@ -144,7 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
       render();
     });
 
-    // textbox blur (normalize if numeric; keep blank as blank)
     input.addEventListener("blur", () => {
       const v = normalizeInput(input);
       if (v !== null) {

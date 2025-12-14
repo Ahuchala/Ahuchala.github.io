@@ -190,6 +190,7 @@
     flex-direction: column; /* normal top→bottom */
     align-items: center;
 }
+
 /* alternate color for zero-valued Hodge cells when enabled */
 .zero-alt-on .is-zero {
   color: var(--zero-highlight, #9aa0a6) !important; /* tweak variable/color as you like */
@@ -198,4 +199,22 @@
 
 body.hide-top-half .is-top-half {
   display: none;
+}
+
+.twisted-info-box {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color-1);
+  background-color: var(--body-section-2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  text-align: left;
+  max-height: 250px;
+  overflow-y: auto;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+}
+.twisted-info-box ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.3rem;
 }
