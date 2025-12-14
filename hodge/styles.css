@@ -218,3 +218,7 @@ body.hide-top-half .is-top-half {
   margin: 0.5rem 0 0;
   padding-left: 1.3rem;
 }
+
+.diamond-value.has-contrib {
+    cursor: pointer;
+}

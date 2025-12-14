@@ -142,12 +142,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Encode partition contributions (twisted only)
         if (cell.contributors.length > 0) {
-          span.dataset.twistedContrib = encodeURIComponent(
-            JSON.stringify(cell.contributors)
-          );
-        } else {
+          span.dataset.twistedContrib = encodeURIComponent(JSON.stringify(cell.contributors));
+          span.classList.add("has-contrib");   // ← add this line
+      } else {
           span.dataset.twistedContrib = "";
-        }
+          span.classList.remove("has-contrib");
+      }
+
 
         row.appendChild(span);
       }
@@ -197,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     infoBox.style.display = "block";
     infoBox.innerHTML = `
-      <p><strong>Partitions contributing to (i, j) = (${i}, ${j})</strong></p>
+      <p><strong>Partitions contributing to (i, j) = (${i}, ${j}):</strong></p>
       <ul>${list}</ul>
     `;
   });
