@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (r === null || r === 0) {
       // Ambient only
-      diamondContainer.innerHTML = "";
+      const newRows = [];
       ambientDiamond.forEach(row => {
         const rowDiv = document.createElement("div");
         rowDiv.className = "diamond-row";
@@ -220,8 +220,9 @@ document.addEventListener("DOMContentLoaded", () => {
           cell.innerText = val.toString();
           rowDiv.appendChild(cell);
         });
-        diamondContainer.appendChild(rowDiv);
+        newRows.push(rowDiv);
       });
+      diamondContainer.replaceChildren(...newRows);
       return;
     }
 
@@ -270,12 +271,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Lazy-load math.js and the per-key JSON in parallel, then render
-    diamondContainer.innerHTML = `<p class="placeholder">Loading…</p>`;
+    // Lazy-load math.js and the per-key JSON in parallel, then render.
+    // Dim the existing diamond instead of replacing it with a "Loading…"
+    // placeholder — removed after the new diamond is fully built.
+    diamondContainer.classList.add("diamond-loading");
     let polyArray;
     try {
       [polyArray] = await Promise.all([fetchFlagKey(dims, r), ensureMath()]);
     } catch (err) {
+      diamondContainer.classList.remove("diamond-loading");
       diamondContainer.innerHTML =
         `<p class="error">Error: No precomputed Hodge data for [${dims.join(", ")}] r=${r}.</p>`;
       console.error(err);
@@ -304,8 +308,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Render
-    diamondContainer.innerHTML = "";
+    // Render — build all rows off-DOM first, then swap atomically.
+    const newRows = [];
     finalDiamond.forEach(row => {
       const rowDiv = document.createElement("div");
       rowDiv.className = "diamond-row";
@@ -315,8 +319,11 @@ document.addEventListener("DOMContentLoaded", () => {
         cell.innerText = val.toString();
         rowDiv.appendChild(cell);
       });
-      diamondContainer.appendChild(rowDiv);
+      newRows.push(rowDiv);
     });
+    diamondContainer.replaceChildren(...newRows);
+    // New diamond is fully built — fade back to full opacity.
+    diamondContainer.classList.remove("diamond-loading");
   }
 
   // --- slider<->textbox link for r (blank-friendly) ---

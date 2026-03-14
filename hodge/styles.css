@@ -235,3 +235,15 @@ body.hide-top-half .is-top-half {
 .diamond-value.has-contrib {
     cursor: pointer;
 }
+
+/* Greyed-out state while async Hodge data / math.js is loading.
+   Applied before the fetch starts and removed after the new diamond is
+   fully built, so there is never an empty-container flash. */
+#diamond-container-grassmannian,
+#diamond-container-flag {
+    transition: opacity 0.15s ease;
+}
+.diamond-loading {
+    opacity: 0.35;
+    pointer-events: none;
+}

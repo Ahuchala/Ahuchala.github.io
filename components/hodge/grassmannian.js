@@ -205,7 +205,9 @@ document.addEventListener("DOMContentLoaded", () =>
     const middleRow = constructMiddleRow(dimension, hodgeNumbersForDegrees);
     const fullHodgeNumbers = hodgeGrassmannian(k, n);
 
-    diamondContainerGrassmannian.innerHTML = "";
+    // Build all rows off-DOM first, then swap in one atomic replaceChildren call
+    // so there is never a frame where the container is empty.
+    const newRows = [];
     for (let i = 0; i < rows; i++) {
       const row = document.createElement("div");
       row.className = "diamond-row";
@@ -230,8 +232,9 @@ document.addEventListener("DOMContentLoaded", () =>
         }
         row.appendChild(valueCell);
       }
-      diamondContainerGrassmannian.appendChild(row);
+      newRows.push(row);
     }
+    diamondContainerGrassmannian.replaceChildren(...newRows);
   }
 
   const updateDiamondGrassmannian = async () =>
@@ -258,11 +261,11 @@ document.addEventListener("DOMContentLoaded", () =>
     }
 
     const rows = 2 * dimension + 1;
-    diamondContainerGrassmannian.innerHTML = "";
 
     // No hypersurfaces: just the Grassmannian (no JSON needed)
     if (r === 0) {
       const fullHodgeNumbers = hodgeGrassmannian(k, n);
+      const newRows = [];
       for (let i = 0; i < rows; i++) {
         const row = document.createElement("div");
         row.className = "diamond-row";
@@ -273,8 +276,9 @@ document.addEventListener("DOMContentLoaded", () =>
           valueCell.innerText = fullHodgeNumbers[i]?.[j] ?? "0";
           row.appendChild(valueCell);
         }
-        diamondContainerGrassmannian.appendChild(row);
+        newRows.push(row);
       }
+      diamondContainerGrassmannian.replaceChildren(...newRows);
       return;
     }
 
@@ -297,9 +301,10 @@ document.addEventListener("DOMContentLoaded", () =>
       hodgeNumbersForDegrees = hodgeCompleteIntersection(degrees, n - 1);
       renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, true);
     } else {
-      // Lazy-load math.js and the per-key JSON in parallel
-      diamondContainerGrassmannian.innerHTML =
-        `<p class="placeholder">Loading…</p>`;
+      // Lazy-load math.js and the per-key JSON in parallel.
+      // Dim the existing diamond instead of replacing it with a "Loading…"
+      // placeholder — removed after the new diamond is fully built.
+      diamondContainerGrassmannian.classList.add("diamond-loading");
       try {
         const [hodgePolynomials] = await Promise.all([
           fetchHodgeKey(k, n, r),
@@ -309,7 +314,9 @@ document.addEventListener("DOMContentLoaded", () =>
           evaluatePolynomial(poly, degrees)
         );
         renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, false);
+        diamondContainerGrassmannian.classList.remove("diamond-loading");
       } catch (err) {
+        diamondContainerGrassmannian.classList.remove("diamond-loading");
         diamondContainerGrassmannian.innerHTML =
           `<p class="error">Error: No data found for Gr(${k},${n}) with ${r} hypersurfaces.</p>`;
         console.error(err);
