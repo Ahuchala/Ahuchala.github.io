@@ -9,6 +9,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalDescription = document.getElementById('modal-description');
   const closeModal = document.querySelector('.modal .close');
 
+  // Close modal when X button is clicked
+  if (closeModal) {
+    closeModal.addEventListener('click', () => {
+      closeImageModal(modal, modalImage, modalTitle, modalDescription);
+    });
+  }
+
   // Populate research page with thumbnails
   const zeta = images.find(img => img.title === 'Zeta Function');
   if (zeta) {
@@ -46,20 +53,20 @@ document.addEventListener("DOMContentLoaded", () => {
     // Close modal on background click
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
-        closeModalModal(modal, modalImage, modalTitle, modalDescription);
+        closeImageModal(modal, modalImage, modalTitle, modalDescription);
       }
     });
 
     // Close modal with Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && modal.style.display === 'flex') {
-        closeModalModal(modal, modalImage, modalTitle, modalDescription);
+        closeImageModal(modal, modalImage, modalTitle, modalDescription);
       }
     });
   });
 
 // Helper to DRY up modal closing
-function closeModalModal(modal, modalImage, modalTitle, modalDescription) {
+function closeImageModal(modal, modalImage, modalTitle, modalDescription) {
   modal.style.display = 'none';
   modalImage.src = '';
   modalTitle.innerHTML = '';

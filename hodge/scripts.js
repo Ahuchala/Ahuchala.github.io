@@ -334,12 +334,9 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       if (!rows.length) return;
 
-      // sort top → bottom in screen coordinates
-      rows.sort((a, b) => {
-        const ra = a.getBoundingClientRect();
-        const rb = b.getBoundingClientRect();
-        return ra.top - rb.top;
-      });
+      // sort top → bottom in screen coordinates (pre-compute to avoid layout thrashing)
+      const positions = new Map(rows.map(r => [r, r.getBoundingClientRect().top]));
+      rows.sort((a, b) => positions.get(a) - positions.get(b));
 
       const L = rows.length;
       if (L % 2 === 0) return; // expect 2N+1 rows
@@ -403,11 +400,8 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       if (!rows.length) return;
 
-      rows.sort((a, b) => {
-        const ra = a.getBoundingClientRect();
-        const rb = b.getBoundingClientRect();
-        return ra.top - rb.top;
-      });
+      const positions2 = new Map(rows.map(r => [r, r.getBoundingClientRect().top]));
+      rows.sort((a, b) => positions2.get(a) - positions2.get(b));
 
       const mid = Math.floor(rows.length / 2);
 
@@ -438,6 +432,8 @@ document.addEventListener("DOMContentLoaded", () => {
       obs.observe(root, { childList: true, subtree: true });
       return obs;
     });
+
+    window.addEventListener('beforeunload', () => observers.forEach(o => o.disconnect()));
 
     if (zeroToggle) {
       zeroToggle.addEventListener("change", () => {

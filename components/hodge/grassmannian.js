@@ -26,8 +26,15 @@ document.addEventListener("DOMContentLoaded", async () =>
   }
 
   // ---------------- data ----------------
-  const response = await fetch("/components/hodge/grassmannian_hodge_numbers_factored.json");
-  const hodgeData = await response.json();
+  let hodgeData;
+  try {
+    const response = await fetch("/components/hodge/grassmannian_hodge_numbers_factored.json");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    hodgeData = await response.json();
+  } catch (err) {
+    console.error("Failed to load Grassmannian Hodge data:", err);
+    return;
+  }
 
   // ---------------- blank-friendly slider<->textbox sync ----------------
   const syncSliderAndTextbox = (slider, textbox, onChange) =>

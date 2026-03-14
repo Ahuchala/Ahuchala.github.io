@@ -57,11 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fontCache: "global"
     }
   };
-{/* <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.5.0/math.min.js"></script> */}
   loadScript("https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js")
-    // .then(() => {
-    //   console.log("MathJax loaded successfully.");
-    // })
     .catch((err) => {
       console.error("Error loading MathJax:", err);
     });

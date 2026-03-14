@@ -9,6 +9,7 @@ const components = {
 
 export function setComponents() {
     for (const [queryString, getHTML] of Object.entries(components)) {
-        document.querySelector(queryString).innerHTML = getHTML();
+        const el = document.querySelector(queryString);
+        if (el) el.innerHTML = getHTML();
     }
 };
