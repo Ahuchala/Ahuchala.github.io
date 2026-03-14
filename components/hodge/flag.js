@@ -3,8 +3,24 @@
 // =======================================================
 
 import { hodgeFlag } from "/components/hodge/flagHodge.js";
+import { ensureMath } from "/components/hodge/loadMath.js";
 
-document.addEventListener("DOMContentLoaded", async () => {
+// Per-key in-memory cache: "[d1, d2, d3],r" → polynomial array
+const flagHodgeCache = new Map();
+
+async function fetchFlagKey(dims, r) {
+  const key = `[${dims.join(", ")}],${r}`;
+  if (flagHodgeCache.has(key)) return flagHodgeCache.get(key);
+  const dimsStr = dims.join("_");
+  const url = `/components/hodge/flag-hodge/dims${dimsStr}_r${r}.json`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`HTTP ${resp.status} for ${url}`);
+  const data = await resp.json();
+  flagHodgeCache.set(key, data);
+  return data;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
   // DOM element selectors.
   const dimsInput = document.getElementById("dims-input");
   const rSlider = document.getElementById("r-slider-flag");
@@ -24,15 +40,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (typeof lo === "number") v = Math.max(lo, v);
     if (typeof hi === "number") v = Math.min(hi, v);
     return v;
-  }
-
-  // Load precomputed Hodge numbers JSON for complete intersections.
-  let flagHodgeData = {};
-  try {
-    const response = await fetch("/components/hodge/flag_hodge_numbers_factored.json");
-    flagHodgeData = await response.json();
-  } catch (error) {
-    console.error("Error loading flag_hodge_numbers_factored.json:", error);
   }
 
   // --- BigInt-based polynomial evaluation ---
@@ -153,7 +160,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // --- main render ---
-  function updateDiamondFlag() {
+  async function updateDiamondFlag() {
     const dimsRaw = (dimsInput?.value ?? "").trim();
 
     if (dimsRaw === "") {
@@ -224,13 +231,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const rows = 2 * d + 1;
     const truncatedAmbient = ambientDiamond.slice(0, d + 1);
 
-    const key = "[" + dims.join(", ") + "]," + r;
-    if (!(key in flagHodgeData)) {
-      diamondContainer.innerHTML = `<p class="error">Error: No precomputed Hodge data for key "${key}" found.</p>`;
-      return;
-    }
-    const polyArray = flagHodgeData[key];
-
     // Degrees
     const degreeInputs = Array.from(degreeToggles.children)
       .map(c => c.querySelector("input"))
@@ -268,6 +268,18 @@ document.addEventListener("DOMContentLoaded", async () => {
           return;
         }
       }
+    }
+
+    // Lazy-load math.js and the per-key JSON in parallel, then render
+    diamondContainer.innerHTML = `<p class="placeholder">Loading…</p>`;
+    let polyArray;
+    try {
+      [polyArray] = await Promise.all([fetchFlagKey(dims, r), ensureMath()]);
+    } catch (err) {
+      diamondContainer.innerHTML =
+        `<p class="error">Error: No precomputed Hodge data for [${dims.join(", ")}] r=${r}.</p>`;
+      console.error(err);
+      return;
     }
 
     // Evaluate JSON polynomials → half middle row

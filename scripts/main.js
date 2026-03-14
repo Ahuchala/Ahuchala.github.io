@@ -47,20 +47,26 @@ document.addEventListener("DOMContentLoaded", () => {
   setComponents();
   
 
-  // 2) Load MathJax (only once)
-  window.MathJax = {
-    tex: {
-      inlineMath: [["$", "$"], ["\\(", "\\)"]]
-      // packages: ["base"]
-    },
-    svg: {
-      fontCache: "global"
-    }
+  // 2) Load MathJax during browser idle time so it never blocks initial render.
+  const loadMathJax = () => {
+    window.MathJax = {
+      tex: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]]
+      },
+      svg: {
+        fontCache: "global"
+      }
+    };
+    loadScript("https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js")
+      .catch((err) => {
+        console.error("Error loading MathJax:", err);
+      });
   };
-  loadScript("https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js")
-    .catch((err) => {
-      console.error("Error loading MathJax:", err);
-    });
+  if (typeof requestIdleCallback === "function") {
+    requestIdleCallback(loadMathJax, { timeout: 3000 });
+  } else {
+    setTimeout(loadMathJax, 0);
+  }
 
   // 3) Initialize your other scripts
   initModal();

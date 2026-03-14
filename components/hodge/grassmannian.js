@@ -1,7 +1,22 @@
 import { hodgeGrassmannian } from "/components/hodge/grassmannianHodge.js";
 import { hodgeCompleteIntersection } from "/components/hodge/completeIntersectionHodgeNumbers.js";
+import { ensureMath } from "/components/hodge/loadMath.js";
 
-document.addEventListener("DOMContentLoaded", async () =>
+// Per-key in-memory cache: "k,n,r" → polynomial array
+const hodgeCache = new Map();
+
+async function fetchHodgeKey(k, n, r) {
+  const key = `${k},${n},${r}`;
+  if (hodgeCache.has(key)) return hodgeCache.get(key);
+  const url = `/components/hodge/grassmannian-hodge/k${k}_n${n}_r${r}.json`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`HTTP ${resp.status} for ${url}`);
+  const data = await resp.json();
+  hodgeCache.set(key, data);
+  return data;
+}
+
+document.addEventListener("DOMContentLoaded", () =>
 {
   const nSliderGrassmannian = document.getElementById("n-slider-grassmannian");
   const kSliderGrassmannian = document.getElementById("k-slider-grassmannian");
@@ -23,17 +38,6 @@ document.addEventListener("DOMContentLoaded", async () =>
     if (typeof lo === "number") v = Math.max(lo, v);
     if (typeof hi === "number") v = Math.min(hi, v);
     return v;
-  }
-
-  // ---------------- data ----------------
-  let hodgeData;
-  try {
-    const response = await fetch("/components/hodge/grassmannian_hodge_numbers_factored.json");
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    hodgeData = await response.json();
-  } catch (err) {
-    console.error("Failed to load Grassmannian Hodge data:", err);
-    return;
   }
 
   // ---------------- blank-friendly slider<->textbox sync ----------------
@@ -78,7 +82,7 @@ document.addEventListener("DOMContentLoaded", async () =>
     });
   };
 
-  // ---------------- BigInt evaluation helpers (unchanged behavior) ----------------
+  // ---------------- BigInt evaluation helpers ----------------
   function evalASTBigInt(node, scope)
   {
     if (node.isConstantNode) {
@@ -164,7 +168,7 @@ document.addEventListener("DOMContentLoaded", async () =>
         const label = document.createElement("label");
         label.innerText = `Degree of Hypersurface ${i + 1}:`;
         const input = document.createElement("input");
-        input.type = "number";  // keeping your type; blanks still allowed by our logic
+        input.type = "number";
         input.min = "1";
         input.max = "50";
         input.value = "2";
@@ -194,7 +198,43 @@ document.addEventListener("DOMContentLoaded", async () =>
     return middleRow;
   }
 
-  const updateDiamondGrassmannian = () =>
+  // Renders the diamond once hodge data is available.
+  function renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, isCompleteIntersection) {
+    const dimension = k * (n - k) - r;
+    const rows = 2 * dimension + 1;
+    const middleRow = constructMiddleRow(dimension, hodgeNumbersForDegrees);
+    const fullHodgeNumbers = hodgeGrassmannian(k, n);
+
+    diamondContainerGrassmannian.innerHTML = "";
+    for (let i = 0; i < rows; i++) {
+      const row = document.createElement("div");
+      row.className = "diamond-row";
+      const elements = i < dimension ? i + 1 : rows - i;
+      for (let j = 0; j < elements; j++) {
+        const valueCell = document.createElement("span");
+        valueCell.className = "diamond-value";
+        if (i === dimension) {
+          if (isCompleteIntersection) {
+            valueCell.innerText = middleRow[j] ?? "0";
+          } else {
+            const grassmannianValue = fullHodgeNumbers[i]?.[j] ?? 0;
+            const jsonValue = middleRow[j] ?? "0";
+            const sum = safeBigInt(grassmannianValue) + safeBigInt(jsonValue);
+            valueCell.innerText = sum.toString();
+          }
+        } else if (i < dimension) {
+          valueCell.innerText = fullHodgeNumbers[i]?.[j] ?? "0";
+        } else {
+          const mirrorRow = rows - i - 1;
+          valueCell.innerText = fullHodgeNumbers[mirrorRow]?.[j] ?? "0";
+        }
+        row.appendChild(valueCell);
+      }
+      diamondContainerGrassmannian.appendChild(row);
+    }
+  }
+
+  const updateDiamondGrassmannian = async () =>
   {
     // read core inputs as nullable
     const n = intOrNull(nValueGrassmannian);
@@ -220,7 +260,7 @@ document.addEventListener("DOMContentLoaded", async () =>
     const rows = 2 * dimension + 1;
     diamondContainerGrassmannian.innerHTML = "";
 
-    // No hypersurfaces: just the Grassmannian
+    // No hypersurfaces: just the Grassmannian (no JSON needed)
     if (r === 0) {
       const fullHodgeNumbers = hodgeGrassmannian(k, n);
       for (let i = 0; i < rows; i++) {
@@ -250,54 +290,30 @@ document.addEventListener("DOMContentLoaded", async () =>
     }
 
     const degrees = degreeVals.slice().sort((a, b) => b - a);
-
-    // Either complete intersection in P^n (k=1 or k=n-1) or from JSON
-    const key = `${k},${n},${r}`;
     const isCompleteIntersection = (k === 1 || k === n - 1);
 
     let hodgeNumbersForDegrees;
     if (isCompleteIntersection) {
       hodgeNumbersForDegrees = hodgeCompleteIntersection(degrees, n - 1);
-    } else if (key in hodgeData) {
-      const hodgePolynomials = hodgeData[key];
-      hodgeNumbersForDegrees = hodgePolynomials.map(poly =>
-        evaluatePolynomial(poly, degrees)
-      );
+      renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, true);
     } else {
+      // Lazy-load math.js and the per-key JSON in parallel
       diamondContainerGrassmannian.innerHTML =
-        `<p class="error">Error: No data found for Gr(${k},${n}) with ${r} hypersurfaces.</p>`;
-      console.error(`Key "${key}" not found in JSON data.`);
-      return;
-    }
-
-    const middleRow = constructMiddleRow(dimension, hodgeNumbersForDegrees);
-    const fullHodgeNumbers = hodgeGrassmannian(k, n);
-
-    for (let i = 0; i < rows; i++) {
-      const row = document.createElement("div");
-      row.className = "diamond-row";
-      const elements = i < dimension ? i + 1 : rows - i;
-      for (let j = 0; j < elements; j++) {
-        const valueCell = document.createElement("span");
-        valueCell.className = "diamond-value";
-        if (i === dimension) {
-          if (isCompleteIntersection) {
-            valueCell.innerText = middleRow[j] ?? "0";
-          } else {
-            const grassmannianValue = fullHodgeNumbers[i]?.[j] ?? 0;
-            const jsonValue = middleRow[j] ?? "0";
-            const sum = safeBigInt(grassmannianValue) + safeBigInt(jsonValue);
-            valueCell.innerText = sum.toString();
-          }
-        } else if (i < dimension) {
-          valueCell.innerText = fullHodgeNumbers[i]?.[j] ?? "0";
-        } else {
-          const mirrorRow = rows - i - 1;
-          valueCell.innerText = fullHodgeNumbers[mirrorRow]?.[j] ?? "0";
-        }
-        row.appendChild(valueCell);
+        `<p class="placeholder">Loading…</p>`;
+      try {
+        const [hodgePolynomials] = await Promise.all([
+          fetchHodgeKey(k, n, r),
+          ensureMath(),
+        ]);
+        hodgeNumbersForDegrees = hodgePolynomials.map(poly =>
+          evaluatePolynomial(poly, degrees)
+        );
+        renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, false);
+      } catch (err) {
+        diamondContainerGrassmannian.innerHTML =
+          `<p class="error">Error: No data found for Gr(${k},${n}) with ${r} hypersurfaces.</p>`;
+        console.error(err);
       }
-      diamondContainerGrassmannian.appendChild(row);
     }
   };
 
