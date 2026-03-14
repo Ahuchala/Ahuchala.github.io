@@ -65,6 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
     kInput.max  = String(nClamp);
   }
 
+  // Contributors store: maps "i,j" → contributor array for the current render.
+  // Replaces JSON+URI encoding into DOM dataset attributes, eliminating
+  // serialization overhead on every render and parse overhead on every click.
+  let contribStore = new Map();
+
   // ======================================================
   // --- render twisted Hodge diamond + data for info box ---
   // ======================================================
@@ -105,21 +110,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const results = hodgeTwisted(k, n, t);
 
-    // hij[i][j] = { total: BigInt, contributors: [] }
-    const hij = Array.from({ length: N + 1 }, () =>
-      Array.from({ length: N + 1 }, () => ({
-        total: 0n,
-        contributors: [],
-      }))
-    );
-
+    // Sparse Map keyed by i*(N+1)+j — avoids the O(N²) allocation of the
+    // original (N+1)×(N+1) dense array (e.g. N=225 → ~51k objects, most zero).
+    contribStore = new Map();
+    const hij = new Map();
     for (const { i, j, lambda, dimension } of results || []) {
       if (i >= 0 && j >= 0 && i <= N && j <= N) {
-        hij[i][j].total += BigInt(dimension);
-        hij[i][j].contributors.push({
-          lambda: lambda.slice(),
-          dimension,
-        });
+        const key = i * (N + 1) + j;
+        if (!hij.has(key)) hij.set(key, { total: 0n, contributors: [] });
+        const cell = hij.get(key);
+        cell.total += BigInt(dimension);
+        cell.contributors.push({ lambda: lambda.slice(), dimension });
       }
     }
 
@@ -133,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       for (let i = Math.max(0, r - N); i <= Math.min(r, N); i++) {
         const j = r - i;
-        const cell = hij[i][j];
+        const cell = hij.get(i * (N + 1) + j) ?? { total: 0n, contributors: [] };
         const val = cell.total;
 
         const span = document.createElement("span");
@@ -142,14 +143,10 @@ document.addEventListener("DOMContentLoaded", () => {
         span.dataset.i = String(i);
         span.dataset.j = String(j);
 
-        // Encode partition contributions (twisted only)
         if (cell.contributors.length > 0) {
-          span.dataset.twistedContrib = encodeURIComponent(JSON.stringify(cell.contributors));
-          span.classList.add("has-contrib");   // ← add this line
-      } else {
-          span.dataset.twistedContrib = "";
-          span.classList.remove("has-contrib");
-      }
+          contribStore.set(`${i},${j}`, cell.contributors);
+          span.classList.add("has-contrib");
+        }
 
 
         row.appendChild(span);
@@ -169,19 +166,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const target = event.target.closest(".diamond-value");
     if (!target) return;
 
-    const encoded = target.dataset.twistedContrib || "";
-    let contrib = [];
-
-    if (encoded) {
-      try {
-        contrib = JSON.parse(decodeURIComponent(encoded));
-      } catch (e) {
-        console.error("Failed to decode twisted contrib:", e);
-      }
-    }
-
     const i = target.dataset.i ?? "?";
     const j = target.dataset.j ?? "?";
+    const contrib = contribStore.get(`${i},${j}`) ?? [];
 
     if (!contrib.length) {
       infoBox.style.display = "block";

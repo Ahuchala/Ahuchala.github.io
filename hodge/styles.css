@@ -56,6 +56,9 @@
     background-color: var(--body-section-2);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+    /* Scopes layout and paint to this container so large diamonds don't
+       trigger page-wide reflows/repaints during scroll. */
+    contain: layout style;
 }
 
 .diamond-row {
@@ -80,7 +83,9 @@
     border-radius: 1.5em;
     background-color: var(--secondary-light);
     color: var(--header-text-color);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* box-shadow removed: painting thousands of individual shadows per scroll
+       frame was the primary cause of scroll lag on large diamonds. The
+       #diamond-box container already carries its own shadow. */
     line-height: 1.5;
 }
 
@@ -172,6 +177,14 @@
 }
 
 
+#diamond-container,
+#diamond-container-abelian,
+#diamond-container-grassmannian,
+#diamond-container-flag,
+#diamond-container-twisted {
+    contain: layout style;
+}
+
 #diamond-container {
     margin-top: 20px;
     display: flex;
@@ -187,7 +200,7 @@
 
 #diamond-container-twisted {
     display: flex;
-    flex-direction: column; /* normal top→bottom */
+    flex-direction: column;
     align-items: center;
 }
 

@@ -2,46 +2,22 @@
 // /components/hodge/twistedHodge.js
 // =======================================================
 
-// --- exact gcd on integers
-function gcd(x, y) {
-  x = Math.abs(x);
-  y = Math.abs(y);
-  while (y !== 0) {
-    const t = x % y;
-    x = y;
-    y = t;
-  }
-  return x;
-}
-
-// --- exact integer Schur dimension
+// --- exact integer Schur dimension (Weyl formula, direct BigInt)
+// All factors (beta[a] - beta[b] + (b-a)) are strictly positive because
+// beta+ρ is strictly decreasing after sorting.  The formula always yields
+// an integer by Weyl's theorem, so BigInt division is exact — the original
+// O(n⁴) GCD pre-cancellation loop is unnecessary.
 function schurDimension(beta) {
   const n = beta.length;
-  const num = [];
-  const den = [];
-
+  let num = 1n;
+  let den = 1n;
   for (let a = 0; a < n; a++) {
     for (let b = a + 1; b < n; b++) {
-      num.push(beta[a] - beta[b] + (b - a));
-      den.push(b - a);
+      num *= BigInt(beta[a] - beta[b] + (b - a));
+      den *= BigInt(b - a);
     }
   }
-
-  // gcd cancellations
-  for (let i = 0; i < num.length; i++) {
-    for (let j = 0; j < den.length; j++) {
-      const g = gcd(num[i], den[j]);
-      if (g > 1) {
-        num[i] /= g;
-        den[j] /= g;
-      }
-    }
-  }
-
-  // Use BigInt products to avoid float overflow/precision loss.
-  const numProd = num.reduce((p, x) => p * BigInt(x), 1n);
-  const denProd = den.reduce((p, x) => p * BigInt(x), 1n);
-  return Number(numProd / denProd);
+  return Number(num / den);
 }
 
 // --- q-binomial (Gaussian binomial) coefficients
@@ -83,38 +59,43 @@ function tSkew(mu, t) {
   return l;
 }
 
-// --- bounded partitions in (maxPart)×(maxLen)
+// --- bounded partitions in (maxPart) × (maxLen)
+// Buffer-based: reuses a single preallocated array and yields slices,
+// eliminating the O(k) prefix.concat() allocations per yielded partition.
 function* boundedPartitions(maxPart, maxLen) {
   yield [];
-  function* rec(maxVal, len, prefix) {
-    if (len >= maxLen) return;
+  if (maxLen === 0 || maxPart === 0) return;
+  const buf = new Array(maxLen);
+  function* rec(maxVal, len) {
     for (let next = Math.min(maxVal, maxPart); next > 0; next--) {
-      const newPrefix = prefix.concat(next);
-      yield newPrefix;
-      yield* rec(next, len + 1, newPrefix);
+      buf[len] = next;
+      yield buf.slice(0, len + 1);
+      if (len + 1 < maxLen) yield* rec(next, len + 1);
     }
   }
-  yield* rec(maxPart, 0, []);
+  yield* rec(maxPart, 0);
 }
 
 // --- transpose of a partition
+// O(|λ|) double-loop replaces the O(k·w) filter-per-column approach.
 function transposePartition(lambda) {
-  const w = Math.max(...lambda, 0);
-  const tpose = [];
-  for (let j = 0; j < w; j++) {
-    tpose.push(lambda.filter(x => x > j).length);
+  if (!lambda.length) return [];
+  const w = Math.max(...lambda);
+  const tpose = new Array(w).fill(0);
+  for (let i = 0; i < lambda.length; i++) {
+    for (let j = 0; j < lambda[i]; j++) tpose[j]++;
   }
   return tpose;
 }
 
 // =======================================================
-// Main export
+// Core computation (internal — call hodgeTwisted instead)
 // =======================================================
-export function hodgeTwisted(k, n, t) {
+function _computeHodgeTwisted(k, n, t) {
   const nMinusK = n - k;
   const N = k * (n - k);
 
-  // --- Serre duality for t<0
+  // --- Serre duality for t < 0
   if (t < 0) {
     const pos = hodgeTwisted(k, n, -t);
     return (pos || []).map(({ i, j, lambda, beta, dimension }) => ({
@@ -126,7 +107,7 @@ export function hodgeTwisted(k, n, t) {
     }));
   }
 
-  // --- t = 0: q-binomial shortcut (all mass on i=j)
+  // --- t = 0: q-binomial shortcut (all mass on i = j diagonal)
   if (t === 0) {
     const coeffs = qBinomialCoeffs(n, k);
     const out = [];
@@ -137,11 +118,15 @@ export function hodgeTwisted(k, n, t) {
     return out;
   }
 
+  // Precompute shift and rho once per call — they depend only on n, not on λ.
+  // The original code rebuilt both arrays inside every partition's processing block.
+  const shift = Array.from({ length: n }, (_, i) => n - i);      // [n, n-1, …, 1]
+  const rho   = Array.from({ length: n }, (_, i) => n - i - 1);  // [n-1, n-2, …, 0]
+
   const results = [];
   const seen = new Set();
 
-  // --- Fast path: for t >= n, every λ ⊆ k×(n−k) is a t-core.
-  // Enumerate λ directly (with i = 0), but KEEP the distinctness check and β/dimension logic.
+  // --- Fast path: t >= n ⇒ every λ ⊆ k×(n−k) is a t-core
   if (t >= n) {
     for (const lambda of boundedPartitions(nMinusK, k)) {
       if (lambda.length > k || Math.max(0, ...lambda) > nMinusK) continue;
@@ -152,44 +137,42 @@ export function hodgeTwisted(k, n, t) {
 
       // α = (−rev(λᵀ), λ−t)
       const lamT = transposePartition(lambda);
+      lamT.reverse(); // reverse in-place (was: [...lamT].reverse())
 
-      // left = −rev(λᵀ) padded to length n−k
-      const left = Array(nMinusK).fill(0);
-      const revLamT = [...lamT].reverse();
-      for (let i = 0; i < Math.min(revLamT.length, nMinusK); i++) {
-        left[nMinusK - revLamT.length + i] = -revLamT[i];
+      const alpha = new Array(n).fill(0);
+      const startL = nMinusK - lamT.length;
+      for (let i = 0; i < lamT.length; i++) alpha[startL + i] = -lamT[i];
+
+      const lambdaLen = lambda.length;
+      for (let i = 0; i < k; i++) {
+        alpha[nMinusK + i] = (i < lambdaLen ? lambda[i] : 0) - t;
       }
 
-      // right = (λ − t) padded to length k
-      const right = [...lambda, ...Array(Math.max(0, k - lambda.length)).fill(0)].map(x => x - t);
-      const alpha = [...left, ...right]; // length n
-
-      // distinctness of α + (n,…,1)
-      const shift = Array.from({ length: n }, (_, i) => n - i);
-      const shifted = alpha.map((x, i) => x + shift[i]);
-      const distinct = new Set(shifted);
-      if (distinct.size !== shifted.length) continue;
+      // distinctness of α + shift
+      const shiftedSet = new Set();
+      let allDistinct = true;
+      for (let i = 0; i < n; i++) {
+        const v = alpha[i] + shift[i];
+        if (shiftedSet.has(v)) { allDistinct = false; break; }
+        shiftedSet.add(v);
+      }
+      if (!allDistinct) continue;
 
       // β = sort(α + ρ) − ρ
-      const rho = Array.from({ length: n }, (_, i) => n - i - 1);
-      const alphaPlusRho = alpha.map((x, i) => x + rho[i]);
-      const sorted = [...alphaPlusRho].sort((a, b) => b - a);
-      const beta = sorted.map((x, i) => x - rho[i]);
+      const aPlusRho = alpha.map((x, i) => x + rho[i]);
+      aPlusRho.sort((a, b) => b - a);
+      const beta = aPlusRho.map((x, i) => x - rho[i]);
 
-      const dimension = schurDimension(beta);
       const j = lambda.reduce((a, b) => a + b, 0);
-      const i = 0;
-
-      results.push({ i, j, lambda, beta, dimension });
+      results.push({ i: 0, j, lambda, beta, dimension: schurDimension(beta) });
     }
     return results;
   }
 
-  // --- General case: enumerate μ in (t−1)×k, map μ ↦ λ by tSkew, then proceed
+  // --- General case: enumerate μ in (t−1)×k, map μ ↦ λ via tSkew
   for (const mu of boundedPartitions(t - 1, k)) {
     const lambda = tSkew(mu, t);
 
-    // must fit in box k×(n−k)
     if (lambda.length > k || Math.max(0, ...lambda) > nMinusK) continue;
 
     const key = lambda.join(",");
@@ -198,37 +181,49 @@ export function hodgeTwisted(k, n, t) {
 
     // α = (−rev(λᵀ), λ−t)
     const lamT = transposePartition(lambda);
+    lamT.reverse();
 
-    // left = −rev(λᵀ) padded to length n−k
-    const left = Array(nMinusK).fill(0);
-    const revLamT = [...lamT].reverse();
-    for (let i = 0; i < Math.min(revLamT.length, nMinusK); i++) {
-      left[nMinusK - revLamT.length + i] = -revLamT[i];
+    const alpha = new Array(n).fill(0);
+    const startL = nMinusK - lamT.length;
+    for (let i = 0; i < lamT.length; i++) alpha[startL + i] = -lamT[i];
+
+    const lambdaLen = lambda.length;
+    for (let i = 0; i < k; i++) {
+      alpha[nMinusK + i] = (i < lambdaLen ? lambda[i] : 0) - t;
     }
 
-    // right = (λ − t) padded to length k
-    const right = [...lambda, ...Array(Math.max(0, k - lambda.length)).fill(0)].map(x => x - t);
-    const alpha = [...left, ...right]; // length n
-
-    // distinctness of α + (n,…,1)
-    const shift = Array.from({ length: n }, (_, i) => n - i);
-    const shifted = alpha.map((x, i) => x + shift[i]);
-    const distinct = new Set(shifted);
-    if (distinct.size !== shifted.length) continue;
+    // distinctness of α + shift
+    const shiftedSet = new Set();
+    let allDistinct = true;
+    for (let i = 0; i < n; i++) {
+      const v = alpha[i] + shift[i];
+      if (shiftedSet.has(v)) { allDistinct = false; break; }
+      shiftedSet.add(v);
+    }
+    if (!allDistinct) continue;
 
     // β = sort(α + ρ) − ρ
-    const rho = Array.from({ length: n }, (_, i) => n - i - 1);
-    const alphaPlusRho = alpha.map((x, i) => x + rho[i]);
-    const sorted = [...alphaPlusRho].sort((a, b) => b - a);
-    const beta = sorted.map((x, i) => x - rho[i]);
+    const aPlusRho = alpha.map((x, i) => x + rho[i]);
+    aPlusRho.sort((a, b) => b - a);
+    const beta = aPlusRho.map((x, i) => x - rho[i]);
 
-    const dimension = schurDimension(beta);
     const j = lambda.reduce((a, b) => a + b, 0);
     const muSize = mu.reduce((a, b) => a + b, 0);
-    const i = j - muSize; // t-interior size
-
-    results.push({ i, j, lambda, beta, dimension });
+    results.push({ i: j - muSize, j, lambda, beta, dimension: schurDimension(beta) });
   }
 
   return results;
+}
+
+// =======================================================
+// Memoized export
+// =======================================================
+const hodgeTwistedCache = new Map();
+
+export function hodgeTwisted(k, n, t) {
+  const cacheKey = `${k},${n},${t}`;
+  if (hodgeTwistedCache.has(cacheKey)) return hodgeTwistedCache.get(cacheKey);
+  const result = _computeHodgeTwisted(k, n, t);
+  hodgeTwistedCache.set(cacheKey, result);
+  return result;
 }
