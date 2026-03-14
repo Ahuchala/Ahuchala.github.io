@@ -3,7 +3,7 @@ export function footer() {
         <div class="gradient-bar"></div> <!-- Reusable gradient bar -->
 
         <div class="footer-content">
-            <p>&copy; 2025 Andy Huchala | 
+            <p>&copy; 2026 Andy Huchala | 
                 <a class="footer-button" href="/index.html">Home</a>
             </p>
         </div>

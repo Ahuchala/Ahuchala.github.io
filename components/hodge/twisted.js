@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!contrib.length) {
       infoBox.style.display = "block";
       infoBox.innerHTML = `
-        <p><strong>(i, j) = (${i}, ${j})</strong> has no contributing partitions.</p>
+        <p><strong>$H^{${i}}(\\Omega^{${j}}(t))$</strong> has no contributing partitions.</p>
       `;
       return;
     }
@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     infoBox.style.display = "block";
     infoBox.innerHTML = `
-      <p><strong>Partitions contributing to $H^{${j}}(\\Omega^{${i}}(t))$:</strong></p>
+      <p><strong>Partitions contributing to $H^{${i}}(\\Omega^{${j}}(t))$:</strong></p>
       <ul>${list}</ul>
     `;
 
