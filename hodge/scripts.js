@@ -329,14 +329,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function annotateDiamondCoords(root) {
       if (!root) return;
 
-      let rows = Array.from(
+      const rows = Array.from(
         root.querySelectorAll(".hodge-row, .diamond-row")
       );
       if (!rows.length) return;
 
-      // sort top → bottom in screen coordinates (pre-compute to avoid layout thrashing)
-      const positions = new Map(rows.map(r => [r, r.getBoundingClientRect().top]));
-      rows.sort((a, b) => positions.get(a) - positions.get(b));
+      // querySelectorAll returns DOM order (top→bottom)
 
       const L = rows.length;
       if (L % 2 === 0) return; // expect 2N+1 rows
@@ -395,14 +393,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function labelTopHalf(root) {
       if (!root) return;
 
-      let rows = Array.from(
+      const rows = Array.from(
         root.querySelectorAll(".hodge-row, .diamond-row")
       );
       if (!rows.length) return;
 
-      const positions2 = new Map(rows.map(r => [r, r.getBoundingClientRect().top]));
-      rows.sort((a, b) => positions2.get(a) - positions2.get(b));
-
+      // querySelectorAll returns DOM order (top→bottom), no position sort needed
       const mid = Math.floor(rows.length / 2);
 
       rows.forEach((row, idx) => {
