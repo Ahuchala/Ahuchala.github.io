@@ -38,9 +38,10 @@ function schurDimension(beta) {
     }
   }
 
-  const numProd = num.reduce((p, x) => p * x, 1);
-  const denProd = den.reduce((p, x) => p * x, 1);
-  return numProd / denProd;
+  // Use BigInt products to avoid float overflow/precision loss.
+  const numProd = num.reduce((p, x) => p * BigInt(x), 1n);
+  const denProd = den.reduce((p, x) => p * BigInt(x), 1n);
+  return Number(numProd / denProd);
 }
 
 // --- q-binomial (Gaussian binomial) coefficients

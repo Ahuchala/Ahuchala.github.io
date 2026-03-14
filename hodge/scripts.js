@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof container.updateCalculator === "function") {
           container.updateCalculator();
       }
-      setTimeout(() => requestAnimationFrame(updateHodgeDiamondDescription), 10);
+      requestAnimationFrame(updateHodgeDiamondDescription);
     };
 
     toggleCompleteIntersection.addEventListener("click", () => {

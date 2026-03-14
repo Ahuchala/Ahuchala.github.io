@@ -64,32 +64,6 @@ html.dark-mode {
   --intro-highlight-background: rgba(255, 255, 255, 0.05); /* Subtle circle highlight */
 }
 
-/* 
-html.dark-mode {
-  --primary-dark: #000e39;
-  --secondary-light: #6a80d3;
-  --hover-light: #4a4f72;
-  --hover-dark: #5e60ce;;
-  --hover-darker: #3e4590;
-  --body-bg: #f4f4f4;
-  --body-bg-1: #2a2a2a;
-  --body-bg-2: #08002d;
-  --section-bg: #2a2a2a;
-  --body-section-1: #050238;
-  --body-section-2: #0f0b44;
-  --text-color: #e4e4e4;
-  --secondary-text: #bbbbbb;
-  --primary-border: #444;
-  --secondary-border: #5e60ce;
-  --header-color-1: #0a1c5b;
-  --header-color-2: #225969;  
-  --border-color-1: black;
-  --border-color-2: #5e60ce;
-  --header-text-color: #e4e4e4;
-  --section-header-text-color: var(--header-text-color);
-} 
-*/
-
 html, body {
   background-color: var(--body-bg-1);
   overscroll-behavior: contain; /* Minimizes the overscroll effect in some browsers */
@@ -256,18 +230,8 @@ header .header-content h1 {
  * 6. MENU BUTTON (HAMBURGER) & TOGGLE
  *****************************************************/
 
-/* Hidden by default on larger screens; shown in small screens with media query */
 .menu-button {
-  display: none; 
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-right: 20px;
-}
-
-/* Then we override in one place for its final styling: */
-.menu-button {
-  display: flex; 
+  display: flex;
   align-items: center;
   gap: 10px; 
   padding: 9px 14px; 
@@ -287,11 +251,6 @@ header .header-content h1 {
   background: var(--hover-dark);
   transform: scale(1.05);
   outline: none;
-}
-
-.menu-button:active {
-  /* background: var(--hover-darker); */
-  /* transform: scale(0.98); */
 }
 
 /* The hamburger icon itself */
@@ -342,8 +301,6 @@ header .header-content h1 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
   border: 2px solid var(--border-color-2); /* Optional outline */
 }
-
-/* .menu-button.pressed  */
 
 /*****************************************************
  * 7. MAIN CONTENT AREA

@@ -47,9 +47,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Close modal on 'X'
-  closeModal.addEventListener('click', () => {
-    closeImageModal(modal, modalImage, modalTitle, modalDescription);
-  });
+  if (closeModal) {
+    closeModal.addEventListener('click', () => {
+      closeImageModal(modal, modalImage, modalTitle, modalDescription);
+    });
+  }
 
   // Close modal on background click
   modal.addEventListener('click', (e) => {

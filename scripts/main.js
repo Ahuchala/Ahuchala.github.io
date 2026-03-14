@@ -66,21 +66,18 @@ document.addEventListener("DOMContentLoaded", () => {
   initModal();
   initMenuToggle();
   initSettings();
-});
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Get the computed background color from CSS
+  // 4) Sync theme-color meta tag with CSS variable
   const backgroundColor = getComputedStyle(document.body).getPropertyValue('--body-bg').trim();
-  // Find the <meta name="theme-color"> tag
-  let themeMetaTag = document.querySelector('meta[name="theme-color"]');
-
-  // If the tag exists, update its content; otherwise, create one
-  if (themeMetaTag) {
+  if (backgroundColor) {
+    let themeMetaTag = document.querySelector('meta[name="theme-color"]');
+    if (themeMetaTag) {
       themeMetaTag.setAttribute('content', backgroundColor);
-  } else {
+    } else {
       themeMetaTag = document.createElement('meta');
       themeMetaTag.setAttribute('name', 'theme-color');
       themeMetaTag.setAttribute('content', backgroundColor);
       document.head.appendChild(themeMetaTag);
+    }
   }
 });

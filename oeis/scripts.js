@@ -13,13 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (hasImage) {
             const img = new Image();
-            img.src = imageUrl.thumbnail || ''; // Ensure thumbnail is defined
+            img.src = imageUrl.thumbnail || '';
             img.alt = label;
             img.classList.add('clickable');
-            img.dataset.fullImage = imageUrl.full || ''; // Ensure full image path is defined
+            img.dataset.fullImage = imageUrl.full || '';
             img.dataset.title = title;
             img.dataset.description = description;
-
             wrapper.appendChild(img);
         } else {
             const placeholder = document.createElement('div');
@@ -30,32 +29,27 @@ document.addEventListener("DOMContentLoaded", () => {
         gallery.appendChild(wrapper);
     };
 
-    
-
-    // Knights Gallery
-    const knights = Array.from({ length: 37 }, (_, i) => i + 4); // 4 to 45
+    // Knights Gallery (n = 4 to 40)
+    const knights = Array.from({ length: 37 }, (_, i) => i + 4); // 4 to 40
     const existingKnights = [
         4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
         20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 36, 38, 40
     ];
-    // Knights Gallery
-// Knights Gallery
-const knightPath = '/images/gallery/'; // Full-size images in /images/gallery/
-const knightThumbnailPath = '/images/thumbnails/'; // Thumbnails in /images/thumbnails/
-const knightExtension = '.png';
+    const knightPath = '/images/gallery/';
+    const knightThumbnailPath = '/images/thumbnails/';
+    const knightExtension = '.png';
 
-knights.forEach((n) => {
-    const label = `n = ${n}`;
-    const hasImage = existingKnights.includes(n);
-    const imageUrl = {
-        full: `${knightPath}knight${n}${knightExtension}`, // Full image in gallery/
-        thumbnail: `${knightThumbnailPath}knight${n}.webp` // Thumbnail in thumbnails/
-    };
-    const title = `Knight's Domination for n = ${n}`;
-    const description = `This is a minimal covering of an ${n} x ${n} board by knights.`;
-    addGalleryItem(label, imageUrl, knightGallery, hasImage, title, description);
-});
-
+    knights.forEach((n) => {
+        const label = `n = ${n}`;
+        const hasImage = existingKnights.includes(n);
+        const imageUrl = {
+            full: `${knightPath}knight${n}${knightExtension}`,
+            thumbnail: `${knightThumbnailPath}knight${n}.webp`
+        };
+        const title = `Knight's Domination for n = ${n}`;
+        const description = `This is a minimal covering of an ${n} x ${n} board by knights.`;
+        addGalleryItem(label, imageUrl, knightGallery, hasImage, title, description);
+    });
 
     // Barnes-Wall Lattice Theta Series
     const thetaImages = [
@@ -67,7 +61,7 @@ knights.forEach((n) => {
             The theta function for the Barnes-Wall lattice in dimension 8 goes by many names. The lattice itself is the root lattice for the Lie algebra $E_8$, and its theta function is the Eisenstein series $E_4$, which along with the Eisenstein series $E_6$, generates the full space of modular forms. It admits a nice description
             $$E_4(q) = 1 + 240\\sum_{n \\geq 1} \\dfrac{n^3 q^n}{1 - q^n} = 1 + 240q^2 + 2160q^4 + 6720q^6 + \\ldots
             $$
-            
+
         `},
         { n: 16, file: 'theta_16.png', title: /* html */`<a href="https://oeis.org/A008409">A008409</a>: n = 16`, description: /* html */`
         The Barnes-Wall lattice of dimension 16 is typically what one refers to as "the" Barnes-Wall lattice. Its theta series is
@@ -75,7 +69,7 @@ knights.forEach((n) => {
         $$
         ` },
         { n: 32, file: 'theta_32.png', title: /* html */`<a href="https://oeis.org/A004670">A004670</a>: n = 32`, description: /* html */`
-        Theta series for the Barnes-Wall lattice of dimension $n = 32$. This is a modular form of weight 16, which may be written as 
+        Theta series for the Barnes-Wall lattice of dimension $n = 32$. This is a modular form of weight 16, which may be written as
         $$E_4^4-960\\Delta E_4 = 1 + 146880q^2 + 64757760q^3 + 4844836800q^4+\\ldots
         $$
         where $E_4$ is the Eisenstein series (with coefficients in A004009) and $\\Delta$ is the cusp form of weight 12.
@@ -114,10 +108,12 @@ def f(z):
         };
         addGalleryItem(title, imageUrl, thetaGallery, true, title, description);
     });
-});
 
+    // OEIS sequence data (fill these arrays to populate the grids)
+    const editedSequences = [];
+    const authoredSequences = [];
+    const favoriteSequences = [];
 
-document.addEventListener("DOMContentLoaded", () => {
     function populateSequences(gridSelector, sequences) {
         const oeisGrid = document.querySelector(gridSelector);
         if (!oeisGrid || !sequences) return;
@@ -126,10 +122,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const sequenceDiv = document.createElement('div');
             sequenceDiv.classList.add('oeis-sequence');
 
-            sequenceDiv.innerHTML = `
-                <div class="sequence-id">${sequence.id}</div>
-                <div class="sequence-name">${sequence.name}</div>
-            `;
+            const idEl = document.createElement('div');
+            idEl.className = 'sequence-id';
+            idEl.textContent = sequence.id;
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'sequence-name';
+            nameEl.textContent = sequence.name;
+
+            sequenceDiv.appendChild(idEl);
+            sequenceDiv.appendChild(nameEl);
 
             sequenceDiv.addEventListener('click', () => {
                 window.open(`https://oeis.org/${sequence.id}`, '_blank');
@@ -139,75 +141,57 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Call the function for each sequence category
     populateSequences('.oeis-edits', editedSequences);
     populateSequences('.oeis-authored', authoredSequences);
     populateSequences('.oeis-favorite', favoriteSequences);
-});
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Define sections to apply collapsible behavior
+    // Collapsible sections
     const collapsibleSections = [
         { selector: '#knight-gallery', itemClass: 'gallery-item' },
         { selector: '.oeis-edits', itemClass: 'oeis-sequence' },
         { selector: '.oeis-authored', itemClass: 'oeis-sequence' },
         { selector: '#theta-gallery', itemClass: 'gallery-item' }
-
     ];
+
+    // Collect per-section applyVisibility fns; register a single debounced resize handler
+    const allApplyFns = [];
 
     collapsibleSections.forEach(({ selector, itemClass }) => {
         const section = document.querySelector(selector);
-        if (!section) return; // Skip if the section doesn't exist
+        if (!section) return;
 
         const items = Array.from(section.querySelectorAll(`.${itemClass}`));
-        const toggleButton = section.parentElement.querySelector('.show-more'); // Target existing button
-        if (!toggleButton) return; // Skip if no button exists
+        const toggleButton = section.parentElement.querySelector('.show-more');
+        if (!toggleButton) return;
 
-        let itemsPerRow = 1;
-
-        // Function to calculate and apply visibility rules
         const applyVisibility = () => {
             const sectionWidth = section.clientWidth;
-            const itemWidth = items[0]?.offsetWidth || 1; // Prevent division by zero
-            itemsPerRow = Math.floor(sectionWidth / itemWidth);
+            const itemWidth = items[0]?.offsetWidth || 1;
+            const itemsPerRow = Math.floor(sectionWidth / itemWidth);
             const totalRows = Math.ceil(items.length / itemsPerRow);
 
             items.forEach((item, index) => {
                 const rowIndex = Math.floor(index / itemsPerRow);
-
                 if (rowIndex === 0 || totalRows <= 2) {
-                    // Fully visible first row
                     item.style.display = 'block';
                     item.classList.add('visible');
                     item.classList.remove('hidden', 'obscured');
                 } else if (rowIndex === 1) {
-                    // Obscured second row
                     item.style.display = 'block';
                     item.classList.add('obscured');
                     item.classList.remove('hidden', 'visible');
                 } else {
-                    // Hidden rows after the second
                     item.style.display = 'none';
                     item.classList.add('hidden');
                     item.classList.remove('visible', 'obscured');
                 }
             });
-            
 
-            // Toggle the visibility of the "Show More" button based on the number of rows
-            if (totalRows <= 2) {
-                toggleButton.style.display = 'none';
-            } else {
-                toggleButton.style.display = 'inline-block';
-            };
-            
+            toggleButton.style.display = totalRows <= 2 ? 'none' : 'inline-block';
         };
-        
-        
-        // Attach functionality to the existing button
+
         toggleButton.addEventListener('click', () => {
             if (toggleButton.textContent === 'Show More') {
-                // Show all items
                 items.forEach((item) => {
                     item.style.display = 'block';
                     item.classList.add('visible');
@@ -215,20 +199,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 toggleButton.textContent = 'Show Less';
             } else {
-                // Reapply visibility rules
                 applyVisibility();
                 toggleButton.textContent = 'Show More';
             }
         });
 
-                // Apply visibility rules immediately on page load
-                applyVisibility();
+        applyVisibility();
+        allApplyFns.push(applyVisibility);
+    });
 
-                // Reapply visibility rules when the screen is resized
-                window.addEventListener('resize', applyVisibility);
-        
-                // Ensure visibility is correct after DOM content is fully loaded
-                window.addEventListener('load', applyVisibility);
+    // Single debounced resize handler for all sections
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => allApplyFns.forEach(fn => fn()), 100);
     });
 });
-

@@ -139,6 +139,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const span = document.createElement("span");
         span.className = "diamond-value";
         span.innerText = val.toString();
+        span.dataset.i = String(i);
+        span.dataset.j = String(j);
 
         // Encode partition contributions (twisted only)
         if (cell.contributors.length > 0) {

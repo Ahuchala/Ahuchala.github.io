@@ -9,17 +9,17 @@
  */
 export function hodgeCompleteIntersection(dArray, nInput) {
     // ============= HELPER: binomial coefficient =============
+    // Uses integer arithmetic to avoid float precision loss for large inputs.
     function binomial(n, k) {
       if (k < 0 || k > n) return 0;
       if (k === 0 || k === n) return 1;
-      let res = 1;
-      if (k > n-k) {
-        k = n-k;
-      }
+      if (k > n - k) k = n - k;
+      let res = 1n;
+      const bn = BigInt(n);
       for (let i = 1; i <= k; i++) {
-        res = (res * (n - (k - i))) / i;
+        res = res * (bn - BigInt(k - i)) / BigInt(i);
       }
-      return res;
+      return Number(res);
     }
   
     // ============= HELPER: polynomial in x,y =============

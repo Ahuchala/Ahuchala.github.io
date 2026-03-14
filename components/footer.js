@@ -4,7 +4,7 @@ export function footer() {
 
         <div class="footer-content">
             <p>&copy; 2025 Andy Huchala | 
-                <button class="footer-button" onclick="location.href='/index.html'">Home</button>
+                <a class="footer-button" href="/index.html">Home</a>
             </p>
         </div>
 
