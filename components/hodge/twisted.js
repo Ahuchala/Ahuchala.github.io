@@ -140,11 +140,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const span = document.createElement("span");
         span.className = "diamond-value";
         span.innerText = val.toString();
-        span.dataset.i = String(i);
-        span.dataset.j = String(j);
+        span.dataset.i = String(j);  // p = form degree  (matches scripts.js convention)
+        span.dataset.j = String(i);  // q = cohomology   (matches scripts.js convention)
 
         if (cell.contributors.length > 0) {
-          contribStore.set(`${i},${j}`, cell.contributors);
+          contribStore.set(`${j},${i}`, cell.contributors);  // key "p,q"
           span.classList.add("has-contrib");
         }
 
@@ -166,15 +166,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const target = event.target.closest(".diamond-value");
     if (!target) return;
 
-    const i = target.dataset.i ?? "?";
-    const j = target.dataset.j ?? "?";
-    const contrib = contribStore.get(`${i},${j}`) ?? [];
+    const p = target.dataset.i ?? "?";  // form degree   (scripts.js: dataset.i = p)
+    const q = target.dataset.j ?? "?";  // cohomology    (scripts.js: dataset.j = q)
+    const contrib = contribStore.get(`${p},${q}`) ?? [];
 
     if (!contrib.length) {
       infoBox.style.display = "block";
       infoBox.innerHTML = `
-        <p><strong>$H^{${i}}(\\Omega^{${j}}(t))$</strong> has no contributing partitions.</p>
+        <p><strong>$H^{${q}}(\\Omega^{${p}}(t))$</strong> has no contributing partitions.</p>
       `;
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([infoBox]);
       return;
     }
 
@@ -187,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     infoBox.style.display = "block";
     infoBox.innerHTML = `
-      <p><strong>Partitions contributing to $H^{${i}}(\\Omega^{${j}}(t))$:</strong></p>
+      <p><strong>Partitions contributing to $H^{${q}}(\\Omega^{${p}}(t))$:</strong></p>
       <ul>${list}</ul>
     `;
 
