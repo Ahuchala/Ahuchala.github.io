@@ -52,8 +52,9 @@ document.addEventListener("DOMContentLoaded", () =>
         onChange();
         return;
       }
-      const c = clamp(v, lo, hi);
-      if (String(c) !== slider.value) slider.value = String(c);
+      // Clamp slider to its physical range, but leave textbox free to exceed it
+      const sliderVal = clamp(v, lo, hi);
+      if (String(sliderVal) !== slider.value) slider.value = String(sliderVal);
       onChange();
     });
 
@@ -61,9 +62,11 @@ document.addEventListener("DOMContentLoaded", () =>
     textbox.addEventListener("blur", () => {
       const v = intOrNull(textbox);
       if (v === null) { onChange(); return; }
-      const c = clamp(v, lo, hi);
-      if (textbox.value !== String(c)) textbox.value = String(c);
-      if (slider.value !== String(c)) slider.value = String(c);
+      // Only enforce lower bound on textbox; slider is clamped to its range
+      const textVal = Math.max(lo, v);
+      const sliderVal = clamp(v, lo, hi);
+      if (textbox.value !== String(textVal)) textbox.value = String(textVal);
+      if (slider.value !== String(sliderVal)) slider.value = String(sliderVal);
       onChange();
     });
   };
