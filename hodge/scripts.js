@@ -528,4 +528,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     updateHodgeDiamondDescription();
+
+    // Prevent scroll wheel from changing number-input values.
+    // preventDefault() blocks the value change; we then forward the delta to the
+    // page manually so scrolling still works. The input stays focused, so
+    // keyboard arrow keys continue to change the value as expected.
+    document.addEventListener("wheel", (e) => {
+      if (e.target.type === "number") {
+        e.preventDefault();
+        window.scrollBy({ top: e.deltaY, left: e.deltaX, behavior: "instant" });
+      }
+    }, { passive: false });
 });
