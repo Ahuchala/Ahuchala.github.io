@@ -69,7 +69,7 @@
                 <button id="toggle-grassmannian" class="toggle-button">Complete Intersections in $\text{Gr}(k,n)$</button>
                 <button id="toggle-flag" class="toggle-button">Flag Varieties</button>
                 <button id="toggle-twisted" class="toggle-button">Twisted Hodge Numbers</button>
-                <button id="toggle-product-grassmannian" class="toggle-button">CIs in $\text{Gr}(k_1,n_1) \times \text{Gr}(k_2,n_2)$</button>
+                <button id="toggle-product-grassmannian" class="toggle-button">CIs in Products of Grassmannians</button>
             </div>
         
             <!-- Calculator Containers -->
@@ -265,45 +265,36 @@
                     <h2>Preset Examples</h2>
                     <div id="preset-buttons-product">
                         <button class="preset-button"
-                            data-k1="1" data-n1="2" data-k2="1" data-n2="2" data-r="0" data-degrees="">
+                            data-factors="1,2,1,2" data-r="0" data-degrees="">
                             $\mathbb{P}^1 \times \mathbb{P}^1$
                         </button>
                         <button class="preset-button"
-                            data-k1="1" data-n1="2" data-k2="1" data-n2="2" data-r="1" data-degrees="2,2">
+                            data-factors="1,2,1,2" data-r="1" data-degrees="2,2">
                             Elliptic Curve (bidegree $(2,2)$ in $\mathbb{P}^1\times\mathbb{P}^1$)
                         </button>
                         <button class="preset-button"
-                            data-k1="1" data-n1="2" data-k2="1" data-n2="3" data-r="1" data-degrees="2,3">
+                            data-factors="1,2,1,3" data-r="1" data-degrees="2,3">
                             K3 Surface (bidegree $(2,3)$ in $\mathbb{P}^1\times\mathbb{P}^2$)
                         </button>
                         <button class="preset-button"
-                            data-k1="1" data-n1="3" data-k2="1" data-n2="3" data-r="1" data-degrees="3,3">
+                            data-factors="1,3,1,3" data-r="1" data-degrees="3,3">
                             Calabi&ndash;Yau Threefold (bidegree $(3,3)$ in $\mathbb{P}^2\times\mathbb{P}^2$)
+                        </button>
+                        <button class="preset-button"
+                            data-factors="1,2,1,2,1,2" data-r="1" data-degrees="2,2,2">
+                            K3 Surface (tridegree $(2,2,2)$ in $\mathbb{P}^1\times\mathbb{P}^1\times\mathbb{P}^1$)
                         </button>
                     </div>
                 </section>
                 <div id="hodge-container">
                     <div id="inputs">
                         <h3>Product Grassmannian CI Calculator</h3>
-                        <div class="input-row">
-                            <label for="n1-slider-product">Ambient Dimension (\(n_1\)) for Factor 1:</label>
-                            <input type="range" id="n1-slider-product" min="2" max="10" value="2">
-                            <input type="number" id="n1-value-product" min="2" max="50" value="2" class="hodge-input">
+                        <div id="factor-inputs-product">
+                            <!-- Factor rows are created dynamically by productGrassmannian.js -->
                         </div>
                         <div class="input-row">
-                            <label for="k1-slider-product">Dimension of Subspace (\(k_1\)) for Factor 1:</label>
-                            <input type="range" id="k1-slider-product" min="1" max="10" value="1">
-                            <input type="number" id="k1-value-product" min="1" max="50" value="1" class="hodge-input">
-                        </div>
-                        <div class="input-row">
-                            <label for="n2-slider-product">Ambient Dimension (\(n_2\)) for Factor 2:</label>
-                            <input type="range" id="n2-slider-product" min="2" max="10" value="2">
-                            <input type="number" id="n2-value-product" min="2" max="50" value="2" class="hodge-input">
-                        </div>
-                        <div class="input-row">
-                            <label for="k2-slider-product">Dimension of Subspace (\(k_2\)) for Factor 2:</label>
-                            <input type="range" id="k2-slider-product" min="1" max="10" value="1">
-                            <input type="number" id="k2-value-product" min="1" max="50" value="1" class="hodge-input">
+                            <button id="add-factor-product" class="preset-button" type="button">+ Add Factor</button>
+                            <button id="remove-factor-product" class="preset-button" type="button" disabled>&#8722; Remove Factor</button>
                         </div>
                         <div class="input-row">
                             <label for="r-slider-product">Number of Hypersurfaces (\(r\)):</label>

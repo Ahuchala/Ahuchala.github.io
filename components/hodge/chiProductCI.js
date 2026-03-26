@@ -2,24 +2,23 @@
 // chiProductCI.js
 //
 // Computes the Hodge diamond of a smooth complete intersection
-// Z in a product X = Gr(k1, n1) × Gr(k2, n2).
+// Z in a product X = Gr(k₁,n₁) × … × Gr(kₛ,nₛ).
 //
 // Algorithm:
-//   1. Künneth base case:
-//        χ(Ω^j_X(t1,t2)) = Σ_{j1+j2=j} χ(Ω^{j1}_{Gr(k1,n1)}(t1))
-//                                       · χ(Ω^{j2}_{Gr(k2,n2)}(t2))
-//   2. Multi-twist Koszul recurrence (t is now a tuple [t1,t2]):
-//        χ(Ω^j_{Zs}(t)) = χ(Ω^j_{Zs-1}(t))
-//                        − χ(Ω^j_{Zs-1}(t−ds))
-//                        − χ(Ω^{j-1}_{Zs}(t−ds))
+//   1. Künneth base case (iterative convolution over factors):
+//        χ(Ω^j_X(t)) = Σ_{j₁+…+jₛ=j} ∏ᵢ χ(Ω^{jᵢ}_{Gr(kᵢ,nᵢ)}(tᵢ))
+//   2. Multi-twist Koszul recurrence (t is now a length-s tuple):
+//        χ(Ω^j_{Zₛ}(t)) = χ(Ω^j_{Zₛ₋₁}(t))
+//                        − χ(Ω^j_{Zₛ₋₁}(t−dₛ))
+//                        − χ(Ω^{j-1}_{Zₛ}(t−dₛ))
 //   3. Diagonal entries a[p] = h^{p,p}(X):
-//        convolution of per-factor partition-count arrays.
+//        iterative convolution of per-factor partition-count arrays.
 //
-// Export: hodgeDiamondProduct(k1, n1, k2, n2, degrees)
-//   degrees: array of r tuples [d1, d2], one per hypersurface.
-//   Returns a 2D array (same shape as hodgeGrassmannian /
-//   hodgeDiamondCI): 2*dim+1 rows, row i has min(i+1,2*dim+1-i)
-//   entries.
+// Export: hodgeDiamondProduct(factors, degrees)
+//   factors: [{k, n}, …]          one entry per Grassmannian factor
+//   degrees: [[d₁,…,dₛ], …]       one tuple per hypersurface
+//   Returns a 2D array (same shape as hodgeDiamondCI / hodgeGrassmannian):
+//   2*dim+1 rows, row i has min(i+1, 2*dim+1-i) entries.
 // ============================================================
 
 import {
@@ -37,36 +36,46 @@ function mulFrac([a, b], [c, d]) {
 }
 
 // --- Künneth base case ---
-// χ(Ω^j_{Gr(k1,n1)×Gr(k2,n2)}(t1, t2))  as a BigInt fraction.
-function chiProductExact(k1, n1, k2, n2, j, t1, t2) {
-  const dim1 = k1 * (n1 - k1);
-  const dim2 = k2 * (n2 - k2);
-  let sum = [0n, 1n];
-  for (let j1 = Math.max(0, j - dim2); j1 <= Math.min(j, dim1); j1++) {
-    const j2 = j - j1;
-    const f1 = chiGrassmannianExact(k1, n1, j1, t1);
-    const f2 = chiGrassmannianExact(k2, n2, j2, t2);
-    sum = addFrac(sum, mulFrac(f1, f2));
+// χ(Ω^j_{Gr(k₁,n₁)×…}(t₁,…)) as a BigInt fraction.
+// Iteratively convolves over all factors.
+function chiProductExact(factors, j, t) {
+  // result[jAcc] = χ of partial product at form-degree jAcc
+  let result = new Array(j + 1).fill(null).map(() => [0n, 1n]);
+  result[0] = [1n, 1n]; // empty product contributes 1 at j=0
+
+  for (let fi = 0; fi < factors.length; fi++) {
+    const { k, n } = factors[fi];
+    const dimFi = k * (n - k);
+    const tf = t[fi];
+    const next = new Array(j + 1).fill(null).map(() => [0n, 1n]);
+    for (let jAcc = 0; jAcc <= j; jAcc++) {
+      if (result[jAcc][0] === 0n) continue;
+      for (let jf = 0; jf <= Math.min(j - jAcc, dimFi); jf++) {
+        const chiF = chiGrassmannianExact(k, n, jf, tf);
+        next[jAcc + jf] = addFrac(next[jAcc + jf], mulFrac(result[jAcc], chiF));
+      }
+    }
+    result = next;
   }
-  return sum;
+  return result[j] ?? [0n, 1n];
 }
 
 // --- Memoized Koszul recurrence ---
-// t = [t1, t2], degrees[s-1] = [d1, d2]
+// t = [t₁,…,tₛ], degrees[s-1] = [d₁,…,dₛ]
 // All values are BigInt fractions [num, den].
-function buildChiProductCI(k1, n1, k2, n2, degrees) {
+function buildChiProductCI(factors, degrees) {
   const cache = new Map();
 
   function chi(s, j, t) {
     if (j < 0) return [0n, 1n];
-    const key = `${s},${j},${t[0]},${t[1]}`;
+    const key = `${s},${j},${t.join(",")}`;
     if (cache.has(key)) return cache.get(key);
     let val;
     if (s === 0) {
-      val = chiProductExact(k1, n1, k2, n2, j, t[0], t[1]);
+      val = chiProductExact(factors, j, t);
     } else {
-      const d = degrees[s - 1]; // [d1, d2]
-      const td = [t[0] - d[0], t[1] - d[1]];
+      const d  = degrees[s - 1];
+      const td = t.map((ti, i) => ti - d[i]);
       val = subFrac(
         subFrac(chi(s - 1, j, t), chi(s - 1, j, td)),
         chi(s, j - 1, td)
@@ -79,50 +88,50 @@ function buildChiProductCI(k1, n1, k2, n2, degrees) {
   return chi;
 }
 
-// --- Diagonal entries: convolution of per-factor partition counts ---
-// a[j] = Σ_{j1+j2=j} #{partitions of j1 in k1×(n1-k1) box}
-//                   · #{partitions of j2 in k2×(n2-k2) box}
-function productPartitionCounts(k1, n1, k2, n2, maxJ) {
-  const m1 = n1 - k1;
-  const m2 = n2 - k2;
-  const a1 = [];
-  const a2 = [];
-  for (let j = 0; j <= maxJ; j++) {
-    let c1 = 0, c2 = 0;
-    for (const _ of partitionsInBox(k1, m1, j)) c1++;
-    for (const _ of partitionsInBox(k2, m2, j)) c2++;
-    a1.push(c1);
-    a2.push(c2);
-  }
-  const a = [];
-  for (let j = 0; j <= maxJ; j++) {
-    let s = 0;
-    for (let j1 = 0; j1 <= j; j1++) {
-      s += (a1[j1] ?? 0) * (a2[j - j1] ?? 0);
+// --- Diagonal entries: iterative convolution of per-factor partition counts ---
+// a[j] = Σ_{j₁+…+jₛ=j} ∏ᵢ #{partitions of jᵢ in kᵢ×(nᵢ-kᵢ) box}
+function productPartitionCounts(factors, maxJ) {
+  let a = [1]; // identity element for convolution (empty product)
+  for (const { k, n } of factors) {
+    const m = n - k;
+    const aFi = [];
+    for (let j = 0; j <= maxJ; j++) {
+      let c = 0;
+      for (const _ of partitionsInBox(k, m, j)) c++;
+      aFi.push(c);
     }
-    a.push(s);
+    const newA = new Array(maxJ + 1).fill(0);
+    for (let j1 = 0; j1 <= maxJ; j1++) {
+      for (let j2 = 0; j1 + j2 <= maxJ; j2++) {
+        newA[j1 + j2] += (a[j1] ?? 0) * (aFi[j2] ?? 0);
+      }
+    }
+    a = newA;
   }
   return a;
 }
 
 // --- Main export ---
-// degrees: array of [d1, d2] tuples (one per hypersurface).
+// factors: [{k, n}, …] (one per Grassmannian factor).
+// degrees: array of length-s tuples, one per hypersurface.
 // Returns the full Hodge diamond as a 2D array in the same
 // convention as hodgeDiamondCI / hodgeGrassmannian.
-export function hodgeDiamondProduct(k1, n1, k2, n2, degrees) {
-  const dim = k1 * (n1 - k1) + k2 * (n2 - k2) - degrees.length;
+export function hodgeDiamondProduct(factors, degrees) {
+  const totalDim = factors.reduce((s, { k, n }) => s + k * (n - k), 0);
+  const dim = totalDim - degrees.length;
   if (dim < 0) throw new Error("dim Z < 0: too many hypersurfaces");
 
-  const r = degrees.length;
-  const chi = buildChiProductCI(k1, n1, k2, n2, degrees);
-  const a = productPartitionCounts(k1, n1, k2, n2, dim);
+  const r  = degrees.length;
+  const t0 = new Array(factors.length).fill(0);
+  const chi = buildChiProductCI(factors, degrees);
+  const a   = productPartitionCounts(factors, dim);
 
   // Primitive middle-row Hodge numbers (half-diamond, j = 0..floor(dim/2)).
-  const half = Math.floor(dim / 2);
-  const isOdd = dim % 2 === 1;
-  const prim = [];
+  const half   = Math.floor(dim / 2);
+  const isOdd  = dim % 2 === 1;
+  const prim   = [];
   for (let j = 0; j <= half; j++) {
-    const chiVal = fracToNumber(chi(r, j, [0, 0]));
+    const chiVal  = fracToNumber(chi(r, j, t0));
     const sign    = ((dim - j) % 2 === 0) ? 1 : -1;
     const chiSign = (j % 2 === 0)         ? 1 : -1;
     prim.push(Math.round(sign * (chiVal - chiSign * a[j])));
@@ -135,7 +144,7 @@ export function hodgeDiamondProduct(k1, n1, k2, n2, degrees) {
   );
   const midFull = [...midHalf];
   if (isOdd) {
-    for (let j = half; j >= 0; j--) midFull.push(midHalf[j]);
+    for (let j = half;     j >= 0; j--) midFull.push(midHalf[j]);
   } else {
     for (let j = half - 1; j >= 0; j--) midFull.push(midHalf[j]);
   }

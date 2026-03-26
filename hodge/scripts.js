@@ -225,29 +225,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // For Product of Grassmannians:
       else if (productGrassmannianContainer && productGrassmannianContainer.style.display !== "none") {
-        const k1 = document.getElementById("k1-value-product")?.value;
-        const n1 = document.getElementById("n1-value-product")?.value;
-        const k2 = document.getElementById("k2-value-product")?.value;
-        const n2 = document.getElementById("n2-value-product")?.value;
-        const r  = parseInt(document.getElementById("r-value-product")?.value, 10);
+        const r = parseInt(document.getElementById("r-value-product")?.value, 10);
+        const factorRows = Array.from(
+          document.querySelectorAll("#factor-inputs-product .factor-row-product")
+        );
+        const factorStrs = factorRows.map(row => {
+          const k = row.querySelector(".factor-k-value")?.value;
+          const n = row.querySelector(".factor-n-value")?.value;
+          return grOrPn(k, n);
+        });
+        const productStr = factorStrs.join("\\times ");
         const degInputs = Array.from(
           document.getElementById("degree-toggles-product")
             ?.querySelectorAll(".degree-toggle") ?? []
         );
-        const factor1 = grOrPn(k1, n1);
-        const factor2 = grOrPn(k2, n2);
         if (!r || degInputs.length === 0) {
-          descriptionText =
-            `Hodge diamond for \\(${factor1}\\times ${factor2}\\)`;
+          descriptionText = `Hodge diamond for \\(${productStr}\\)`;
         } else {
           const degs = degInputs.map(row => {
-            const inps = row.querySelectorAll(".hodge-input");
-            return `(${inps[0]?.value ?? "?"},${inps[1]?.value ?? "?"})`;
+            const vals = Array.from(row.querySelectorAll(".hodge-input")).map(i => i.value ?? "?");
+            return `(${vals.join(",")})`;
           });
-          const multideg = degs.join(", ");
           descriptionText =
-            `Hodge diamond for a smooth CI of multidegree ${multideg} ` +
-            `in \\(${factor1}\\times ${factor2}\\)`;
+            `Hodge diamond for a smooth CI of multidegree ${degs.join(", ")} ` +
+            `in \\(${productStr}\\)`;
         }
       }
       // For Twisted Hodge Numbers:
@@ -351,20 +352,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (tValueT) tValueT.addEventListener("input", updateHodgeDiamondDescription);
 
-    // Product Grassmannian inputs
-    ["k1-slider-product","n1-slider-product","k2-slider-product","n2-slider-product","r-slider-product"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.addEventListener("input",  () => requestAnimationFrame(updateHodgeDiamondDescription));
-        el.addEventListener("change", () => requestAnimationFrame(updateHodgeDiamondDescription));
-      }
-    });
-    ["k1-value-product","n1-value-product","k2-value-product","n2-value-product","r-value-product"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.addEventListener("input", updateHodgeDiamondDescription);
-    });
+    // Product Grassmannian inputs — r slider/textbox
+    const rSliderProduct = document.getElementById("r-slider-product");
+    const rValueProduct  = document.getElementById("r-value-product");
+    if (rSliderProduct) {
+      rSliderProduct.addEventListener("input",  () => requestAnimationFrame(updateHodgeDiamondDescription));
+      rSliderProduct.addEventListener("change", () => requestAnimationFrame(updateHodgeDiamondDescription));
+    }
+    if (rValueProduct) rValueProduct.addEventListener("input", updateHodgeDiamondDescription);
+    // Factor rows and degree toggles are dynamically created; use event delegation
+    const factorInputsProduct = document.getElementById("factor-inputs-product");
+    if (factorInputsProduct) {
+      factorInputsProduct.addEventListener("input", () => requestAnimationFrame(updateHodgeDiamondDescription));
+    }
     const degTogglesProduct = document.getElementById("degree-toggles-product");
     if (degTogglesProduct) degTogglesProduct.addEventListener("input", updateHodgeDiamondDescription);
+    // Re-describe after Add/Remove Factor buttons
+    ["add-factor-product","remove-factor-product"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("click", () => requestAnimationFrame(updateHodgeDiamondDescription));
+    });
 
     const presetButtons = document.querySelectorAll(".preset-button");
     presetButtons.forEach(button => {

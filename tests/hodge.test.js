@@ -808,7 +808,7 @@ test("hodgePrimitiveMiddleRow Gr(5,10) 2×d=2: regression", () => {
 // P¹×P¹ with no CI (r=0): product Hodge diamond.
 // h^{1,1}(P¹×P¹) = 2 (two independent (1,1)-classes).
 test("hodgeDiamondProduct P¹×P¹ (r=0): full diamond", () => {
-  assert.deepEqual(hodgeDiamondProduct(1, 2, 1, 2, []), [
+  assert.deepEqual(hodgeDiamondProduct([{k:1,n:2},{k:1,n:2}], []), [
     [1],
     [0, 0],
     [0, 2, 0],
@@ -819,7 +819,7 @@ test("hodgeDiamondProduct P¹×P¹ (r=0): full diamond", () => {
 
 // Bidegree (2,2) CI in P¹×P¹: elliptic curve (g=1).
 test("hodgeDiamondProduct (2,2) CI in P¹×P¹: elliptic curve", () => {
-  assert.deepEqual(hodgeDiamondProduct(1, 2, 1, 2, [[2, 2]]), [
+  assert.deepEqual(hodgeDiamondProduct([{k:1,n:2},{k:1,n:2}], [[2, 2]]), [
     [1],
     [1, 1],
     [1],
@@ -828,12 +828,22 @@ test("hodgeDiamondProduct (2,2) CI in P¹×P¹: elliptic curve", () => {
 
 // Bidegree (2,3) CI in P¹×P²: K3 surface (h^{1,1}=20).
 test("hodgeDiamondProduct (2,3) CI in P¹×P²: K3 surface (h^{1,1}=20)", () => {
-  const d = hodgeDiamondProduct(1, 2, 1, 3, [[2, 3]]);
+  const d = hodgeDiamondProduct([{k:1,n:2},{k:1,n:3}], [[2, 3]]);
   assert.deepEqual(d[Math.floor(d.length / 2)], [1, 20, 1]);
 });
 
 // Two (1,1) CIs in P¹×P¹: 0-dimensional, degree = 2.
 test("hodgeDiamondProduct two (1,1) CIs in P¹×P¹: 2 points", () => {
-  assert.deepEqual(hodgeDiamondProduct(1, 2, 1, 2, [[1, 1], [1, 1]]), [[2]]);
+  assert.deepEqual(hodgeDiamondProduct([{k:1,n:2},{k:1,n:2}], [[1, 1], [1, 1]]), [[2]]);
+});
+
+// P¹×P¹×P¹ (r=0, dim=3): h^{p,p} = C(3,p); all off-diagonal entries 0.
+test("hodgeDiamondProduct P¹×P¹×P¹ (r=0): diagonal Hodge numbers", () => {
+  const d = hodgeDiamondProduct([{k:1,n:2},{k:1,n:2},{k:1,n:2}], []);
+  assert.deepEqual(d[0], [1]);
+  assert.deepEqual(d[2], [0, 3, 0]);
+  assert.deepEqual(d[3], [0, 0, 0, 0]); // middle row: purely off-diagonal = 0
+  assert.deepEqual(d[4], [0, 3, 0]);
+  assert.deepEqual(d[6], [1]);
 });
 

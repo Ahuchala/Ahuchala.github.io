@@ -1,18 +1,11 @@
 import { hodgeDiamondProduct } from "./chiProductCI.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const k1SliderProduct = document.getElementById("k1-slider-product");
-  const n1SliderProduct = document.getElementById("n1-slider-product");
-  const k2SliderProduct = document.getElementById("k2-slider-product");
-  const n2SliderProduct = document.getElementById("n2-slider-product");
-  const rSliderProduct  = document.getElementById("r-slider-product");
-
-  const k1ValueProduct  = document.getElementById("k1-value-product");
-  const n1ValueProduct  = document.getElementById("n1-value-product");
-  const k2ValueProduct  = document.getElementById("k2-value-product");
-  const n2ValueProduct  = document.getElementById("n2-value-product");
-  const rValueProduct   = document.getElementById("r-value-product");
-
+  const factorInputsProduct    = document.getElementById("factor-inputs-product");
+  const addFactorBtn           = document.getElementById("add-factor-product");
+  const removeFactorBtn        = document.getElementById("remove-factor-product");
+  const rSliderProduct         = document.getElementById("r-slider-product");
+  const rValueProduct          = document.getElementById("r-value-product");
   const degreeTogglesProduct   = document.getElementById("degree-toggles-product");
   const diamondContainerProduct = document.getElementById("diamond-container-product");
 
@@ -55,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     textbox.addEventListener("blur", () => {
       const v = intOrNull(textbox);
       if (v === null) { onChange(); return; }
-      const textVal  = Math.max(lo, v);
+      const textVal   = Math.max(lo, v);
       const sliderVal = clamp(v, lo, hi);
       if (textbox.value !== String(textVal))  textbox.value  = String(textVal);
       if (slider.value  !== String(sliderVal)) slider.value  = String(sliderVal);
@@ -63,49 +56,113 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // ---------------- degree toggle rows (each has 2 inputs) ----------------
-  const updateDegreeTogglesProduct = (r) => {
-    const currentCount = degreeTogglesProduct.children.length;
-    if (r > currentCount) {
-      for (let i = currentCount; i < r; i++) {
-        const toggleContainer = document.createElement("div");
-        toggleContainer.className = "degree-toggle";
+  // ---------------- factor row management ----------------
+  function getNumFactors() {
+    return factorInputsProduct.querySelectorAll(".factor-row-product").length;
+  }
 
-        const label = document.createElement("label");
-        label.innerText = `Bidegree of Hypersurface ${i + 1}:`;
+  function updateRemoveButton() {
+    removeFactorBtn.disabled = getNumFactors() <= 1;
+  }
 
-        const input1 = document.createElement("input");
-        input1.type = "number";
-        input1.min  = "1";
-        input1.max  = "50";
-        input1.value = "1";
-        input1.className = "hodge-input";
-        input1.dataset.factor = "0";
+  function addFactorRow(kDefault = 1, nDefault = 2) {
+    const idx = getNumFactors();
+    const row = document.createElement("div");
+    row.className = "factor-row-product";
+    row.innerHTML = `
+      <div class="input-row">
+        <label>Ambient Dimension (\\(n_{${idx + 1}}\\)) for Factor ${idx + 1}:</label>
+        <input type="range"  class="factor-n-slider" min="2" max="10" value="${nDefault}">
+        <input type="number" class="factor-n-value hodge-input" min="2" max="50" value="${nDefault}">
+      </div>
+      <div class="input-row">
+        <label>Subspace Dimension (\\(k_{${idx + 1}}\\)) for Factor ${idx + 1}:</label>
+        <input type="range"  class="factor-k-slider" min="1" max="10" value="${kDefault}">
+        <input type="number" class="factor-k-value hodge-input" min="1" max="50" value="${kDefault}">
+      </div>`;
+    factorInputsProduct.appendChild(row);
+    if (window.MathJax?.typesetPromise) MathJax.typesetPromise([row]);
+    // Wire sliders for this row (re-trigger on every change)
+    syncSliderAndTextbox(
+      row.querySelector(".factor-n-slider"),
+      row.querySelector(".factor-n-value"),
+      () => { rebuildDegreeRows(); updateDiamondProduct(); }
+    );
+    syncSliderAndTextbox(
+      row.querySelector(".factor-k-slider"),
+      row.querySelector(".factor-k-value"),
+      () => { rebuildDegreeRows(); updateDiamondProduct(); }
+    );
+    // Also catch direct textbox edits not caught by blur/change
+    row.querySelector(".factor-n-value").addEventListener("input",
+      () => { rebuildDegreeRows(); updateDiamondProduct(); });
+    row.querySelector(".factor-k-value").addEventListener("input",
+      () => { rebuildDegreeRows(); updateDiamondProduct(); });
+    updateRemoveButton();
+  }
 
-        const sep = document.createElement("span");
-        sep.innerText = " × ";
-        sep.style.margin = "0 4px";
+  addFactorBtn.addEventListener("click", () => {
+    addFactorRow();
+    rebuildDegreeRows();
+    updateDiamondProduct();
+  });
 
-        const input2 = document.createElement("input");
-        input2.type = "number";
-        input2.min  = "1";
-        input2.max  = "50";
-        input2.value = "1";
-        input2.className = "hodge-input";
-        input2.dataset.factor = "1";
+  removeFactorBtn.addEventListener("click", () => {
+    const rows = factorInputsProduct.querySelectorAll(".factor-row-product");
+    if (rows.length > 1) rows[rows.length - 1].remove();
+    updateRemoveButton();
+    rebuildDegreeRows();
+    updateDiamondProduct();
+  });
 
-        toggleContainer.appendChild(label);
-        toggleContainer.appendChild(input1);
-        toggleContainer.appendChild(sep);
-        toggleContainer.appendChild(input2);
-        degreeTogglesProduct.appendChild(toggleContainer);
+  // ---------------- read factors from DOM ----------------
+  function readFactors() {
+    return Array.from(factorInputsProduct.querySelectorAll(".factor-row-product")).map(row => ({
+      k: intOrNull(row.querySelector(".factor-k-value")),
+      n: intOrNull(row.querySelector(".factor-n-value")),
+    }));
+  }
+
+  // ---------------- degree toggle rows ----------------
+  // Rebuilds all degree rows based on current r and numFactors,
+  // preserving existing values where possible.
+  function rebuildDegreeRows() {
+    const r          = intOrNull(rValueProduct) ?? 0;
+    const numFactors = getNumFactors();
+
+    // Save current input values (jagged — old rows may have different widths)
+    const saved = Array.from(degreeTogglesProduct.querySelectorAll(".degree-toggle")).map(row =>
+      Array.from(row.querySelectorAll(".hodge-input")).map(inp => inp.value)
+    );
+
+    degreeTogglesProduct.innerHTML = "";
+    for (let i = 0; i < r; i++) {
+      const toggle = document.createElement("div");
+      toggle.className = "degree-toggle";
+
+      const label = document.createElement("label");
+      label.innerText = `Multidegree of Hypersurface ${i + 1}:`;
+      toggle.appendChild(label);
+
+      for (let fi = 0; fi < numFactors; fi++) {
+        if (fi > 0) {
+          const sep = document.createElement("span");
+          sep.innerText = " × ";
+          sep.style.margin = "0 4px";
+          toggle.appendChild(sep);
+        }
+        const inp = document.createElement("input");
+        inp.type      = "number";
+        inp.min       = "1";
+        inp.max       = "50";
+        inp.value     = saved[i]?.[fi] ?? "1";
+        inp.className = "hodge-input";
+        inp.dataset.factor = String(fi);
+        toggle.appendChild(inp);
       }
-    } else if (r < currentCount) {
-      for (let i = currentCount - 1; i >= r; i--) {
-        degreeTogglesProduct.children[i].remove();
-      }
+      degreeTogglesProduct.appendChild(toggle);
     }
-  };
+  }
 
   // ---------------- render diamond from 2D array ----------------
   function renderProductDiamond(diamond) {
@@ -126,42 +183,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ---------------- main update ----------------
   const updateDiamondProduct = () => {
-    const n1Raw = intOrNull(n1ValueProduct);
-    const k1Raw = intOrNull(k1ValueProduct);
-    const n2Raw = intOrNull(n2ValueProduct);
-    const k2Raw = intOrNull(k2ValueProduct);
-    const r     = intOrNull(rValueProduct);
+    const r       = intOrNull(rValueProduct);
+    const factors = readFactors();
 
-    if (n1Raw === null || k1Raw === null || n2Raw === null || k2Raw === null || r === null) {
+    if (r === null || factors.some(({ k, n }) => k === null || n === null)) {
       diamondContainerProduct.innerHTML =
         `<p class="placeholder">Enter all parameters to see the Hodge diamond.</p>`;
       return;
     }
 
-    // Symmetry reduction: Gr(k,n) = Gr(n-k,n)
-    const k1 = Math.min(k1Raw, n1Raw - k1Raw);
-    const k2 = Math.min(k2Raw, n2Raw - k2Raw);
+    // Symmetry reduction: Gr(k,n) ≅ Gr(n−k,n)
+    const validFactors = factors.map(({ k, n }) => ({ n, k: Math.min(k, n - k) }));
 
-    if (k1 <= 0 || k2 <= 0 || n1Raw <= k1Raw || n2Raw <= k2Raw) {
+    if (validFactors.some(({ k, n }) => k <= 0 || n <= k)) {
       diamondContainerProduct.innerHTML =
-        `<p class="error">Error: Need 0 &lt; k &lt; n for each factor.</p>`;
-      return;
-    }
-
-    const dim = k1 * (n1Raw - k1) + k2 * (n2Raw - k2) - r;
-
-    if (dim < 0) {
-      diamondContainerProduct.innerHTML =
-        `<p class="error">Error: Dimension is negative. Ensure \\( r \\leq \\dim(\\mathrm{Gr}(k_1,n_1)\\times\\mathrm{Gr}(k_2,n_2)) \\).</p>`;
+        `<p class="error">Error: Need \\(0 &lt; k &lt; n\\) for each factor.</p>`;
       if (window.MathJax?.typesetPromise) MathJax.typesetPromise([diamondContainerProduct]);
       return;
     }
 
-    // r = 0: no CI needed, compute product directly
+    const totalDim = validFactors.reduce((s, { k, n }) => s + k * (n - k), 0);
+    const dim      = totalDim - r;
+
+    if (dim < 0) {
+      diamondContainerProduct.innerHTML =
+        `<p class="error">Error: Dimension is negative. ` +
+        `Ensure \\( r \\leq \\dim(X) \\).</p>`;
+      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([diamondContainerProduct]);
+      return;
+    }
+
+    // r = 0: show ambient product diamond directly
     if (r === 0) {
       try {
-        const diamond = hodgeDiamondProduct(k1, n1Raw, k2, n2Raw, []);
-        renderProductDiamond(diamond);
+        renderProductDiamond(hodgeDiamondProduct(validFactors, []));
       } catch (e) {
         console.error("hodgeDiamondProduct error:", e);
         diamondContainerProduct.innerHTML =
@@ -170,41 +225,39 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // r > 0: need all bidegrees filled
+    // r > 0: need all multidegrees filled
     const degreeRows = Array.from(degreeTogglesProduct.querySelectorAll(".degree-toggle"));
     if (degreeRows.length !== r) {
       diamondContainerProduct.innerHTML =
-        `<p class="placeholder">Fill all ${r} bidegree(s) to compute the diamond.</p>`;
+        `<p class="placeholder">Fill all ${r} multidegree(s) to compute the diamond.</p>`;
       return;
     }
 
-    const degrees = degreeRows.map(row => {
-      const inputs = row.querySelectorAll(".hodge-input");
-      return [intOrNull(inputs[0]), intOrNull(inputs[1])];
-    });
+    const degrees = degreeRows.map(row =>
+      Array.from(row.querySelectorAll(".hodge-input")).map(inp => intOrNull(inp))
+    );
 
-    if (degrees.some(([d1, d2]) => d1 === null || d2 === null)) {
+    if (degrees.some(tuple => tuple.some(d => d === null))) {
       diamondContainerProduct.innerHTML =
-        `<p class="placeholder">Fill all ${r} bidegree(s) to compute the diamond.</p>`;
+        `<p class="placeholder">Fill all ${r} multidegree(s) to compute the diamond.</p>`;
       return;
     }
 
-    // Each bidegree component must be ≥ 1.
+    // Each degree component must be ≥ 1 (ampleness requirement for Lefschetz).
     // A component of 0 gives a non-ample divisor (e.g. O(0,d) pulls back from
     // one factor only), so the Lefschetz hyperplane theorem fails and the
     // formula for non-middle Hodge numbers is invalid.
-    if (degrees.some(([d1, d2]) => d1 < 1 || d2 < 1)) {
+    if (degrees.some(tuple => tuple.some(d => d < 1))) {
       diamondContainerProduct.innerHTML =
-        `<p class="error">Error: Both components of each bidegree must be \\(\\geq 1\\). ` +
-        `A bidegree with a 0 component defines a non-ample divisor on the product, ` +
-        `so the Lefschetz hyperplane theorem fails and the Hodge number formula is invalid.</p>`;
+        `<p class="error">Error: Every component of each multidegree must be \\(\\geq 1\\). ` +
+        `A component of 0 defines a non-ample divisor, so the Lefschetz hyperplane theorem ` +
+        `fails and the Hodge number formula is invalid.</p>`;
       if (window.MathJax?.typesetPromise) MathJax.typesetPromise([diamondContainerProduct]);
       return;
     }
 
     try {
-      const diamond = hodgeDiamondProduct(k1, n1Raw, k2, n2Raw, degrees);
-      renderProductDiamond(diamond);
+      renderProductDiamond(hodgeDiamondProduct(validFactors, degrees));
     } catch (e) {
       console.error("hodgeDiamondProduct error:", e);
       diamondContainerProduct.innerHTML =
@@ -213,27 +266,21 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // ---------------- preset loader ----------------
-  const loadPreset = (k1, n1, k2, n2, r, degrees) => {
-    k1ValueProduct.value = String(k1);
-    k1SliderProduct.value = String(Math.min(k1, Number(k1SliderProduct.max)));
-    n1ValueProduct.value = String(n1);
-    n1SliderProduct.value = String(Math.min(n1, Number(n1SliderProduct.max)));
-    k2ValueProduct.value = String(k2);
-    k2SliderProduct.value = String(Math.min(k2, Number(k2SliderProduct.max)));
-    n2ValueProduct.value = String(n2);
-    n2SliderProduct.value = String(Math.min(n2, Number(n2SliderProduct.max)));
-    rValueProduct.value  = String(r);
-    rSliderProduct.value  = String(Math.min(r, Number(rSliderProduct.max)));
+  const loadPreset = (factors, r, degrees) => {
+    // Remove all existing factor rows and rebuild
+    factorInputsProduct.innerHTML = "";
+    for (const { k, n } of factors) addFactorRow(k, n);
 
-    updateDegreeTogglesProduct(r);
+    rValueProduct.value  = String(r);
+    rSliderProduct.value = String(Math.min(r, Number(rSliderProduct.max)));
+
+    rebuildDegreeRows();
 
     const rows = degreeTogglesProduct.querySelectorAll(".degree-toggle");
-    degrees.forEach(([d1, d2], i) => {
-      if (rows[i]) {
-        const inputs = rows[i].querySelectorAll(".hodge-input");
-        if (inputs[0]) inputs[0].value = String(d1);
-        if (inputs[1]) inputs[1].value = String(d2);
-      }
+    degrees.forEach((tuple, i) => {
+      if (!rows[i]) return;
+      const inputs = rows[i].querySelectorAll(".hodge-input");
+      tuple.forEach((d, fi) => { if (inputs[fi]) inputs[fi].value = String(d); });
     });
 
     updateDiamondProduct();
@@ -241,44 +288,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelectorAll("#preset-buttons-product .preset-button").forEach(button => {
     button.addEventListener("click", () => {
-      const k1 = parseInt(button.dataset.k1, 10);
-      const n1 = parseInt(button.dataset.n1, 10);
-      const k2 = parseInt(button.dataset.k2, 10);
-      const n2 = parseInt(button.dataset.n2, 10);
-      const r  = parseInt(button.dataset.r,  10);
-      // data-degrees: flat comma-separated list read in pairs, e.g. "2,3" => [[2,3]]
-      const raw = (button.dataset.degrees || "").split(",").map(Number).filter(v => !isNaN(v));
+      const r     = parseInt(button.dataset.r, 10);
+      // data-factors: flat comma-separated k,n pairs e.g. "1,2,1,3" → [{k:1,n:2},{k:1,n:3}]
+      const rawF  = (button.dataset.factors || "").split(",").map(Number);
+      const factors = [];
+      for (let i = 0; i + 1 < rawF.length; i += 2) factors.push({ k: rawF[i], n: rawF[i + 1] });
+      const numF  = factors.length;
+      // data-degrees: flat list, read in groups of numF e.g. "2,3" + 2 factors → [[2,3]]
+      const rawD  = (button.dataset.degrees || "").split(",").map(Number).filter(v => !isNaN(v));
       const degrees = [];
-      for (let i = 0; i + 1 < raw.length; i += 2) degrees.push([raw[i], raw[i + 1]]);
-      loadPreset(k1, n1, k2, n2, r, degrees);
+      for (let i = 0; i + numF - 1 < rawD.length; i += numF) {
+        degrees.push(rawD.slice(i, i + numF));
+      }
+      loadPreset(factors, r, degrees);
     });
   });
 
-  // ---------------- wire up sliders / textboxes ----------------
-  syncSliderAndTextbox(k1SliderProduct, k1ValueProduct, updateDiamondProduct);
-  syncSliderAndTextbox(n1SliderProduct, n1ValueProduct, updateDiamondProduct);
-  syncSliderAndTextbox(k2SliderProduct, k2ValueProduct, updateDiamondProduct);
-  syncSliderAndTextbox(n2SliderProduct, n2ValueProduct, updateDiamondProduct);
-  syncSliderAndTextbox(rSliderProduct,  rValueProduct, () => {
-    const rv = intOrNull(rValueProduct);
-    if (rv !== null) updateDegreeTogglesProduct(rv);
+  // ---------------- wire up r slider / textbox ----------------
+  syncSliderAndTextbox(rSliderProduct, rValueProduct, () => {
+    rebuildDegreeRows();
     updateDiamondProduct();
   });
-
-  k1ValueProduct.addEventListener("input", updateDiamondProduct);
-  n1ValueProduct.addEventListener("input", updateDiamondProduct);
-  k2ValueProduct.addEventListener("input", updateDiamondProduct);
-  n2ValueProduct.addEventListener("input", updateDiamondProduct);
   rValueProduct.addEventListener("input", () => {
-    const rv = intOrNull(rValueProduct);
-    if (rv !== null) updateDegreeTogglesProduct(rv);
+    rebuildDegreeRows();
     updateDiamondProduct();
   });
 
   degreeTogglesProduct.addEventListener("input", updateDiamondProduct);
 
   // ---------------- initial render ----------------
-  const rInit = intOrNull(rValueProduct);
-  updateDegreeTogglesProduct(rInit ?? 0);
+  addFactorRow(1, 2); // Factor 1: default Gr(1,2) = P¹
+  addFactorRow(1, 2); // Factor 2: default Gr(1,2) = P¹
+  rebuildDegreeRows();
   updateDiamondProduct();
 });
