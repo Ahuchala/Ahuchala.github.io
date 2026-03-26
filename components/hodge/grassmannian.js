@@ -219,6 +219,30 @@ document.addEventListener("DOMContentLoaded", () =>
     renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, false);
   };
 
+  // ---------------- preset buttons ----------------
+  const loadPreset = (k, n, r, degrees) => {
+    nValueGrassmannian.value = String(n);
+    nSliderGrassmannian.value = String(Math.min(n, Number(nSliderGrassmannian.max)));
+    kValueGrassmannian.value = String(k);
+    kSliderGrassmannian.value = String(Math.min(k, Number(kSliderGrassmannian.max)));
+    rValueGrassmannian.value = String(r);
+    rSliderGrassmannian.value = String(Math.min(r, Number(rSliderGrassmannian.max)));
+    updateDegreeTogglesGrassmannian(r);
+    const inputs = degreeTogglesGrassmannian.querySelectorAll(".hodge-input");
+    degrees.forEach((deg, i) => { if (inputs[i]) inputs[i].value = String(deg); });
+    updateDiamondGrassmannian();
+  };
+
+  document.querySelectorAll("#preset-buttons-grassmannian .preset-button").forEach(button => {
+    button.addEventListener("click", () => {
+      const k = parseInt(button.dataset.k, 10);
+      const n = parseInt(button.dataset.n, 10);
+      const r = parseInt(button.dataset.r, 10);
+      const degrees = button.dataset.degrees.split(",").map(Number);
+      loadPreset(k, n, r, degrees);
+    });
+  });
+
   // ---------------- wire up ----------------
   syncSliderAndTextbox(nSliderGrassmannian, nValueGrassmannian, updateDiamondGrassmannian);
   syncSliderAndTextbox(kSliderGrassmannian, kValueGrassmannian, updateDiamondGrassmannian);
