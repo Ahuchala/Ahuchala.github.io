@@ -58,6 +58,7 @@
     /* Scopes layout and paint to this container so large diamonds don't
        trigger page-wide reflows/repaints during scroll. */
     contain: layout style;
+    overflow-x: auto;
 }
 
 .diamond-row {
@@ -233,6 +234,18 @@ body.hide-top-half .is-top-half {
 
 .diamond-value.has-contrib {
     cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    #inputs,
+    #diamond-box {
+        max-width: 100%;
+    }
+
+    .how-does-it-work-div {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
 }
 
 /* Greyed-out state while async Hodge data / math.js is loading.

@@ -92,7 +92,7 @@ body {
   line-height: 1.6;
   color: var(--text-color);
   background: linear-gradient(135deg, var(--body-bg-1), var(--body-bg-2));
-  /* overflow-x: hidden; */
+  overflow-x: hidden;
   transition: background 3.3s ease, color 0.3s ease; /* does nothing visible, but we'll keep it */
 }
 
@@ -1027,6 +1027,35 @@ main {
 
   .menu-button {
     display: none; 
+  }
+}
+
+/* Mobile layout fixes */
+@media (max-width: 768px) {
+  header .header-content h1 {
+    font-size: 2rem;
+  }
+
+  .intro h2 {
+    font-size: 2rem;
+  }
+
+  .featured img {
+    width: 60%;
+    max-width: 280px;
+  }
+
+  .modal-content {
+    flex-direction: column;
+    max-height: 85vh;
+  }
+
+  .modal img {
+    max-width: 100%;
+  }
+
+  .modal-text {
+    max-width: 100%;
   }
 }
 

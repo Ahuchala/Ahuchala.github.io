@@ -67,6 +67,16 @@
     /* color: var(--primary-dark); Match the timeline color scheme */
 }
 
+@media (max-width: 480px) {
+    .timeline {
+        padding-left: 24px;
+    }
+
+    .timeline-item::before {
+        left: -18px;
+    }
+}
+
 /* Section Description */
 .timeline-description {
     text-align: center; /* Align with the title */
