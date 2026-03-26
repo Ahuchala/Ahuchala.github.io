@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import { chiCI, hodgeDiamondCI, hodgePrimitiveMiddleRow } from "../components/hodge/chiGrassmannianCI.js";
+import { hodgeDiamondProduct } from "../components/hodge/chiProductCI.js";
 import { hodgeGrassmannian } from "../components/hodge/grassmannianHodge.js";
 import { hodgeAbelianVariety } from "../components/hodge/abelianVarietyHodgeNumbers.js";
 import { hodgeFlag } from "../components/hodge/flagHodge.js";
@@ -800,5 +801,39 @@ test("hodgePrimitiveMiddleRow Gr(5,10) 1×d=2: regression", () => {
 
 test("hodgePrimitiveMiddleRow Gr(5,10) 2×d=2: regression", () => {
   assert.deepEqual(hodgePrimitiveMiddleRow(5, 10, [2,2]), [0,0,0,4,96614,93619752,16246652763,839591628326,16498708108916,141169515777511,569276046290679,1131550540047461]);
+});
+
+// ─── Product Grassmannian CI (hodgeDiamondProduct) ───────────────────────────
+
+// P¹×P¹ with no CI (r=0): product Hodge diamond.
+// h^{1,1}(P¹×P¹) = 2 (two independent (1,1)-classes).
+test("hodgeDiamondProduct P¹×P¹ (r=0): full diamond", () => {
+  assert.deepEqual(hodgeDiamondProduct(1, 2, 1, 2, []), [
+    [1],
+    [0, 0],
+    [0, 2, 0],
+    [0, 0],
+    [1],
+  ]);
+});
+
+// Bidegree (2,2) CI in P¹×P¹: elliptic curve (g=1).
+test("hodgeDiamondProduct (2,2) CI in P¹×P¹: elliptic curve", () => {
+  assert.deepEqual(hodgeDiamondProduct(1, 2, 1, 2, [[2, 2]]), [
+    [1],
+    [1, 1],
+    [1],
+  ]);
+});
+
+// Bidegree (2,3) CI in P¹×P²: K3 surface (h^{1,1}=20).
+test("hodgeDiamondProduct (2,3) CI in P¹×P²: K3 surface (h^{1,1}=20)", () => {
+  const d = hodgeDiamondProduct(1, 2, 1, 3, [[2, 3]]);
+  assert.deepEqual(d[Math.floor(d.length / 2)], [1, 20, 1]);
+});
+
+// Two (1,1) CIs in P¹×P¹: 0-dimensional, degree = 2.
+test("hodgeDiamondProduct two (1,1) CIs in P¹×P¹: 2 points", () => {
+  assert.deepEqual(hodgeDiamondProduct(1, 2, 1, 2, [[1, 1], [1, 1]]), [[2]]);
 });
 

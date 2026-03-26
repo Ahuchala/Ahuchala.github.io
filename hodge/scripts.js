@@ -5,12 +5,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const toggleGrassmannian = document.getElementById("toggle-grassmannian");
     const toggleFlag = document.getElementById("toggle-flag");
     const toggleTwisted = document.getElementById("toggle-twisted");
+    const toggleProductGrassmannian = document.getElementById("toggle-product-grassmannian");
 
     const completeIntersectionContainer = document.getElementById("complete-intersection-container");
     const abelianVarietyContainer = document.getElementById("abelian-variety-container");
     const grassmannianContainer = document.getElementById("grassmannian-container");
     const flagContainer = document.getElementById("flag-container");
     const twistedContainer = document.getElementById("twisted-container");
+    const productGrassmannianContainer = document.getElementById("product-grassmannian-container");
 
     const setActiveToggle = (active, ...inactives) => {
       active.classList.add("pressed");
@@ -23,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       grassmannianContainer.style.display = "none";
       flagContainer.style.display = "none";
       twistedContainer.style.display = "none";
+      if (productGrassmannianContainer) productGrassmannianContainer.style.display = "none";
       container.style.display = "block";
       // If the container has a registered update function, call it.
       if (typeof container.updateCalculator === "function") {
@@ -33,24 +36,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     toggleCompleteIntersection.addEventListener("click", () => {
       showContainer(completeIntersectionContainer);
-      setActiveToggle(toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian, toggleFlag, toggleTwisted);
+      setActiveToggle(toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian, toggleFlag, toggleTwisted, toggleProductGrassmannian);
     });
     toggleAbelianVariety.addEventListener("click", () => {
       showContainer(abelianVarietyContainer);
-      setActiveToggle(toggleAbelianVariety, toggleCompleteIntersection, toggleGrassmannian, toggleFlag, toggleTwisted);
+      setActiveToggle(toggleAbelianVariety, toggleCompleteIntersection, toggleGrassmannian, toggleFlag, toggleTwisted, toggleProductGrassmannian);
     });
     toggleGrassmannian.addEventListener("click", () => {
       showContainer(grassmannianContainer);
-      setActiveToggle(toggleGrassmannian, toggleCompleteIntersection, toggleAbelianVariety, toggleFlag, toggleTwisted);
+      setActiveToggle(toggleGrassmannian, toggleCompleteIntersection, toggleAbelianVariety, toggleFlag, toggleTwisted, toggleProductGrassmannian);
     });
     toggleFlag.addEventListener("click", () => {
       showContainer(flagContainer);
-      setActiveToggle(toggleFlag, toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian, toggleTwisted);
+      setActiveToggle(toggleFlag, toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian, toggleTwisted, toggleProductGrassmannian);
     });
     toggleTwisted.addEventListener("click", () => {
       showContainer(twistedContainer);
-      setActiveToggle(toggleTwisted, toggleFlag, toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian);
+      setActiveToggle(toggleTwisted, toggleFlag, toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian, toggleProductGrassmannian);
     });
+    if (toggleProductGrassmannian) {
+      toggleProductGrassmannian.addEventListener("click", () => {
+        showContainer(productGrassmannianContainer);
+        setActiveToggle(toggleProductGrassmannian, toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian, toggleFlag, toggleTwisted);
+      });
+    }
 
 
     // --- Preset Button State Updates (existing code) ---
@@ -102,6 +111,15 @@ document.addEventListener("DOMContentLoaded", () => {
     updateAllPressedButtons();
   
     // --- Unified Dynamic Hodge Diamond Description ---
+
+    // Returns "\mathbb{P}^{n-1}" when Gr(k,n) is projective space (k=1 or k=n-1),
+    // otherwise returns "\mathrm{Gr}(k,n)".
+    function grOrPn(k, n) {
+      const ki = parseInt(k, 10), ni = parseInt(n, 10);
+      if (ki === 1 || ki === ni - 1) return `\\mathbb{P}^{${ni - 1}}`;
+      return `\\mathrm{Gr}(${k},${n})`;
+    }
+
     function updateHodgeDiamondDescription() {
       let descriptionText = "";
 
@@ -149,15 +167,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const k = kValueEl.value;
         const r = parseInt(rValueEl.value, 10);
         const degreeInputs = Array.from(degreeToggles.querySelectorAll("input.hodge-input"));
+        const ambientGr = grOrPn(k, n);
         if (degreeInputs.length === 0 || r === 0) {
-          descriptionText = `Hodge diamond for \\(\\mathrm{Gr}(${k},${n})\\)`;
+          descriptionText = `Hodge diamond for \\(${ambientGr}\\)`;
         } else if (degreeInputs.length === 1) {
           const degree = degreeInputs[0].value;
-          descriptionText = `Hodge diamond for a smooth hypersurface of degree ${degree} in \\(\\mathrm{Gr}(${k},${n})\\)`;
+          descriptionText = `Hodge diamond for a smooth hypersurface of degree ${degree} in \\(${ambientGr}\\)`;
         } else {
           const degrees = degreeInputs.map(input => input.value);
           const multidegreeStr = "(" + degrees.join(", ") + ")";
-          descriptionText = `Hodge diamond for a smooth complete intersection of multidegree ${multidegreeStr} in \\(\\mathrm{Gr}(${k},${n})\\)`;
+          descriptionText = `Hodge diamond for a smooth complete intersection of multidegree ${multidegreeStr} in \\(${ambientGr}\\)`;
         }
       }
       // For Abelian Varieties:
@@ -204,6 +223,33 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
+      // For Product of Grassmannians:
+      else if (productGrassmannianContainer && productGrassmannianContainer.style.display !== "none") {
+        const k1 = document.getElementById("k1-value-product")?.value;
+        const n1 = document.getElementById("n1-value-product")?.value;
+        const k2 = document.getElementById("k2-value-product")?.value;
+        const n2 = document.getElementById("n2-value-product")?.value;
+        const r  = parseInt(document.getElementById("r-value-product")?.value, 10);
+        const degInputs = Array.from(
+          document.getElementById("degree-toggles-product")
+            ?.querySelectorAll(".degree-toggle") ?? []
+        );
+        const factor1 = grOrPn(k1, n1);
+        const factor2 = grOrPn(k2, n2);
+        if (!r || degInputs.length === 0) {
+          descriptionText =
+            `Hodge diamond for \\(${factor1}\\times ${factor2}\\)`;
+        } else {
+          const degs = degInputs.map(row => {
+            const inps = row.querySelectorAll(".hodge-input");
+            return `(${inps[0]?.value ?? "?"},${inps[1]?.value ?? "?"})`;
+          });
+          const multideg = degs.join(", ");
+          descriptionText =
+            `Hodge diamond for a smooth CI of multidegree ${multideg} ` +
+            `in \\(${factor1}\\times ${factor2}\\)`;
+        }
+      }
       // For Twisted Hodge Numbers:
       else if (twistedContainer && twistedContainer.style.display !== "none") {
         const nValueEl = document.getElementById("n-value-twisted");
@@ -304,7 +350,21 @@ document.addEventListener("DOMContentLoaded", () => {
       tSliderT.addEventListener("change", () => requestAnimationFrame(updateHodgeDiamondDescription));
     }
     if (tValueT) tValueT.addEventListener("input", updateHodgeDiamondDescription);
-  
+
+    // Product Grassmannian inputs
+    ["k1-slider-product","n1-slider-product","k2-slider-product","n2-slider-product","r-slider-product"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener("input",  () => requestAnimationFrame(updateHodgeDiamondDescription));
+        el.addEventListener("change", () => requestAnimationFrame(updateHodgeDiamondDescription));
+      }
+    });
+    ["k1-value-product","n1-value-product","k2-value-product","n2-value-product","r-value-product"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("input", updateHodgeDiamondDescription);
+    });
+    const degTogglesProduct = document.getElementById("degree-toggles-product");
+    if (degTogglesProduct) degTogglesProduct.addEventListener("input", updateHodgeDiamondDescription);
 
     const presetButtons = document.querySelectorAll(".preset-button");
     presetButtons.forEach(button => {
@@ -323,6 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("diamond-container-grassmannian"),
       document.getElementById("diamond-container-flag"),
       document.getElementById("diamond-container-twisted"),
+      document.getElementById("diamond-container-product"),
     ].filter(Boolean);
 
     // NEW: annotate (i,j) coordinates + title for ALL diamonds

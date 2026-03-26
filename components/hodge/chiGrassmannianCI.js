@@ -12,7 +12,7 @@
 
 // --- Enumerate all partitions λ in the k × m box with |λ| = target.
 // Yields arrays (non-increasing, first entry ≤ m, length ≤ k).
-function* partitionsInBox(k, m, target, maxFirst = m, len = 0, partial = []) {
+export function* partitionsInBox(k, m, target, maxFirst = m, len = 0, partial = []) {
   if (target === 0) { yield partial.slice(); return; }
   if (len === k || target <= 0) return;
   const hi = Math.min(maxFirst, target);
@@ -43,7 +43,7 @@ function hookLength(lambda, lambdaT, a, b) {
 
 // --- Exact BigInt rational arithmetic helpers ---
 
-function gcdBig(a, b) {
+export function gcdBig(a, b) {
   if (a < 0n) a = -a;
   if (b < 0n) b = -b;
   while (b) { const t = b; b = a % b; a = t; }
@@ -51,7 +51,7 @@ function gcdBig(a, b) {
 }
 
 // Reduce [num, den] to lowest terms with den > 0.
-function reduce(num, den) {
+export function reduce(num, den) {
   if (num === 0n) return [0n, 1n];
   const g = gcdBig(num < 0n ? -num : num, den < 0n ? -den : den);
   num /= g; den /= g;
@@ -59,18 +59,18 @@ function reduce(num, den) {
   return [num, den];
 }
 
-function addFrac([a, b], [c, d]) {
+export function addFrac([a, b], [c, d]) {
   return reduce(a * d + c * b, b * d);
 }
 
-function subFrac([a, b], [c, d]) {
+export function subFrac([a, b], [c, d]) {
   return reduce(a * d - c * b, b * d);
 }
 
 // --- f_λ(t): product over all (a,b) in [1,k]×[1,m].
 // Uses exact BigInt arithmetic to avoid float64 overflow on large Grassmannians.
 // If any h_λ(a,b) = 0: returns 1 when t = 0, else returns 0.
-function fLambdaExact(lambda, k, m, t) {
+export function fLambdaExact(lambda, k, m, t) {
   const lT = conjugate(lambda, m);
   const tB = BigInt(t);
   let num = 1n;
@@ -94,7 +94,7 @@ function fLambdaExact(lambda, k, m, t) {
 // --- χ(Ω^j_X(t)) for the Grassmannian X = Gr(k,n).
 // = (-1)^j * Σ_{λ : |λ|=j, λ in k×m box} f_λ(t)
 // Returns a BigInt fraction [num, den].
-function chiGrassmannianExact(k, n, j, t) {
+export function chiGrassmannianExact(k, n, j, t) {
   const m = n - k;
   if (j < 0 || j > k * m) return [0n, 1n];
   let sum = [0n, 1n];
@@ -136,7 +136,7 @@ function buildChiCI(k, n, degrees) {
 
 // Convert a BigInt fraction to Number. For integer fractions (den divides num),
 // returns the exact integer; otherwise falls back to floating-point division.
-function fracToNumber([num, den]) {
+export function fracToNumber([num, den]) {
   if (den === 1n) return Number(num);
   // Exact integer check
   if (num % den === 0n) return Number(num / den);
