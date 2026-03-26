@@ -2,14 +2,14 @@ import { hodgeDiamondCI } from "/components/hodge/chiGrassmannianCI.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const nSlider = document.getElementById("n-slider");
-    const kSlider = document.getElementById("k-slider");
+    const rSlider = document.getElementById("r-slider");
     const nValue  = document.getElementById("n-value");
-    const kValue  = document.getElementById("k-value");
+    const rValue  = document.getElementById("r-value");
     const degreeToggles = document.getElementById("degree-toggles");
     const diamondContainer = document.getElementById("diamond-container");
 
     const presetButtons = document.querySelectorAll(".preset-button");
-    let lastUserSetK = parseInt(kSlider.value, 10) || 0; // Tracks last user-set value of k
+    let lastUserSetR = parseInt(rSlider.value, 10) || 0; // Tracks last user-set value of r
 
     // --- slider/textbox sync that allows blank, with configurable min/max ---
     const syncSliderAndTextbox = (slider, textbox, onChange, minVal = 0, maxVal = 50) => {
@@ -56,22 +56,22 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    const updateKSlider = () => {
+    const updateRSlider = () => {
         const n = parseInt(nValue.value, 10);
         const safeN = Number.isFinite(n) ? n : 0;
-        const newK = Math.min(lastUserSetK, safeN);  // ensure 0 ≤ k ≤ n
+        const newR = Math.min(lastUserSetR, safeN);  // ensure 0 ≤ r ≤ n
 
-        kSlider.max = String(Math.min(10, safeN));   // slider max = min(10, n)
-        kSlider.value = String(newK);
-        kValue.value  = String(newK);
+        rSlider.max = String(Math.min(10, safeN));   // slider max = min(10, n)
+        rSlider.value = String(newR);
+        rValue.value  = String(newR);
 
-        updateDegreeToggles(newK);
+        updateDegreeToggles(newR);
     };
 
-    const updateDegreeToggles = (k) => {
+    const updateDegreeToggles = (r) => {
         const currentCount = degreeToggles.children.length;
-        if (k > currentCount) {
-            for (let i = currentCount; i < k; i++) {
+        if (r > currentCount) {
+            for (let i = currentCount; i < r; i++) {
                 const toggleContainer = document.createElement("div");
                 toggleContainer.className = "degree-toggle";
 
@@ -91,8 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 toggleContainer.appendChild(input);
                 degreeToggles.appendChild(toggleContainer);
             }
-        } else if (k < currentCount) {
-            for (let i = currentCount - 1; i >= k; i--) {
+        } else if (r < currentCount) {
+            for (let i = currentCount - 1; i >= r; i--) {
                 degreeToggles.children[i].remove();
             }
         }
@@ -100,22 +100,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const updateDiamond = () => {
         const n = parseInt(nValue.value, 10);
-        const k = parseInt(kValue.value, 10);
+        const r = parseInt(rValue.value, 10);
 
-        // Basic sanity check on n, k
-        if (!Number.isFinite(n) || !Number.isFinite(k) || n < 0 || k < 0) {
+        // Basic sanity check on n, r
+        if (!Number.isFinite(n) || !Number.isFinite(r) || n < 0 || r < 0) {
             diamondContainer.innerHTML =
-                `<p class="placeholder">Enter n and k (or use sliders) to see the Hodge diamond.</p>`;
+                `<p class="placeholder">Enter n and r (or use sliders) to see the Hodge diamond.</p>`;
             return;
         }
 
-        const rows = 2 * (n - k) + 1;
-        const targetRowIndex = n - k;
+        const rows = 2 * (n - r) + 1;
+        const targetRowIndex = n - r;
 
-        // If rows is nonsense (e.g. k > n), just show a placeholder
+        // If rows is nonsense (e.g. r > n), just show a placeholder
         if (rows <= 0 || targetRowIndex < 0) {
             diamondContainer.innerHTML =
-                `<p class="placeholder">Choose n and k with 0 ≤ k ≤ n to see the Hodge diamond.</p>`;
+                `<p class="placeholder">Choose n and r with 0 ≤ r ≤ n to see the Hodge diamond.</p>`;
             return;
         }
 
@@ -145,8 +145,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return { ok: true, degrees };
         };
 
-        // Special case: k = n → 0-dim complete intersection (finite set of points)
-        if (k === n) {
+        // Special case: r = n → 0-dim complete intersection (finite set of points)
+        if (r === n) {
             const { ok, degrees } = readDegrees();
             if (!ok) {
                 diamondContainer.innerHTML =
@@ -168,8 +168,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Special case: k = 0 → projective space P^n
-        if (k === 0) {
+        // Special case: r = 0 → projective space P^n
+        if (r === 0) {
             for (let j = 0; j < rows; j++) {
                 const row = document.createElement("div");
                 row.className = "diamond-row";
@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 for (let i = 0; i < elements; i++) {
                     const valEl = document.createElement("span");
                     valEl.className = "diamond-value";
-                    const condition = 2 * i === Math.min(j, 2 * (n - k) - j);
+                    const condition = 2 * i === Math.min(j, 2 * (n - r) - j);
                     valEl.innerText = condition ? "1" : "0";
                     row.appendChild(valEl);
                 }
@@ -202,11 +202,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // General complete intersection case: 1 ≤ k ≤ n-1
+        // General complete intersection case: 1 ≤ r ≤ n-1
         const { ok, degrees } = readDegrees();
         if (!ok) {
             diamondContainer.innerHTML =
-                `<p class="placeholder">Enter positive degrees for all ${k} hypersurfaces to see the Hodge diamond.</p>`;
+                `<p class="placeholder">Enter positive degrees for all ${r} hypersurfaces to see the Hodge diamond.</p>`;
             return;
         }
 
@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         hodgeNumbers[symmetricIndex] ??
                         0;
                 } else {
-                    const condition = 2 * i === Math.min(j, 2 * (n - k) - j);
+                    const condition = 2 * i === Math.min(j, 2 * (n - r) - j);
                     valEl.innerText = condition ? "1" : "0";
                 }
 
@@ -262,13 +262,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    const loadPreset = (n, k, degrees) => {
+    const loadPreset = (n, r, degrees) => {
         nValue.value = String(n);
         nSlider.value = String(Math.min(n, Number(nSlider.max)));
 
-        lastUserSetK = k; // Remember the preset k
-        updateKSlider();
-        updateDegreeToggles(k);
+        lastUserSetR = r; // Remember the preset r
+        updateRSlider();
+        updateDegreeToggles(r);
 
         const inputs = degreeToggles.querySelectorAll(".hodge-input");
         degrees.forEach((deg, i) => {
@@ -282,12 +282,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     presetButtons.forEach(button => {
         button.addEventListener("click", () => {
-            if (!button.dataset.n || !button.dataset.k || !button.dataset.degrees) return;
+            if (!button.dataset.n || !button.dataset.r || !button.dataset.degrees) return;
 
             const n = parseInt(button.dataset.n, 10);
-            const k = parseInt(button.dataset.k, 10);
+            const r = parseInt(button.dataset.r, 10);
             const degrees = button.dataset.degrees.split(",").map(Number);
-            loadPreset(n, k, degrees);
+            loadPreset(n, r, degrees);
         });
     });
 
@@ -296,7 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nSlider,
         nValue,
         () => {
-            updateKSlider();
+            updateRSlider();
             updateDiamond();
         },
         0,  // allow n = 0
@@ -304,14 +304,14 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     syncSliderAndTextbox(
-        kSlider,
-        kValue,
+        rSlider,
+        rValue,
         () => {
-            lastUserSetK = parseInt(kValue.value, 10) || 0;
-            updateDegreeToggles(lastUserSetK);
+            lastUserSetR = parseInt(rValue.value, 10) || 0;
+            updateDegreeToggles(lastUserSetR);
             updateDiamond();
         },
-        0,  // allow k = 0
+        0,  // allow r = 0
         50
     );
 
