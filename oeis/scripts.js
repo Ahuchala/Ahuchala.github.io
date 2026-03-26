@@ -109,11 +109,6 @@ def f(z):
         addGalleryItem(title, imageUrl, thetaGallery, true, title, description);
     });
 
-    // OEIS sequence data (fill these arrays to populate the grids)
-    const editedSequences = [];
-    const authoredSequences = [];
-    const favoriteSequences = [];
-
     function populateSequences(gridSelector, sequences) {
         const oeisGrid = document.querySelector(gridSelector);
         if (!oeisGrid || !sequences) return;
@@ -147,16 +142,16 @@ def f(z):
 
     // Collapsible sections
     const collapsibleSections = [
-        { selector: '#knight-gallery', itemClass: 'gallery-item' },
-        { selector: '.oeis-edits', itemClass: 'oeis-sequence' },
-        { selector: '.oeis-authored', itemClass: 'oeis-sequence' },
-        { selector: '#theta-gallery', itemClass: 'gallery-item' }
+        { selector: '#knight-gallery', itemClass: 'gallery-item', itemMinWidth: 150 },
+        { selector: '.oeis-edits', itemClass: 'oeis-sequence', itemMinWidth: 250 },
+        { selector: '.oeis-authored', itemClass: 'oeis-sequence', itemMinWidth: 250 },
+        { selector: '#theta-gallery', itemClass: 'gallery-item', itemMinWidth: 150 }
     ];
 
     // Collect per-section applyVisibility fns; register a single debounced resize handler
     const allApplyFns = [];
 
-    collapsibleSections.forEach(({ selector, itemClass }) => {
+    collapsibleSections.forEach(({ selector, itemClass, itemMinWidth }) => {
         const section = document.querySelector(selector);
         if (!section) return;
 
@@ -166,8 +161,9 @@ def f(z):
 
         const applyVisibility = () => {
             const sectionWidth = section.clientWidth;
-            const itemWidth = items[0]?.offsetWidth || 1;
-            const itemsPerRow = Math.floor(sectionWidth / itemWidth);
+            // Use the CSS minmax minimum width to compute columns reliably,
+            // even before items have been laid out (when offsetWidth would be 0).
+            const itemsPerRow = Math.max(1, Math.floor(sectionWidth / itemMinWidth));
             const totalRows = Math.ceil(items.length / itemsPerRow);
 
             items.forEach((item, index) => {
