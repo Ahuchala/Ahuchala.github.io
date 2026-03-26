@@ -1,7 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { hodgeCompleteIntersection } from "../components/hodge/completeIntersectionHodgeNumbers.js";
 import { chiCI, hodgeDiamondCI, hodgePrimitiveMiddleRow } from "../components/hodge/chiGrassmannianCI.js";
 import { hodgeGrassmannian } from "../components/hodge/grassmannianHodge.js";
 import { hodgeAbelianVariety } from "../components/hodge/abelianVarietyHodgeNumbers.js";
@@ -28,66 +27,66 @@ function twistedMap(results) {
 
 // Plane curves: genus g = (d-1)(d-2)/2, middle row = [g, g]
 test("CI: conic in P² (P¹, g=0)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([2], 2), [0, 0]);
+  assert.deepEqual(hodgeDiamondCI(1, 3, [2])[1], [0, 0]);
 });
 
 test("CI: cubic in P² (elliptic curve, g=1)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([3], 2), [1, 1]);
+  assert.deepEqual(hodgeDiamondCI(1, 3, [3])[1], [1, 1]);
 });
 
 test("CI: quartic in P² (genus 3 curve)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([4], 2), [3, 3]);
+  assert.deepEqual(hodgeDiamondCI(1, 3, [4])[1], [3, 3]);
 });
 
 test("CI: quintic in P² (genus 6 curve)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([5], 2), [6, 6]);
+  assert.deepEqual(hodgeDiamondCI(1, 3, [5])[1], [6, 6]);
 });
 
 test("CI: sextic in P² (genus 10 curve)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([6], 2), [10, 10]);
+  assert.deepEqual(hodgeDiamondCI(1, 3, [6])[1], [10, 10]);
 });
 
 // Surfaces in P^3 (dim = 3 - 1 = 2)
 test("CI: quadric in P³ (P¹×P¹, h^{1,1}=2)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([2], 3), [0, 2, 0]);
+  assert.deepEqual(hodgeDiamondCI(1, 4, [2])[2], [0, 2, 0]);
 });
 
 test("CI: cubic surface in P³ (del Pezzo 3, h^{1,1}=7)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([3], 3), [0, 7, 0]);
+  assert.deepEqual(hodgeDiamondCI(1, 4, [3])[2], [0, 7, 0]);
 });
 
 test("CI: quartic in P³ (K3 surface, K_X trivial, h^{1,1}=20)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([4], 3), [1, 20, 1]);
+  assert.deepEqual(hodgeDiamondCI(1, 4, [4])[2], [1, 20, 1]);
 });
 
 // Curves and surfaces via complete intersections in higher P^n
 test("CI: hyperplane in P³ (≅ P², h^{1,1}=1)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([1], 3), [0, 1, 0]);
+  assert.deepEqual(hodgeDiamondCI(1, 4, [1])[2], [0, 1, 0]);
 });
 
 test("CI: two quadrics in P³ (elliptic curve, K_C trivial)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([2, 2], 3), [1, 1]);
+  assert.deepEqual(hodgeDiamondCI(1, 4, [2, 2])[1], [1, 1]);
 });
 
 test("CI: quadric and cubic in P³ (genus 4 curve)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([2, 3], 3), [4, 4]);
+  assert.deepEqual(hodgeDiamondCI(1, 4, [2, 3])[1], [4, 4]);
 });
 
 test("CI: two quadrics in P⁴ (del Pezzo degree 4, h^{1,1}=6)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([2, 2], 4), [0, 6, 0]);
+  assert.deepEqual(hodgeDiamondCI(1, 5, [2, 2])[2], [0, 6, 0]);
 });
 
 test("CI: quadric and cubic in P⁴ (K3, K_X = O(2+3-5) trivial, h^{1,1}=20)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([2, 3], 4), [1, 20, 1]);
+  assert.deepEqual(hodgeDiamondCI(1, 5, [2, 3])[2], [1, 20, 1]);
 });
 
 test("CI: three quadrics in P⁵ (K3, K_X = O(6-6) trivial, h^{1,1}=20)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([2, 2, 2], 5), [1, 20, 1]);
+  assert.deepEqual(hodgeDiamondCI(1, 6, [2, 2, 2])[2], [1, 20, 1]);
 });
 
 // CY threefolds (K_X trivial, dim=3, middle row = [1, h^{2,1}, h^{2,1}, 1])
 test("CI: quintic in P⁴ (CY3, h^{2,1}=101)", () => {
-  assert.deepEqual(hodgeCompleteIntersection([5], 4), [1, 101, 101, 1]);
+  assert.deepEqual(hodgeDiamondCI(1, 5, [5])[3], [1, 101, 101, 1]);
 });
 
 // ─── Grassmannians ──────────────────────────────────────────────────────────

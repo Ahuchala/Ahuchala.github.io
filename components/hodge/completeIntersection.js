@@ -1,4 +1,4 @@
-import { hodgeCompleteIntersection } from "/components/hodge/completeIntersectionHodgeNumbers.js";
+import { hodgeDiamondCI } from "/components/hodge/chiGrassmannianCI.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const nSlider = document.getElementById("n-slider");
@@ -212,9 +212,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let hodgeNumbers;
         try {
-            hodgeNumbers = hodgeCompleteIntersection(degrees, n);
+            const dim = n - degrees.length;
+            hodgeNumbers = hodgeDiamondCI(1, n + 1, degrees)[dim];
         } catch (e) {
-            console.error("hodgeCompleteIntersection error:", e);
+            console.error("hodgeDiamondCI error:", e);
             diamondContainer.innerHTML =
                 `<p class="placeholder">Unable to compute the Hodge diamond for these parameters.</p>`;
             return;

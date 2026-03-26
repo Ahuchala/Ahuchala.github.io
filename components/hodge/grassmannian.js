@@ -1,5 +1,4 @@
 import { hodgeGrassmannian } from "/components/hodge/grassmannianHodge.js";
-import { hodgeCompleteIntersection } from "/components/hodge/completeIntersectionHodgeNumbers.js";
 import { hodgePrimitiveMiddleRow } from "/components/hodge/chiGrassmannianCI.js";
 
 document.addEventListener("DOMContentLoaded", () =>
@@ -216,16 +215,8 @@ document.addEventListener("DOMContentLoaded", () =>
     }
 
     const degrees = degreeVals.slice().sort((a, b) => b - a);
-    const isCompleteIntersection = (k === 1 || k === n - 1);
-
-    let hodgeNumbersForDegrees;
-    if (isCompleteIntersection) {
-      hodgeNumbersForDegrees = hodgeCompleteIntersection(degrees, n - 1);
-      renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, true);
-    } else {
-      hodgeNumbersForDegrees = hodgePrimitiveMiddleRow(k, n, degrees);
-      renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, false);
-    }
+    const hodgeNumbersForDegrees = hodgePrimitiveMiddleRow(k, n, degrees);
+    renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, false);
   };
 
   // ---------------- wire up ----------------
