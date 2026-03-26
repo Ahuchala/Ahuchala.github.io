@@ -18,11 +18,13 @@
 /* Timeline Items */
 .timeline-item {
     position: relative;
-    background: #f9f9f9; /* Item background */
-    border: 1px solid #ddd; /* Border for individual items */
-    border-radius: 5px; /* Rounded corners */
-    padding: 15px; /* Inner padding */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background: var(--body-section-1);
+    border: 1px solid var(--border-color-1);
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04),
+                0 4px 12px rgba(0, 0, 0, 0.06),
+                0 8px 20px rgba(0, 0, 0, 0.04);
 }
 
 /* Timeline Item Dot */
@@ -41,21 +43,22 @@
 
 /* Timeline Item Title */
 .timeline-item h2 {
-    margin: 0 0 10px; /* Add spacing below the title */
-    font-size: 1.2rem; /* Title font size */
-    font-weight: bold; /* Bold title */
-    color: #31395a; /* Title color */
-    line-height: 1.4; /* Ensure proper spacing */
-    margin-left: 10px; /* Offset text slightly from the timeline */
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--section-header-text-color);
+    line-height: 1.4;
+    margin-left: 10px;
+    letter-spacing: -0.01em;
 }
 
 /* Timeline Item Description */
 .timeline-item p {
-    margin: 0; /* Remove unnecessary spacing */
-    font-size: 1rem; /* Description font size */
-    color: #555; /* Softer color for readability */
-    line-height: 1.4; /* Line spacing */
-    margin-left: 10px; /* Offset text slightly from the timeline */
+    margin: 0;
+    font-size: 1rem;
+    color: var(--secondary-text);
+    line-height: 1.5;
+    margin-left: 10px;
 }
 
 /* Section Title */
@@ -79,10 +82,10 @@
 
 /* Section Description */
 .timeline-description {
-    text-align: center; /* Align with the title */
-    font-size: 1.2rem; /* Slightly smaller font size */
-    font-weight: 400; /* Regular weight for readability */
-    color: #555555; /* Softer color for contrast */
-    margin-bottom: 40px; /* Spacing before the timeline */
-    line-height: 1.6; /* Improve readability */
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--secondary-text);
+    margin-bottom: 40px;
+    line-height: 1.6;
 }

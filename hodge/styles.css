@@ -11,9 +11,11 @@
     max-width: 45%;
     padding: 20px;
     border: 1px solid var(--border-color-1);
-    border-radius: 10px;
+    border-radius: 12px;
     background-color: var(--body-section-2);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04),
+                0 4px 12px rgba(0, 0, 0, 0.06),
+                0 8px 24px rgba(0, 0, 0, 0.04);
     text-align: center;
 }
 .input-row {
@@ -51,9 +53,11 @@
     max-width: 45%;
     padding: 20px;
     border: 1px solid var(--border-color-1);
-    border-radius: 10px;
+    border-radius: 12px;
     background-color: var(--body-section-2);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04),
+                0 4px 12px rgba(0, 0, 0, 0.06),
+                0 8px 24px rgba(0, 0, 0, 0.04);
     text-align: center;
     /* Scopes layout and paint to this container so large diamonds don't
        trigger page-wide reflows/repaints during scroll. */
