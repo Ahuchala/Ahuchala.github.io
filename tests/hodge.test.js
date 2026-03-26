@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import { hodgeCompleteIntersection } from "../components/hodge/completeIntersectionHodgeNumbers.js";
-import { chiCI, hodgeDiamondCI } from "../components/hodge/chiGrassmannianCI.js";
+import { chiCI, hodgeDiamondCI, hodgePrimitiveMiddleRow } from "../components/hodge/chiGrassmannianCI.js";
 import { hodgeGrassmannian } from "../components/hodge/grassmannianHodge.js";
 import { hodgeAbelianVariety } from "../components/hodge/abelianVarietyHodgeNumbers.js";
 import { hodgeFlag } from "../components/hodge/flagHodge.js";
@@ -540,3 +540,266 @@ test("hodgeDiamondCI Gr(2,8) d=[1×4]: full diamond", () => {
     [1],
   ]);
 });
+
+// ─── Regression: primitive middle-row for all JSON entries (d=2) ────────────
+
+test("hodgePrimitiveMiddleRow Gr(2,10) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 10, [2]), [0,0,0,0,1,725,27621,150425]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,10) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 10, [2,2]), [0,0,0,4,3719,198864,1775059,3588784]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,11) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 11, [2]), [0,0,0,0,0,55,11022,251174,1103641]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,12) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 12, [2]), [0,0,0,0,0,1,1572,142286,2215576,8248019]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,13) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 13, [2]), [0,0,0,0,0,0,78,32123,1655173,19188143,62600473]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,14) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 14, [2]), [0,0,0,0,0,0,1,2989,533975,17948399,164332155,481415739]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,4) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 4, [2]), [0,2]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,4) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 4, [2,2]), [1,19]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,4) 3×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 4, [2,2,2]), [17]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,5) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 5, [2]), [0,0,10]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,5) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 5, [2,2]), [0,20,130]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,5) 3×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 5, [2,2,2]), [10,260]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,5) 4×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 5, [2,2,2,2]), [135,639]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,5) 5×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 5, [2,2,2,2,2]), [401]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,6) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 6, [2]), [0,0,1,69]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,6) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 6, [2,2]), [0,2,239,956]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,6) 3×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 6, [2,2,2]), [1,271,2972]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,6) 4×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 6, [2,2,2,2]), [101,3335,9858]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,6) 5×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 6, [2,2,2,2,2]), [1249,11969]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,7) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 7, [2]), [0,0,0,21,441]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,7) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 7, [2,2]), [0,0,63,2380,7231]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,7) 3×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 7, [2,2,2]), [0,63,4501,31038]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,7) 4×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 7, [2,2,2,2]), [21,3633,54824,130122]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,7) 5×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 7, [2,2,2,2,2]), [1071,43239,234718]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,8) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 8, [2]), [0,0,0,1,273,3002]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,8) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 8, [2,2]), [0,0,3,1148,22219,56295]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,8) 3×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 8, [2,2,2]), [0,3,1809,60507,309210]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,8) 4×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 8, [2,2,2,2]), [1,1265,78222,756316,1570297]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,8) 5×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 8, [2,2,2,2,2]), [331,48791,931620,3771648]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,9) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 9, [2]), [0,0,0,0,36,2880,20952]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(2,9) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(2, 9, [2,2]), [0,0,0,144,16209,200340,446202]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,10) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 10, [2]), [0,0,0,0,1,4850,1226841,57797421,763665001,3398571946,5543786962]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,10) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 10, [2,2]), [0,0,0,4,24344,7652574,457801608,7995063098,49675865063,121231109407]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,11) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 11, [2]), [0,0,0,0,0,165,243650,43475861,1911635286,27840771134,155879394353,362637067727]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,12) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 12, [2]), [0,0,0,0,0,1,15586,11514646,1601905591,66936501489,1051905193847,7034370013956,21471612746883,31028653969169]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,13) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 13, [2]), [0,0,0,0,0,0,286,1145872,529337458,61071480379,2453912110897,40997316116146,316014868920869,1196863914843831,2309782401722966]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,14) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 14, [2]), [0,0,0,0,0,0,1,41209,73452275,24058474882,2398361382404,93425215477581,1641501328374714,14216994691374188,64220895877358660,156695737401401300,210521385209475520]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,6) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 6, [2]), [0,0,1,140,601]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,6) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 6, [2,2]), [0,2,449,4524]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,6) 3×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 6, [2,2,2]), [1,481,10532,27881]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,6) 4×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 6, [2,2,2,2]), [171,9859,62358]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,6) 5×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 6, [2,2,2,2,2]), [3251,58351,142902]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,7) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 7, [2]), [0,0,0,35,2758,20076]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,7) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 7, [2,2]), [0,0,105,12215,154672,347542]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,7) 3×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 7, [2,2,2]), [0,105,20097,435792,1864577]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,7) 4×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 7, [2,2,2,2]), [35,14581,580104,4534319,8817808]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,7) 5×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 7, [2,2,2,2,2]), [3941,371161,5592210,20334007]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,8) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 8, [2]), [0,0,0,1,1112,67305,650553,1351504]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,8) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 8, [2,2]), [0,0,3,4507,376955,5516118,19868743]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,8) 3×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 8, [2,2,2]), [0,3,6849,836418,18477228,107314782,190247626]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,8) 4×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 8, [2,2,2,2]), [1,4625,920574,31787647,291964616,854014201]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,8) 5×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 8, [2,2,2,2,2]), [1171,503189,29902458,445124149,2101910092,3491437727]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,9) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 9, [2]), [0,0,0,0,84,36150,1879449,21813090,71136917]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(3,9) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(3, 9, [2,2]), [0,0,0,336,185676,12710817,205842258,1017039061,1713732500]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(4,10) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(4, 10, [2]), [0,0,0,0,1,13760,8343621,926258586,30239408012,363045824691,1806323956328,3972028010137]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(4,10) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(4, 10, [2,2]), [0,0,0,4,68894,50960454,6902720253,279057249922,4252756943182,27761857459621,83459171464965,119982081028834]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(4,8) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(4, 8, [2]), [0,0,0,1,1700,155422,2423049,9017875]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(4,8) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(4, 8, [2,2]), [0,0,3,6859,842316,18696542,108857786,193117765]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(4,8) 3×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(4, 8, [2,2,2]), [0,3,10377,1816698,58277529,512676368,1469416681]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(4,8) 4×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(4, 8, [2,2,2,2]), [1,6977,1950414,94634503,1258024985,5595719279,9121149593]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(4,8) 5×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(4, 8, [2,2,2,2,2]), [1759,1042889,84858042,1767224521,12145903889,31058618581]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(4,9) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(4, 9, [2]), [0,0,0,0,126,107982,11025828,267058044,2017356121,5399830296]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(4,9) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(4, 9, [2,2]), [0,0,0,504,547596,70913664,2238368220,23043321323,89214590555,139126255901]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(5,10) 1×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(5, 10, [2]), [0,0,0,0,1,19304,15388263,2206230708,93286270462,1471833677292,9849790919188,30057566343211,43427888504570]);
+});
+
+test("hodgePrimitiveMiddleRow Gr(5,10) 2×d=2: regression", () => {
+  assert.deepEqual(hodgePrimitiveMiddleRow(5, 10, [2,2]), [0,0,0,4,96614,93619752,16246652763,839591628326,16498708108916,141169515777511,569276046290679,1131550540047461]);
+});
+

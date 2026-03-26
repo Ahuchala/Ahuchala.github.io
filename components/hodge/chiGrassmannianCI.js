@@ -41,64 +41,106 @@ function hookLength(lambda, lambdaT, a, b) {
   return la + lb - a - b + 1;
 }
 
+// --- Exact BigInt rational arithmetic helpers ---
+
+function gcdBig(a, b) {
+  if (a < 0n) a = -a;
+  if (b < 0n) b = -b;
+  while (b) { const t = b; b = a % b; a = t; }
+  return a;
+}
+
+// Reduce [num, den] to lowest terms with den > 0.
+function reduce(num, den) {
+  if (num === 0n) return [0n, 1n];
+  const g = gcdBig(num < 0n ? -num : num, den < 0n ? -den : den);
+  num /= g; den /= g;
+  if (den < 0n) { num = -num; den = -den; }
+  return [num, den];
+}
+
+function addFrac([a, b], [c, d]) {
+  return reduce(a * d + c * b, b * d);
+}
+
+function subFrac([a, b], [c, d]) {
+  return reduce(a * d - c * b, b * d);
+}
+
 // --- f_λ(t): product over all (a,b) in [1,k]×[1,m].
+// Uses exact BigInt arithmetic to avoid float64 overflow on large Grassmannians.
 // If any h_λ(a,b) = 0: returns 1 when t = 0, else returns 0.
-function fLambda(lambda, k, m, t) {
+function fLambdaExact(lambda, k, m, t) {
   const lT = conjugate(lambda, m);
-  let num = 1;
-  let den = 1;
+  const tB = BigInt(t);
+  let num = 1n;
+  let den = 1n;
   for (let a = 1; a <= k; a++) {
     for (let b = 1; b <= m; b++) {
       const h = hookLength(lambda, lT, a, b);
       if (h === 0) {
-        if (t !== 0) return 0;
+        if (t !== 0) return [0n, 1n];
         // h = 0, t = 0: factor (h-t)/h = 0/0 → L'Hôpital → 1; skip it
       } else {
-        num *= (h - t);
-        den *= h;
+        const hB = BigInt(h);
+        num *= (hB - tB);
+        den *= hB;
       }
     }
   }
-  return num / den;
+  return reduce(num, den);
 }
 
 // --- χ(Ω^j_X(t)) for the Grassmannian X = Gr(k,n).
 // = (-1)^j * Σ_{λ : |λ|=j, λ in k×m box} f_λ(t)
-function chiGrassmannian(k, n, j, t) {
+// Returns a BigInt fraction [num, den].
+function chiGrassmannianExact(k, n, j, t) {
   const m = n - k;
-  if (j < 0 || j > k * m) return 0;
-  let sum = 0;
+  if (j < 0 || j > k * m) return [0n, 1n];
+  let sum = [0n, 1n];
   for (const lambda of partitionsInBox(k, m, j)) {
-    sum += fLambda(lambda, k, m, t);
+    sum = addFrac(sum, fLambdaExact(lambda, k, m, t));
   }
-  return (j % 2 === 0 ? 1 : -1) * sum;
+  const sign = j % 2 === 0 ? 1n : -1n;
+  return [sign * sum[0], sum[1]];
 }
 
 // --- Memoized recurrence for the CI.
 // χ(Ω^j_{Z_s}(t)) = χ(Ω^j_{Z_{s-1}}(t))
 //                  - χ(Ω^j_{Z_{s-1}}(t - d_s))
 //                  - χ(Ω^{j-1}_{Z_s}(t - d_s))
+// All values are BigInt fractions [num, den].
 function buildChiCI(k, n, degrees) {
   const cache = new Map();
 
   function chi(s, j, t) {
-    if (j < 0) return 0;
+    if (j < 0) return [0n, 1n];
     const key = `${s},${j},${t}`;
     if (cache.has(key)) return cache.get(key);
     let val;
     if (s === 0) {
-      val = chiGrassmannian(k, n, j, t);
+      val = chiGrassmannianExact(k, n, j, t);
     } else {
       const d = degrees[s - 1];
-      val = chi(s - 1, j, t)
-          - chi(s - 1, j, t - d)
-          - chi(s,     j - 1, t - d);
+      val = subFrac(
+        subFrac(chi(s - 1, j, t), chi(s - 1, j, t - d)),
+        chi(s, j - 1, t - d)
+      );
     }
     cache.set(key, val);
     return val;
   }
 
   return chi;
+}
+
+// Convert a BigInt fraction to Number. For integer fractions (den divides num),
+// returns the exact integer; otherwise falls back to floating-point division.
+function fracToNumber([num, den]) {
+  if (den === 1n) return Number(num);
+  // Exact integer check
+  if (num % den === 0n) return Number(num / den);
+  return Number(num) / Number(den);
 }
 
 // --- Main export.
@@ -108,7 +150,7 @@ export function chiCI(k, n, degrees, t = 0) {
   if (dim < 0) throw new Error("Too many equations: dim Z < 0");
   const chi = buildChiCI(k, n, degrees);
   const r = degrees.length;
-  return Array.from({ length: dim + 1 }, (_, j) => chi(r, j, t));
+  return Array.from({ length: dim + 1 }, (_, j) => fracToNumber(chi(r, j, t)));
 }
 
 // --- Primitive middle-row Hodge numbers for rendering.
@@ -183,12 +225,12 @@ export function hodgePrimitiveMiddleRow(k, n, degrees) {
   const half = Math.floor(dim / 2);
   const result = [];
   for (let j = 0; j <= half; j++) {
-    const chiVal = chi(r, j, 0);
+    const chiVal = fracToNumber(chi(r, j, 0));
     let a_j = 0;
     for (const _ of partitionsInBox(k, m, j)) a_j++;
     const sign     = ((dim - j) % 2 === 0) ? 1 : -1;
     const chiSign  = (j % 2 === 0) ? 1 : -1;
-    result.push(Math.round(sign * (chiVal - chiSign * a_j)));
+    result.push(Math.round(sign * (chiVal - chiSign * a_j)) + 0);
   }
   return result;
 }
