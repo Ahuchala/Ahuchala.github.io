@@ -47,25 +47,30 @@ document.addEventListener("DOMContentLoaded", () => {
   setComponents();
   
 
-  // 2) Load MathJax during browser idle time so it never blocks initial render.
-  const loadMathJax = () => {
+  // 2) Load MathJax for pages that don't include it directly in their HTML.
+  //    Pages like hodge/index.html set window.MathJax themselves via an inline
+  //    <script> + async CDN tag, which is more reliable than dynamic injection.
+  //    Only inject here when no inline setup is present.
+  if (!window.MathJax) {
     window.MathJax = {
       tex: {
-        inlineMath: [["$", "$"], ["\\(", "\\)"]]
+        inlineMath:  [["$", "$"], ["\\(", "\\)"]],
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]]
       },
-      svg: {
-        fontCache: "global"
+      svg: { fontCache: "global" },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          MathJax.startup.promise.then(() =>
+            window.dispatchEvent(new CustomEvent("mathjax-ready"))
+          );
+        }
       }
     };
-    loadScript("https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js")
-      .catch((err) => {
-        console.error("Error loading MathJax:", err);
-      });
-  };
-  if (typeof requestIdleCallback === "function") {
-    requestIdleCallback(loadMathJax, { timeout: 3000 });
-  } else {
-    setTimeout(loadMathJax, 0);
+    setTimeout(() => {
+      loadScript("https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js")
+        .catch((err) => console.error("Error loading MathJax:", err));
+    }, 0);
   }
 
   // 3) Initialize your other scripts

@@ -19,6 +19,16 @@ document.addEventListener("DOMContentLoaded", () => {
       inactives.forEach(el => el.classList.remove("pressed"));
     };
 
+    // Aligns all .input-row labels within a container to the same width so
+    // sliders line up. Must be called while the container is visible.
+    function alignLabelsInContainer(container) {
+      if (!container) return;
+      const labels = Array.from(container.querySelectorAll(".input-row label"));
+      labels.forEach(l => { l.style.minWidth = ""; });
+      const maxW = labels.reduce((m, l) => Math.max(m, l.scrollWidth), 0);
+      labels.forEach(l => { l.style.minWidth = maxW + "px"; });
+    }
+
     const showContainer = (container) => {
       completeIntersectionContainer.style.display = "none";
       abelianVarietyContainer.style.display = "none";
@@ -27,6 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
       twistedContainer.style.display = "none";
       if (productGrassmannianContainer) productGrassmannianContainer.style.display = "none";
       container.style.display = "block";
+      // Align labels now that the container is visible (scrollWidth is valid).
+      requestAnimationFrame(() => alignLabelsInContainer(container));
       // If the container has a registered update function, call it.
       if (typeof container.updateCalculator === "function") {
           container.updateCalculator();
@@ -61,6 +73,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // Align the default-visible container on first paint.
+    requestAnimationFrame(() => alignLabelsInContainer(completeIntersectionContainer));
 
     // --- Preset Button State Updates (existing code) ---
     const updateAllPressedButtons = () => {
@@ -535,6 +549,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     updateHodgeDiamondDescription();
+
 
     // Prevent scroll wheel from changing number-input values.
     // preventDefault() blocks the value change; we then forward the delta to the

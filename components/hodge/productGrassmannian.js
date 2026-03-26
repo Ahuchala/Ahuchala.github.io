@@ -65,23 +65,33 @@ document.addEventListener("DOMContentLoaded", () => {
     removeFactorBtn.disabled = getNumFactors() <= 1;
   }
 
+  // Measures all .input-row labels inside the product calculator and sets
+  // them to the same width as the widest one, so all sliders line up.
+  function alignLabels() {
+    const container = document.getElementById("product-grassmannian-container");
+    if (!container) return;
+    const labels = Array.from(container.querySelectorAll(".input-row label"));
+    labels.forEach(l => { l.style.minWidth = ""; });
+    const maxW = labels.reduce((m, l) => Math.max(m, l.scrollWidth), 0);
+    labels.forEach(l => { l.style.minWidth = maxW + "px"; });
+  }
+
   function addFactorRow(kDefault = 1, nDefault = 2) {
     const idx = getNumFactors();
     const row = document.createElement("div");
     row.className = "factor-row-product";
     row.innerHTML = `
       <div class="input-row">
-        <label>Ambient Dimension (\\(n_{${idx + 1}}\\)) for Factor ${idx + 1}:</label>
+        <label>Ambient Dimension (\\(n_{${idx + 1}}\\)) for Factor&nbsp;${idx + 1}:</label>
         <input type="range"  class="factor-n-slider" min="2" max="10" value="${nDefault}">
         <input type="number" class="factor-n-value hodge-input" min="2" max="50" value="${nDefault}">
       </div>
       <div class="input-row">
-        <label>Subspace Dimension (\\(k_{${idx + 1}}\\)) for Factor ${idx + 1}:</label>
+        <label>Subspace Dimension (\\(k_{${idx + 1}}\\)) for Factor&nbsp;${idx + 1}:</label>
         <input type="range"  class="factor-k-slider" min="1" max="10" value="${kDefault}">
         <input type="number" class="factor-k-value hodge-input" min="1" max="50" value="${kDefault}">
       </div>`;
     factorInputsProduct.appendChild(row);
-    if (window.MathJax?.typesetPromise) MathJax.typesetPromise([row]);
     // Wire sliders for this row (re-trigger on every change)
     syncSliderAndTextbox(
       row.querySelector(".factor-n-slider"),
@@ -105,6 +115,11 @@ document.addEventListener("DOMContentLoaded", () => {
     addFactorRow();
     rebuildDegreeRows();
     updateDiamondProduct();
+    // Typeset only the new row, then realign
+    const newRow = factorInputsProduct.lastElementChild;
+    if (window.MathJax?.typesetPromise) {
+      MathJax.typesetPromise([newRow]).then(alignLabels);
+    }
   });
 
   removeFactorBtn.addEventListener("click", () => {
@@ -113,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateRemoveButton();
     rebuildDegreeRows();
     updateDiamondProduct();
+    alignLabels();
   });
 
   // ---------------- read factors from DOM ----------------
@@ -284,6 +300,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     updateDiamondProduct();
+    // Realign after MathJax re-typesets the newly created factor rows
+    if (window.MathJax?.typesetPromise) {
+      MathJax.typesetPromise([factorInputsProduct]).then(alignLabels);
+    } else {
+      alignLabels();
+    }
   };
 
   document.querySelectorAll("#preset-buttons-product .preset-button").forEach(button => {
@@ -321,4 +343,18 @@ document.addEventListener("DOMContentLoaded", () => {
   addFactorRow(1, 2); // Factor 2: default Gr(1,2) = P¹
   rebuildDegreeRows();
   updateDiamondProduct();
+  // Typeset the dynamically-created factor rows so MathJax renders their
+  // subscripts before the user opens the calculator. Don't call alignLabels
+  // here — the container is hidden so scrollWidth would return 0.
+  function typesetFactorRows() {
+    MathJax.typesetPromise([factorInputsProduct]).then(() => {
+      const c = document.getElementById("product-grassmannian-container");
+      if (c && c.style.display !== "none") alignLabels();
+    });
+  }
+  if (window.MathJax?.typesetPromise) {
+    typesetFactorRows();
+  } else {
+    window.addEventListener("mathjax-ready", typesetFactorRows, { once: true });
+  }
 });

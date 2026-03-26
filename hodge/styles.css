@@ -23,18 +23,17 @@
   }
   
   .input-row label {
-    width: 350px;      /* Fixed width for labels for alignment */
-    max-width:40%;
-    margin-right: 10px;
+    white-space: nowrap;  /* Prevents wrapping; label sizes to its text */
+    margin-right: 16px;
     padding-left: 10px;
-    text-align: left; /* Right-align text in labels */
+    text-align: left;
     font-family: 'Montserrat', sans-serif;
     font-size: 1rem;
   }
-  
+
   .input-row input[type="range"] {
-    flex: 1;           /* Slider takes available space */
-    max-width: 25%;
+    flex: none;
+    width: 120px;
     margin-right: 10px;
   }
   
