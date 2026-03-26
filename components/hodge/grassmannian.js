@@ -1,20 +1,6 @@
 import { hodgeGrassmannian } from "/components/hodge/grassmannianHodge.js";
 import { hodgeCompleteIntersection } from "/components/hodge/completeIntersectionHodgeNumbers.js";
-import { ensureMath } from "/components/hodge/loadMath.js";
-
-// Per-key in-memory cache: "k,n,r" → polynomial array
-const hodgeCache = new Map();
-
-async function fetchHodgeKey(k, n, r) {
-  const key = `${k},${n},${r}`;
-  if (hodgeCache.has(key)) return hodgeCache.get(key);
-  const url = `/components/hodge/grassmannian-hodge/k${k}_n${n}_r${r}.json`;
-  const resp = await fetch(url);
-  if (!resp.ok) throw new Error(`HTTP ${resp.status} for ${url}`);
-  const data = await resp.json();
-  hodgeCache.set(key, data);
-  return data;
-}
+import { hodgePrimitiveMiddleRow } from "/components/hodge/chiGrassmannianCI.js";
 
 document.addEventListener("DOMContentLoaded", () =>
 {
@@ -81,74 +67,6 @@ document.addEventListener("DOMContentLoaded", () =>
       onChange();
     });
   };
-
-  // ---------------- BigInt evaluation helpers ----------------
-  function evalASTBigInt(node, scope)
-  {
-    if (node.isConstantNode) {
-      return BigInt(node.value);
-    } else if (node.isSymbolNode) {
-      if (scope[node.name] !== undefined) return scope[node.name];
-      throw new Error("Undefined symbol: " + node.name);
-    } else if (node.isOperatorNode) {
-      const op = node.op;
-      const args = node.args.map(arg => evalASTBigInt(arg, scope));
-      switch (op) {
-        case "+": return args[0] + args[1];
-        case "-": return args[0] - args[1];
-        case "*": return args[0] * args[1];
-        case "/": return args[0] / args[1];
-        case "^": return args[0] ** BigInt(Number(args[1]));
-        case "unaryMinus": return -args[0];
-        case "unaryPlus":  return args[0];
-        default: throw new Error("Unsupported operator: " + op);
-      }
-    } else if (node.isParenthesisNode) {
-      return evalASTBigInt(node.content, scope);
-    }
-    throw new Error("Unsupported node type: " + node.type);
-  }
-
-  function rewriteIntegersToSymbols(expr)
-  {
-    const constMap = {};
-    let idx = 0;
-    const rewritten = expr.replace(/\b\d+\b/g, (m) => {
-      const key = `C_${idx++}`;
-      constMap[key] = BigInt(m);
-      return key;
-    });
-    return { rewritten, constMap };
-  }
-
-  function evaluatePolynomial(polynomial, degrees)
-  {
-    const fracRegex = /^\s*\(([-+]?\d+)\/(\d+)\)\s*\*\s*/;
-    const match = polynomial.match(fracRegex);
-    let constantNumerator = 1n;
-    let constantDenom = 1n;
-    let remainingStr = polynomial;
-
-    if (match) {
-      constantNumerator = BigInt(match[1]);
-      constantDenom = BigInt(match[2]);
-      remainingStr = polynomial.slice(match[0].length).trim();
-    }
-
-    const { rewritten, constMap } = rewriteIntegersToSymbols(remainingStr);
-    const ast = math.parse(rewritten);
-
-    const scope = { ...constMap };
-    degrees.forEach((deg, index) => {
-      const d = Number.isFinite(deg) ? BigInt(deg) : 1n;
-      scope[`d_${index + 1}`] = d;
-    });
-
-    const prodValue = evalASTBigInt(ast, scope);
-    const finalValue = (prodValue * constantNumerator) / constantDenom;
-    const absFinal = finalValue < 0n ? -finalValue : finalValue;
-    return absFinal.toString();
-  }
 
   function safeBigInt(val)
   {
@@ -301,26 +219,8 @@ document.addEventListener("DOMContentLoaded", () =>
       hodgeNumbersForDegrees = hodgeCompleteIntersection(degrees, n - 1);
       renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, true);
     } else {
-      // Lazy-load math.js and the per-key JSON in parallel.
-      // Dim the existing diamond instead of replacing it with a "Loading…"
-      // placeholder — removed after the new diamond is fully built.
-      diamondContainerGrassmannian.classList.add("diamond-loading");
-      try {
-        const [hodgePolynomials] = await Promise.all([
-          fetchHodgeKey(k, n, r),
-          ensureMath(),
-        ]);
-        hodgeNumbersForDegrees = hodgePolynomials.map(poly =>
-          evaluatePolynomial(poly, degrees)
-        );
-        renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, false);
-        diamondContainerGrassmannian.classList.remove("diamond-loading");
-      } catch (err) {
-        diamondContainerGrassmannian.classList.remove("diamond-loading");
-        diamondContainerGrassmannian.innerHTML =
-          `<p class="error">Error: No data found for Gr(${k},${n}) with ${r} hypersurfaces.</p>`;
-        console.error(err);
-      }
+      hodgeNumbersForDegrees = hodgePrimitiveMiddleRow(k, n, degrees);
+      renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, false);
     }
   };
 

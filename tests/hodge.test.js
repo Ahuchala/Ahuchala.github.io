@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import { hodgeCompleteIntersection } from "../components/hodge/completeIntersectionHodgeNumbers.js";
+import { chiCI, hodgeDiamondCI } from "../components/hodge/chiGrassmannianCI.js";
 import { hodgeGrassmannian } from "../components/hodge/grassmannianHodge.js";
 import { hodgeAbelianVariety } from "../components/hodge/abelianVarietyHodgeNumbers.js";
 import { hodgeFlag } from "../components/hodge/flagHodge.js";
@@ -398,4 +399,144 @@ test("Twisted k=2,n=5,t=0: untwisted Gr(2,5) — diagonal only", () => {
   assert.equal(m.get("4,4"), 2);
   assert.equal(m.get("5,5"), 1);
   assert.equal(m.get("6,6"), 1);
+});
+
+// ─── chiCI: Euler characteristics of CI in Grassmannian ──────────────────────
+
+// Documented example from the algorithm description:
+// Gr(2,5), degree-2 hypersurface, dim Z = 5
+// χ(Ω^j_Z) = [1, -1, -8, 8, 1, -1]
+test("chiCI Gr(2,5) d=[2]: documented example", () => {
+  const chi = chiCI(2, 5, [2]);
+  assert.deepEqual(chi.map(Math.round), [1, -1, -8, 8, 1, -1]);
+});
+
+// Gr(k,n) with no equations = the Grassmannian itself.
+// χ(Ω^j_X) = (-1)^j * #{λ in k×m box : |λ|=j}
+// For Gr(2,4): q-binom [4 choose 2]_q = [1,1,2,1,1], dim=4
+test("chiCI Gr(2,4) d=[]: no equations = Grassmannian", () => {
+  const chi = chiCI(2, 4, []);
+  assert.deepEqual(chi.map(Math.round), [1, -1, 2, -1, 1]);
+});
+
+// Gr(2,5) no equations, q-binom [5 choose 2]_q = [1,1,2,2,2,1,1], dim=6
+test("chiCI Gr(2,5) d=[]: no equations = Grassmannian", () => {
+  const chi = chiCI(2, 5, []);
+  assert.deepEqual(chi.map(Math.round), [1, -1, 2, -2, 2, -1, 1]);
+});
+
+// Lefschetz: for hypersurface in Gr(2,4), dim Z = 3.
+// Euler characteristic of a smooth quadric in Gr(2,4).
+// Hyperplane section of Gr(2,4) has dim = 4 - 1 = 3
+test("chiCI Gr(2,4) d=[1]: hyperplane section, dim=3", () => {
+  const chi = chiCI(2, 4, [1]);
+  // dim=3 (odd), Serre duality: χ(Ω^j) = -χ(Ω^{3-j})
+  assert.equal(chi.length, 4);
+  assert.deepEqual(chi.map(Math.round), [1, -1, 1, -1]);
+});
+
+// Serre duality: χ(Ω^j_Z) = (-1)^{dim Z} χ(Ω^{dim-j}_Z) for untwisted CY (Σd = n)
+// Gr(2,5), d=[5] would be CY (2+3=5), but let's check Serre duality on the documented example.
+// For Gr(2,5) d=[2], dim=5 (odd), so χ(Ω^j) = -χ(Ω^{5-j}).
+test("chiCI Gr(2,5) d=[2]: Serre duality χ(Ω^j) = -χ(Ω^{5-j})", () => {
+  const chi = chiCI(2, 5, [2]);
+  const dim = chi.length - 1;
+  for (let j = 0; j <= dim; j++) {
+    assert.equal(Math.round(chi[j]) + Math.round(chi[dim - j]), 0);
+  }
+});
+
+// Gr(2,8), 4 hyperplanes: dim Z = 2*(8-2) - 4 = 8 (even).
+// Middle row [0,0,0,1,22,1,0,0,0] — the "22" is h^{4,4} displayed as two digits,
+// which is why the diamond row looks like "0001221000".
+// Serre duality for even dim: χ(Ω^j) = χ(Ω^{8-j}).
+test("chiCI Gr(2,8) d=[1,1,1,1]: 4 hyperplanes, dim=8", () => {
+  const chi = chiCI(2, 8, [1, 1, 1, 1]);
+  assert.equal(chi.length, 9);
+  assert.deepEqual(chi.map(Math.round), [1, -1, 2, -3, 22, -3, 2, -1, 1]);
+});
+
+test("chiCI Gr(2,8) d=[1,1,1,1]: Serre duality χ(Ω^j) = χ(Ω^{8-j})", () => {
+  const chi = chiCI(2, 8, [1, 1, 1, 1]);
+  const dim = chi.length - 1;
+  for (let j = 0; j <= dim; j++) {
+    assert.equal(Math.round(chi[j]), Math.round(chi[dim - j]));
+  }
+});
+
+// Gr(2,7), 7 hyperplanes: dim Z = 2*(7-2) - 7 = 3.
+// Σd = 7 = n, so K_Z = 0: this is a Calabi-Yau 3-fold.
+// χ(O_Z) = 0, h^{3,0} = 1, h^{2,1} = 50.
+// The diamond listing all 16 Hodge numbers (1+2+3+4+3+2+1 per row) is:
+// 1 | 0 0 | 0 1 0 | 1 50 50 1 | 0 1 0 | 0 0 | 1
+test("chiCI Gr(2,7) d=[1×7]: CY3, h^{2,1}=50", () => {
+  const chi = chiCI(2, 7, [1, 1, 1, 1, 1, 1, 1]);
+  assert.equal(chi.length, 4);
+  assert.deepEqual(chi.map(Math.round), [0, 49, -49, 0]);
+});
+
+test("chiCI Gr(2,7) d=[1×7]: Serre duality χ(Ω^j) = -χ(Ω^{3-j})", () => {
+  const chi = chiCI(2, 7, [1, 1, 1, 1, 1, 1, 1]);
+  const dim = chi.length - 1;
+  for (let j = 0; j <= dim; j++) {
+    assert.equal(Math.round(chi[j]) + Math.round(chi[dim - j]), 0);
+  }
+});
+
+// ─── Hodge diamond checks ─────────────────────────────────────────────────────
+
+// Gr(2,5), d=[2], dim=5 (odd).
+// Primitive h^{3,2}=h^{2,3}=10; all other middle entries 0 (Grassmannian has
+// no h^{p,p} for p+q=5 since 5 is odd).
+test("hodgeDiamondCI Gr(2,5) d=[2]: full diamond", () => {
+  assert.deepEqual(hodgeDiamondCI(2, 5, [2]), [
+    [1],
+    [0, 0],
+    [0, 1, 0],
+    [0, 0, 0, 0],
+    [0, 0, 2, 0, 0],
+    [0, 0, 10, 10, 0, 0],  // middle: h^{2,3}=h^{3,2}=10
+    [0, 0, 2, 0, 0],
+    [0, 0, 0, 0],
+    [0, 1, 0],
+    [0, 0],
+    [1],
+  ]);
+});
+
+// Gr(2,7), d=[1×7], dim=3. CY3 with h^{3,0}=1, h^{2,1}=50.
+test("hodgeDiamondCI Gr(2,7) d=[1×7]: full diamond", () => {
+  assert.deepEqual(hodgeDiamondCI(2, 7, [1, 1, 1, 1, 1, 1, 1]), [
+    [1],
+    [0, 0],
+    [0, 1, 0],
+    [1, 50, 50, 1],  // middle: h^{0,3}=h^{3,0}=1, h^{1,2}=h^{2,1}=50
+    [0, 1, 0],
+    [0, 0],
+    [1],
+  ]);
+});
+
+// Gr(2,8), d=[1×4], dim=8 (even). h^{4,4}=22=19(prim)+3(Gr).
+// Middle row "0001221000" = [0,0,0,1,22,1,0,0,0].
+test("hodgeDiamondCI Gr(2,8) d=[1×4]: full diamond", () => {
+  assert.deepEqual(hodgeDiamondCI(2, 8, [1, 1, 1, 1]), [
+    [1],
+    [0, 0],
+    [0, 1, 0],
+    [0, 0, 0, 0],
+    [0, 0, 2, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 2, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 22, 1, 0, 0, 0],  // middle
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 2, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 2, 0, 0],
+    [0, 0, 0, 0],
+    [0, 1, 0],
+    [0, 0],
+    [1],
+  ]);
 });
