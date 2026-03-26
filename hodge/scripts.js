@@ -261,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return `(${vals.join(",")})`;
           });
           descriptionText =
-            `Hodge diamond for a smooth CI of multidegree ${degs.join(", ")} ` +
+            `Hodge diamond for a smooth complete intersection of multidegree ${degs.join(", ")} ` +
             `in \\(${productStr}\\)`;
         }
       }
