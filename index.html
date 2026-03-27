@@ -30,6 +30,15 @@
   </script>
   <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
+  <!-- Preload critical module chain so all levels download in parallel with CSS -->
+  <link rel="modulepreload" href="/scripts/main.js">
+  <link rel="modulepreload" href="/scripts/router.js">
+  <link rel="modulepreload" href="/scripts.js">
+  <link rel="modulepreload" href="/components/setComponents.js">
+  <link rel="modulepreload" href="/components/header.js">
+  <link rel="modulepreload" href="/components/footer.js">
+  <link rel="modulepreload" href="/pages/home.js">
+
   <!-- Global styles -->
   <link rel="stylesheet" href="/styles.css">
   <!-- Page-specific styles (all loaded upfront for instant transitions) -->
