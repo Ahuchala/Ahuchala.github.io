@@ -20,7 +20,7 @@ async function fetchFlagKey(dims, r) {
   return data;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+export function init() {
   // DOM element selectors.
   const dimsInput = document.getElementById("dims-input");
   const rSlider = document.getElementById("r-slider-flag");
@@ -395,4 +395,4 @@ document.addEventListener("DOMContentLoaded", () => {
   // Expose update function to container (used by your main scripts).
   const flagContainer = document.getElementById("flag-container");
   if (flagContainer) flagContainer.updateCalculator = updateDiamondFlag;
-});
+}

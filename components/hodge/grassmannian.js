@@ -1,7 +1,7 @@
 import { hodgeGrassmannian } from "/components/hodge/grassmannianHodge.js";
 import { hodgePrimitiveMiddleRow } from "/components/hodge/chiGrassmannianCI.js";
 
-document.addEventListener("DOMContentLoaded", () =>
+export function init()
 {
   const nSliderGrassmannian = document.getElementById("n-slider-grassmannian");
   const kSliderGrassmannian = document.getElementById("k-slider-grassmannian");
@@ -267,4 +267,4 @@ document.addEventListener("DOMContentLoaded", () =>
   const rInit = intOrNull(rValueGrassmannian);
   updateDegreeTogglesGrassmannian(rInit ?? 0);
   updateDiamondGrassmannian();
-});
+}

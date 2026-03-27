@@ -4,7 +4,7 @@
 
 import { hodgeTwisted } from "/components/hodge/twistedHodge.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+export function init() {
   const nSlider = document.getElementById("n-slider-twisted");
   const kSlider = document.getElementById("k-slider-twisted");
   const tSlider = document.getElementById("t-slider-twisted");
@@ -248,4 +248,4 @@ document.addEventListener("DOMContentLoaded", () => {
   // initial
   applyKBoundsFromN();
   render();
-});
+}

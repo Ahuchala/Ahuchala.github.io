@@ -1,6 +1,6 @@
 import { hodgeAbelianVariety } from "/components/hodge/abelianVarietyHodgeNumbers.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+export function init() {
     const gSlider = document.getElementById("g-slider");
     const gValue = document.getElementById("g-value");
     const diamondContainerAbelian = document.getElementById("diamond-container-abelian");
@@ -96,4 +96,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     syncSliderAndTextbox(gSlider, gValue, updateDiamondAbelian);
     updateDiamondAbelian();
-});
+}

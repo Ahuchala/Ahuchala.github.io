@@ -1,165 +1,62 @@
 <!DOCTYPE html>
 <html lang="en-US">
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Andy Huchala</title>
 
-  <!-- Preconnect to CDNs for faster font/script loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
 
-  <!-- Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap"
-    rel="stylesheet"
-  >
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath:  [["$", "$"], ["\\(", "\\)"]],
+        displayMath: [["$$", "$$"], ["\\[", "\\]"]]
+      },
+      svg: { fontCache: "global" },
+      startup: {
+        ready() {
+          MathJax.startup.defaultReady();
+          MathJax.startup.promise.then(() =>
+            window.dispatchEvent(new CustomEvent("mathjax-ready"))
+          );
+        }
+      }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-  <!-- External Stylesheet -->
-  <link rel="stylesheet" href="styles.css">
+  <!-- Global styles -->
+  <link rel="stylesheet" href="/styles.css">
+  <!-- Page-specific styles (all loaded upfront for instant transitions) -->
+  <link rel="stylesheet" href="/gallery/styles.css">
+  <link rel="stylesheet" href="/hodge/styles.css">
+  <link rel="stylesheet" href="/oeis/styles.css">
+  <link rel="stylesheet" href="/research/styles.css">
+  <link rel="stylesheet" href="/teaching/styles.css">
 
   <!-- Favicon -->
-  <!-- Make sure these files actually exist in "/favicon/" -->
-  <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-icon-57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-icon-60x60.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-icon-76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-icon-114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-icon-120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-icon-152x152.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-icon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192"  href="/favicon/android-icon-192x192.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
   <link rel="manifest" href="/favicon/manifest.json">
-
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png">
 </head>
-
 <body>
-  <!-- Header -->
   <div id="header"></div>
 
-  <main>
-    <!-- Intro Section -->
-    <section class="intro">
-      <div class="intro-content">
-        <h2>Welcome!</h2>
-        <p>A space for my work in research, teaching, and art.</p>
-      </div>
-    </section>
+  <main id="app"></main>
 
-    <!-- Featured Content Section -->
-    <section id="gallery" class="featured section">
-      <h3 class="center-content">Featured Work</h3>
-      <p class="center-if-needed center-content">
-        <span>
-          <em>The Sand Reckoner:</em> An abelian sandpile is the result of stacking a bunch of boxes in a rectangular
-          grid, and whenever you have at least 4 tall, you "topple" the pile by moving one box to each of its four
-          neighbors. This image is the result of stacking several million boxes in the center of a 9,000 x 9,000 grid,
-          letting them topple for a while, and then coloring the result by height.
-        </span>
-      </p>
-      <div class="featured-item">
-        <img
-          src="images/thumbnails/museum_small.webp"
-          alt="Museum Submission"
-          class="center-content clickable"
-          data-full-image="images/gallery/museum_small.png"
-          data-title="Museum Submission"
-          data-description="A $9000\times 9000$
-          abelian sandpile with millions of grains. This, along with a zoomed in version, was originally submitted to the Jordan Schnitzer Museum of Art in 2020 and was displayed in their virtual gallery until the museum was able to resume in-person operation in 2021. Also currently on display in gate A of the Eugene airport. It was also published in Girls' Angle magazine, a magazine aimed to increase engagement of girls in math. <a href='/gallery'>A slightly more mathematical description of the construction of abelian sandpiles is given in the gallery</a>.
-          
-          <br><br>
-         
-          Original Caption: <i>This piece attempts to capture the spirit of the infinite and print it on a single page. It uses what's called an Abelian Sandpile model, which is a fractal that colors &quot;grains of sand&quot; by their slope. A fractal is a kind of mathematical picture with a repeated motif no matter how far in or out you zoom. The Abelian Sandpile model achieves this by stacking a large number of grains of sand in the center of a grid, and then &quot;topples&quot; it onto the adjacent 4 tiles. The taller the pile of sand at the start, the more times you can topple, and the closer to the illusion of infinity you get. Adding color depicting the different heights of sand helps us visualize the resulting fractal structure.</i>"
-        />
-        <p class="center-content">
-          <em>Displayed in the Jordan Schnitzer Museum of Art in 2021 (and currently on display in the Eugene Airport!).</em>
-        </p>
-      </div>
-    </section>
-
-    <!-- Image Grid Section -->
-    <section class="grid-section">
-      <h2>Explore More</h2>
-      <div class="grid-container">
-        <div class="grid-item">
-          <a href="/index.html">
-            <img
-              src="images/thumbnails/sand23_3k.webp"
-              alt="Home"
-              class="clickable no-modal"
-            >
-            <p>Home</p>
-          </a>
-        </div>
-        <div class="grid-item">
-          <a href="/gallery">
-            <img
-              src="images/thumbnails/cracked.webp"
-              alt="Gallery"
-              class="clickable no-modal"
-            >
-            <p>Gallery</p>
-          </a>
-        </div>
-        <div class="grid-item">
-          <a href="/hodge">
-            <img
-              src="images/thumbnails/theta_8.webp"
-              alt="Hodge Diamond Calculator"
-              class="clickable no-modal"
-            >
-            <p>Hodge Diamond Calculator</p>
-          </a>
-        </div>
-        <div class="grid-item">
-          <a href="/research">
-            <img
-              src="images/thumbnails/zetafunction.webp"
-              alt="Research"
-              class="clickable no-modal"
-            >
-            <p>Research</p>
-          </a>
-        </div>
-        <div class="grid-item">
-          <a href="/teaching">
-            <img
-              src="images/thumbnails/broken.webp"
-              alt="Teaching"
-              class="clickable no-modal"
-            >
-            <p>Teaching</p>
-          </a>
-        </div>
-        <div class="grid-item">
-          <a href="/oeis">
-            <img
-              src="images/thumbnails/knight31.webp"
-              alt="OEIS"
-              class="clickable no-modal"
-            >
-            <p>OEIS</p>
-          </a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
   <div class="footer"></div>
 
-  <!-- Modal for Images -->
-  <div id="image-modal" class="modal">
+  <div id="image-modal" class="modal" style="display:none">
     <div class="modal-content">
-      <span class="close">&times;</span> <!-- Close button inside modal-content -->
+      <span class="close">&times;</span>
       <img id="modal-image" src="" alt="">
       <div class="modal-text">
         <h2 id="modal-title"></h2>
@@ -168,7 +65,6 @@
     </div>
   </div>
 
-  <!-- Load Everything from main.js as a Module -->
   <script type="module" src="/scripts/main.js"></script>
 </body>
 </html>

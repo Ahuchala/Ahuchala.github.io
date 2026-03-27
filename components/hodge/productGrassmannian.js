@@ -1,6 +1,6 @@
 import { hodgeDiamondProduct } from "./chiProductCI.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+export function init() {
   const factorInputsProduct    = document.getElementById("factor-inputs-product");
   const addFactorBtn           = document.getElementById("add-factor-product");
   const removeFactorBtn        = document.getElementById("remove-factor-product");
@@ -357,4 +357,4 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     window.addEventListener("mathjax-ready", typesetFactorRows, { once: true });
   }
-});
+}

@@ -1,4 +1,4 @@
-const editedSequences = [
+export const editedSequences = [
     { id: "A000755", name: 
     /* html */`
 No-3-in-line problem on $n \\times n$ grid: total number of ways of placing $2n$ points on $n \\times n$ grid so no 3 are in a line. No symmetries are taken into account.` },
@@ -158,7 +158,7 @@ Lower independence number of the $n$-diagonal intersection graph.` },
 Lower independence number of the hypercube graph $Q_n$.` }
 ];
 
-const authoredSequences = [
+export const authoredSequences = [
     { id: "A351664", name: 
     /* html */`
 Discriminants of imaginary quadratic fields with class number 26 (negated).` },
@@ -272,7 +272,7 @@ Theta series of the canonical laminated lattice LAMBDA_31.` },
 Dimension of the space of Siegel cusp forms of genus 3 and weight $2n$.` },
 ];
 
-const favoriteSequences = [
+export const favoriteSequences = [
     { id: "A181746", name: 
     /* html */`
 List of dimensions for which there exist several non-isomorphic irreducible representations of E8.` },

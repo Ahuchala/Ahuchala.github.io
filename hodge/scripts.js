@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+export function init() {
     // --- Toggle Between Calculators ---
     const toggleCompleteIntersection = document.getElementById("toggle-complete-intersection");
     const toggleAbelianVariety = document.getElementById("toggle-abelian-variety");
@@ -561,4 +561,4 @@ document.addEventListener("DOMContentLoaded", () => {
         window.scrollBy({ top: e.deltaY, left: e.deltaX, behavior: "instant" });
       }
     }, { passive: false });
-});
+}

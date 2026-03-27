@@ -1,6 +1,6 @@
 import { hodgeDiamondCI } from "/components/hodge/chiGrassmannianCI.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+export function init() {
     const nSlider = document.getElementById("n-slider");
     const rSlider = document.getElementById("r-slider");
     const nValue  = document.getElementById("n-value");
@@ -317,4 +317,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Default preset
     loadPreset(4, 2, [3, 2]);
-});
+}
