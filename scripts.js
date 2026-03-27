@@ -84,31 +84,48 @@ export function initModal() {
   export function initSettings() {
     const settingsContainer = document.querySelector(".settings-container");
     const darkModeToggle = document.getElementById("dark-mode-btn");
-  
+    const reduceMotionToggle = document.getElementById("reduce-motion-btn");
+
     // Toggle the settings container
     settingsContainer.addEventListener("click", (event) => {
       event.stopPropagation();
       settingsContainer.classList.toggle("active");
     });
-  
+
     // Close settings when clicking outside
     document.addEventListener("click", (event) => {
       if (!settingsContainer.contains(event.target)) {
         settingsContainer.classList.remove("active");
       }
     });
-  
+
     // Apply saved dark mode preference
     const savedMode = localStorage.getItem("darkMode");
     if (savedMode === "enabled") {
       document.documentElement.classList.add("dark-mode");
       darkModeToggle.checked = true;
     }
-  
+
     // Toggle dark mode
     darkModeToggle.addEventListener("change", () => {
       const isDarkMode = darkModeToggle.checked;
       document.documentElement.classList.toggle("dark-mode", isDarkMode);
       localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
+    });
+
+    // Apply reduce motion preference:
+    // Use saved value if set, otherwise default to the OS preference
+    const savedReduceMotion = localStorage.getItem("reduceMotion");
+    const osReduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = savedReduceMotion !== null ? savedReduceMotion === "enabled" : osReduceMotion;
+    if (reduceMotion) {
+      document.documentElement.classList.add("reduce-motion");
+      reduceMotionToggle.checked = true;
+    }
+
+    reduceMotionToggle.addEventListener("change", () => {
+      const isReduceMotion = reduceMotionToggle.checked;
+      document.documentElement.classList.toggle("reduce-motion", isReduceMotion);
+      localStorage.setItem("reduceMotion", isReduceMotion ? "enabled" : "disabled");
     });
   }

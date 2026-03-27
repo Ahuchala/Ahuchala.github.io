@@ -38,6 +38,13 @@ export function header() {
                   <span class="slider"></span>
                 </div>
               </label>
+              <label class="dark-mode-label">
+                <span>Reduce Motion</span>
+                <div class="toggle">
+                  <input type="checkbox" id="reduce-motion-btn" />
+                  <span class="slider"></span>
+                </div>
+              </label>
             </div>
           </div>
         </nav>

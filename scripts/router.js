@@ -99,8 +99,10 @@ export async function navigate(path, pushState = true) {
     window._pageCleanup = null
   }
 
-  // Exit animation (skip on initial load when currentPath is null)
-  if (currentPath !== null) {
+  const reduceMotion = document.documentElement.classList.contains('reduce-motion')
+
+  // Exit animation (skip on initial load or when reduce motion is enabled)
+  if (currentPath !== null && !reduceMotion) {
     app.classList.add(exitClass)
     await new Promise(r => setTimeout(r, 160))
     app.classList.remove(exitClass)
@@ -120,9 +122,11 @@ export async function navigate(path, pushState = true) {
   updateActiveNav(path)
   setupModal()
 
-  // Enter animation
-  app.classList.add(enterClass)
-  app.addEventListener('animationend', () => app.classList.remove(enterClass), { once: true })
+  // Enter animation (skip when reduce motion is enabled)
+  if (!reduceMotion) {
+    app.classList.add(enterClass)
+    app.addEventListener('animationend', () => app.classList.remove(enterClass), { once: true })
+  }
 
   // Run page-specific init (dynamic content, event listeners)
   if (mod.init) mod.init()

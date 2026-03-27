@@ -869,39 +869,22 @@ main {
   top: 50%;
   transform: translateY(-50%);
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
-  justify-content: flex-start;
   height: 50px;
   width: 50px;
-  border-radius: 50%;
-  background: var(--primary-dark);
+  border-radius: 50px;
+  background: rgba(30, 41, 59, 0.92);
   cursor: pointer;
-  transition: width 0.3s ease, height 0.3s ease, border-radius 0.3s ease, background 0.3s ease;
   overflow: hidden;
-  
+  transition: width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
+  z-index: 200;
 }
 
 .settings-container.active {
-  width: 220px;
-  border-radius: 25px;
-  background: var(--header-color-2);
-  justify-content: flex-start;
-  padding-left: 10px;
-}
-
-.settings-content {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.settings-container.active .settings-content {
-  opacity: 1;
-  visibility: visible;
-  transition-delay: 0.3s;
+  width: 240px;
+  height: 78px;
+  border-radius: 20px;
 }
 
 .settings-container .settings-button {
@@ -913,22 +896,41 @@ main {
   justify-content: center;
   border: none;
   background: transparent;
-  font-size: 1.5rem;
-  color: white;
   cursor: pointer;
-  z-index: 2;
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .settings-container.active .settings-button {
   transform: rotate(90deg);
-  color: var(--primary-dark);
+}
+
+.settings-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 4px 0 14px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease 0.15s, visibility 0.2s ease 0.15s;
+}
+
+.settings-container.active .settings-content {
+  opacity: 1;
+  visibility: visible;
 }
 
 .settings-container .dark-mode-label {
-  font-size: 0.9rem;
-  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--header-text-color);
   white-space: nowrap;
+  cursor: default;
+  user-select: none;
 }
 
 /*****************************************************
