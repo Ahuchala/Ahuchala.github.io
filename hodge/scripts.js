@@ -500,12 +500,24 @@ export function init() {
       diamondRoots.forEach(labelTopHalf);
     }
 
+    // Scroll #diamond-box so the diamond peak is centred in the visible area.
+    // Only activates when the diamond is wider than the box.
+    function centreDiamondScroll(root) {
+      const wrapper = root.closest('.diamond-scroll-wrapper');
+      if (!wrapper) return;
+      requestAnimationFrame(() => {
+        const overflow = wrapper.scrollWidth - wrapper.clientWidth;
+        wrapper.scrollLeft = overflow > 0 ? overflow / 2 : 0;
+      });
+    }
+
     // Mutation observer: now also annotates coordinates
     const observers = diamondRoots.map(root => {
       const obs = new MutationObserver(() => {
         annotateDiamondCoords(root);  // NEW
         if (document.body.classList.contains("zero-alt-on")) labelZeros(root);
         labelTopHalf(root);
+        centreDiamondScroll(root);
       });
       obs.observe(root, { childList: true, subtree: true });
       return obs;

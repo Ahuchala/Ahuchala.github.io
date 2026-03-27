@@ -69,8 +69,10 @@ export function render() {
                       </div>
                     <div id="diamond-box">
                         <div class="hodge-diamond-description"></div>
-                        <div id="diamond-container">
-                            <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                        <div class="diamond-scroll-wrapper">
+                            <div id="diamond-container">
+                                <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -99,8 +101,10 @@ export function render() {
                     </div>
                     <div id="diamond-box">
                         <div class="hodge-diamond-description"></div>
-                        <div id="diamond-container-abelian">
-                            <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                        <div class="diamond-scroll-wrapper">
+                            <div id="diamond-container-abelian">
+                                <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -148,8 +152,10 @@ export function render() {
                     </div>
                     <div id="diamond-box">
                         <div class="hodge-diamond-description"></div>
-                        <div id="diamond-container-grassmannian">
-                            <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                        <div class="diamond-scroll-wrapper">
+                            <div id="diamond-container-grassmannian">
+                                <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -175,8 +181,10 @@ export function render() {
                   </div>
                   <div id="diamond-box">
                     <div class="hodge-diamond-description" id="flag-description"></div>
-                    <div id="diamond-container-flag">
-                      <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                    <div class="diamond-scroll-wrapper">
+                        <div id="diamond-container-flag">
+                          <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                        </div>
                     </div>
                   </div>
                 </div>
@@ -205,8 +213,10 @@ export function render() {
                     </div>
                     <div id="diamond-box">
                         <div class="hodge-diamond-description"></div>
-                        <div id="diamond-container-twisted">
-                            <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                        <div class="diamond-scroll-wrapper">
+                            <div id="diamond-container-twisted">
+                                <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -264,8 +274,10 @@ export function render() {
                     </div>
                     <div id="diamond-box">
                         <div class="hodge-diamond-description"></div>
-                        <div id="diamond-container-product">
-                            <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                        <div class="diamond-scroll-wrapper">
+                            <div id="diamond-container-product">
+                                <p class="placeholder">The Hodge diamond will be displayed here.</p>
+                            </div>
                         </div>
                     </div>
                 </div>

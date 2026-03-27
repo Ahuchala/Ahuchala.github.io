@@ -59,10 +59,11 @@
                 0 4px 12px rgba(0, 0, 0, 0.06),
                 0 8px 24px rgba(0, 0, 0, 0.04);
     text-align: center;
-    /* Scopes layout and paint to this container so large diamonds don't
-       trigger page-wide reflows/repaints during scroll. */
-    contain: layout style;
+}
+
+.diamond-scroll-wrapper {
     overflow-x: auto;
+    width: 100%;
 }
 
 .diamond-row {
@@ -186,7 +187,13 @@
 #diamond-container-grassmannian,
 #diamond-container-flag,
 #diamond-container-twisted {
-    contain: layout style;
+    contain: style;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #diamond-container {
@@ -243,12 +250,24 @@ body.hide-top-half .is-top-half {
 @media (max-width: 768px) {
     #inputs,
     #diamond-box {
+        flex-basis: 100%;
         max-width: 100%;
     }
 
     .how-does-it-work-div {
         margin-left: 16px;
         margin-right: 16px;
+    }
+
+    /* Stack label above slider+number so controls fit in the narrow box */
+    .input-row {
+        flex-wrap: wrap;
+    }
+    .input-row label {
+        width: 100%;
+        white-space: normal;
+        margin-right: 0;
+        margin-bottom: 4px;
     }
 }
 
