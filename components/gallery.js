@@ -37,7 +37,7 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/tile.webp',
-      full: '/images/gallery/tile.png',
+      full: '/images/gallery/tile.PNG',
       alt: 'Tile Pattern',
       title: 'Tile Pattern',
       description: /* html */`
@@ -149,7 +149,7 @@ export const images = [
     {
       thumbnail: '/images/thumbnails/cracked.webp',
       full: '/images/gallery/cracked.webp',
-      original: '/images/gallery/cracked.png',
+      original: '/images/gallery/cracked.PNG',
       alt: 'Cracked',
       title: 'Cracked Glass',
       description: /* html */`
@@ -161,7 +161,7 @@ export const images = [
     {
       thumbnail: '/images/thumbnails/julia_3.webp',
       full: '/images/gallery/julia_3.webp',
-      original: '/images/gallery/julia_3.png',
+      original: '/images/gallery/julia_3.PNG',
       alt: 'Julia 3',
       title: 'Julia Variant',
       description: /* html */`
@@ -170,7 +170,7 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/tile2.webp',
-      full: '/images/gallery/tile2.png',
+      full: '/images/gallery/tile2.PNG',
       alt: 'Tile Pattern 2',
       title: 'Tile Pattern II',
       description: /* html */`
