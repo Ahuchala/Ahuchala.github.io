@@ -14,13 +14,15 @@ setComponents()
 initMenuToggle()
 initSettings()
 
-// Prefetch internal links on hover
+// Prefetch internal links on hover — deferred to idle time so it never competes with active work
+const idleCallback = window.requestIdleCallback ?? ((fn) => setTimeout(fn, 100))
 document.addEventListener('mouseover', (e) => {
   const link = e.target.closest('a[href]')
   if (!link || link.target === '_blank') return
   const href = link.getAttribute('href')
   if (!href || href.startsWith('http') || href.startsWith('//') || href.startsWith('#') || href.startsWith('mailto:')) return
-  prefetchRoute(new URL(link.href, window.location.origin).pathname)
+  const path = new URL(link.href, window.location.origin).pathname
+  idleCallback(() => prefetchRoute(path))
 })
 
 // Intercept all internal link clicks for SPA navigation
@@ -45,3 +47,10 @@ window.addEventListener('popstate', () => {
 
 // Initial page render
 navigate(window.location.pathname, false)
+
+// Register service worker for caching on repeat visits
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+  })
+}

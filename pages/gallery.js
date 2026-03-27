@@ -39,6 +39,8 @@ export function init() {
     const img = document.createElement('img')
     img.src = thumbnail
     img.alt = alt
+    img.loading = 'lazy'
+    img.decoding = 'async'
     img.style.cursor = 'pointer'
     img.addEventListener('click', () => window._openGallery?.(images, index))
 

@@ -107,6 +107,8 @@ function populateGallery(containerId, items) {
       const img = document.createElement('img')
       img.src = item.thumbnail
       img.alt = item.label ?? item.title
+      img.loading = 'lazy'
+      img.decoding = 'async'
       img.style.cursor = 'pointer'
       const playlistIndex = playlist.indexOf(item)
       img.addEventListener('click', () =>
