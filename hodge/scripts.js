@@ -154,18 +154,18 @@ export function init() {
           const anyBadDegree = degreesRaw.some(d => d === "" || isNaN(parseInt(d, 10)));
 
           if (degreeInputs.length === 0 || anyBadDegree) {
-            descriptionText = `Hodge diamond for a smooth complete intersection in \\(\\mathbb{CP}^{${n}}\\)`;
+            descriptionText = `Hodge diamond for a smooth complete intersection in \\(\\mathbb{P}^{${n}}\\)`;
           } else if (degreeInputs.length === 1) {
             const degree = parseInt(degreesRaw[0], 10);
             descriptionText =
               `Hodge diamond for a smooth hypersurface of degree ${degree} in ` +
-              `\\(\\mathbb{CP}^{${n}}\\)`;
+              `\\(\\mathbb{P}^{${n}}\\)`;
           } else {
             const degrees = degreesRaw.map(d => parseInt(d, 10));
             const multidegreeStr = "(" + degrees.join(", ") + ")";
             descriptionText =
               `Hodge diamond for a smooth complete intersection of multidegree ${multidegreeStr} ` +
-              `in \\(\\mathbb{CP}^{${n}}\\)`;
+              `in \\(\\mathbb{P}^{${n}}\\)`;
           }
         }
       }
