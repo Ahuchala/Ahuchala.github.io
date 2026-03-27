@@ -1,5 +1,5 @@
 import { hodgeGrassmannian } from "/components/hodge/grassmannianHodge.js";
-import { hodgePrimitiveMiddleRow } from "/components/hodge/chiGrassmannianCI.js";
+import { hodgePrimitiveMiddleRow, applyBlowUp } from "/components/hodge/chiGrassmannianCI.js";
 
 export function init()
 {
@@ -11,6 +11,8 @@ export function init()
   const rValueGrassmannian = document.getElementById("r-value-grassmannian");
   const degreeTogglesGrassmannian = document.getElementById("degree-toggles-grassmannian");
   const diamondContainerGrassmannian = document.getElementById("diamond-container-grassmannian");
+  const sSliderGrassmannian = document.getElementById("s-slider-grassmannian");
+  const sValueGrassmannian  = document.getElementById("s-value-grassmannian");
 
   // ---------------- utils to allow truly empty inputs ----------------
   function intOrNull(el) {
@@ -119,11 +121,23 @@ export function init()
   }
 
   // Renders the diamond once hodge data is available.
-  function renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, isCompleteIntersection) {
+  function renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, isCompleteIntersection, s = 0) {
     const dimension = k * (n - k) - r;
     const rows = 2 * dimension + 1;
     const middleRow = constructMiddleRow(dimension, hodgeNumbersForDegrees);
     const fullHodgeNumbers = hodgeGrassmannian(k, n);
+
+    // Returns s if cell (i, j) is an intermediate diagonal entry h^{p,p} with
+    // 1 <= p <= dimension-1, otherwise 0. Uses mirrorI = min(i, rows-1-i).
+    const blowUpDelta = (i, j) => {
+      if (s <= 0 || dimension <= 1) return 0;
+      const mirrorI = Math.min(i, rows - 1 - i);
+      if (mirrorI % 2 !== 0) return 0;
+      const p = mirrorI / 2;
+      if (p < 1 || p > dimension - 1) return 0;
+      if (j !== p) return 0;
+      return s;
+    };
 
     // Build all rows off-DOM first, then swap in one atomic replaceChildren call
     // so there is never a frame where the container is empty.
@@ -141,14 +155,16 @@ export function init()
           } else {
             const grassmannianValue = fullHodgeNumbers[i]?.[j] ?? 0;
             const jsonValue = middleRow[j] ?? "0";
-            const sum = safeBigInt(grassmannianValue) + safeBigInt(jsonValue);
+            const isDiagonalMiddle = dimension % 2 === 0 && j === dimension / 2;
+            const blowUpMid = (isDiagonalMiddle && s > 0 && dimension >= 2) ? BigInt(s) : 0n;
+            const sum = safeBigInt(grassmannianValue) + safeBigInt(jsonValue) + blowUpMid;
             valueCell.innerText = sum.toString();
           }
         } else if (i < dimension) {
-          valueCell.innerText = fullHodgeNumbers[i]?.[j] ?? "0";
+          valueCell.innerText = String((fullHodgeNumbers[i]?.[j] ?? 0) + blowUpDelta(i, j));
         } else {
           const mirrorRow = rows - i - 1;
-          valueCell.innerText = fullHodgeNumbers[mirrorRow]?.[j] ?? "0";
+          valueCell.innerText = String((fullHodgeNumbers[mirrorRow]?.[j] ?? 0) + blowUpDelta(i, j));
         }
         row.appendChild(valueCell);
       }
@@ -172,6 +188,7 @@ export function init()
     }
 
     const k = Math.min(kRaw, n - kRaw);
+    const s = intOrNull(sValueGrassmannian) ?? 0;
     const dimension = k * (n - k) - r;
 
     if (dimension < 0) {
@@ -194,7 +211,12 @@ export function init()
         for (let j = 0; j < elements; j++) {
           const valueCell = document.createElement("span");
           valueCell.className = "diamond-value";
-          valueCell.innerText = fullHodgeNumbers[i]?.[j] ?? "0";
+          const baseVal = fullHodgeNumbers[i]?.[j] ?? 0;
+          const mirrorI = Math.min(i, rows - 1 - i);
+          const delta = (s > 0 && dimension > 1 && mirrorI % 2 === 0 && j === mirrorI / 2)
+            ? (() => { const p = mirrorI / 2; return (p >= 1 && p <= dimension - 1) ? s : 0; })()
+            : 0;
+          valueCell.innerText = String(baseVal + delta);
           row.appendChild(valueCell);
         }
         newRows.push(row);
@@ -216,7 +238,7 @@ export function init()
 
     const degrees = degreeVals.slice().sort((a, b) => b - a);
     const hodgeNumbersForDegrees = hodgePrimitiveMiddleRow(k, n, degrees);
-    renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, false);
+    renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, false, s);
   };
 
   // ---------------- preset buttons ----------------
@@ -225,6 +247,8 @@ export function init()
     nSliderGrassmannian.value = String(Math.min(n, Number(nSliderGrassmannian.max)));
     kValueGrassmannian.value = String(k);
     kSliderGrassmannian.value = String(Math.min(k, Number(kSliderGrassmannian.max)));
+    sValueGrassmannian.value = "0";
+    sSliderGrassmannian.value = "0";
     rValueGrassmannian.value = String(r);
     rSliderGrassmannian.value = String(Math.min(r, Number(rSliderGrassmannian.max)));
     updateDegreeTogglesGrassmannian(r);
@@ -253,6 +277,7 @@ export function init()
     updateDiamondGrassmannian();
   });
 
+  syncSliderAndTextbox(sSliderGrassmannian, sValueGrassmannian, updateDiamondGrassmannian);
   degreeTogglesGrassmannian.addEventListener("input", updateDiamondGrassmannian);
   nValueGrassmannian.addEventListener("input", updateDiamondGrassmannian);
   kValueGrassmannian.addEventListener("input", updateDiamondGrassmannian);

@@ -1,4 +1,4 @@
-import { hodgeDiamondCI } from "/components/hodge/chiGrassmannianCI.js";
+import { hodgeDiamondCI, applyBlowUp } from "/components/hodge/chiGrassmannianCI.js";
 
 export function init() {
     const nSlider = document.getElementById("n-slider");
@@ -7,6 +7,8 @@ export function init() {
     const rValue  = document.getElementById("r-value");
     const degreeToggles = document.getElementById("degree-toggles");
     const diamondContainer = document.getElementById("diamond-container");
+    const sSlider = document.getElementById("s-slider");
+    const sValue  = document.getElementById("s-value");
 
     const presetButtons = document.querySelectorAll(".preset-button");
     let lastUserSetR = parseInt(rSlider.value, 10) || 0; // Tracks last user-set value of r
@@ -109,8 +111,10 @@ export function init() {
             return;
         }
 
-        const rows = 2 * (n - r) + 1;
-        const targetRowIndex = n - r;
+        const s = Math.max(0, parseInt(sValue.value, 10) || 0);
+        const dim = n - r;
+        const rows = 2 * dim + 1;
+        const targetRowIndex = dim;
 
         // If rows is nonsense (e.g. r > n), just show a placeholder
         if (rows <= 0 || targetRowIndex < 0) {
@@ -174,10 +178,10 @@ export function init() {
                 const row = document.createElement("div");
                 row.className = "diamond-row";
 
-                const elements = j <= (rows - 1) / 2 ? j + 1 : rows - j;
+                const elements = j <= dim ? j + 1 : rows - j;
                 const spaces = (rows - elements) / 2;
 
-                for (let s = 0; s < spaces; s++) {
+                for (let sp = 0; sp < spaces; sp++) {
                     const space = document.createElement("span");
                     space.className = "diamond-space";
                     row.appendChild(space);
@@ -186,12 +190,18 @@ export function init() {
                 for (let i = 0; i < elements; i++) {
                     const valEl = document.createElement("span");
                     valEl.className = "diamond-value";
-                    const condition = 2 * i === Math.min(j, 2 * (n - r) - j);
-                    valEl.innerText = condition ? "1" : "0";
+                    const condition = 2 * i === Math.min(j, 2 * dim - j);
+                    if (condition) {
+                        const mirrorJ = Math.min(j, 2 * dim - j);
+                        const p = mirrorJ / 2;
+                        valEl.innerText = String(1 + (p >= 1 && p <= dim - 1 ? s : 0));
+                    } else {
+                        valEl.innerText = "0";
+                    }
                     row.appendChild(valEl);
                 }
 
-                for (let s = 0; s < spaces; s++) {
+                for (let sp = 0; sp < spaces; sp++) {
                     const space = document.createElement("span");
                     space.className = "diamond-space";
                     row.appendChild(space);
@@ -210,10 +220,9 @@ export function init() {
             return;
         }
 
-        let hodgeNumbers;
+        let blownDiamond;
         try {
-            const dim = n - degrees.length;
-            hodgeNumbers = hodgeDiamondCI(1, n + 1, degrees)[dim];
+            blownDiamond = applyBlowUp(hodgeDiamondCI(1, n + 1, degrees), s, dim);
         } catch (e) {
             console.error("hodgeDiamondCI error:", e);
             diamondContainer.innerHTML =
@@ -225,10 +234,10 @@ export function init() {
             const row = document.createElement("div");
             row.className = "diamond-row";
 
-            const elements = j <= (rows - 1) / 2 ? j + 1 : rows - j;
+            const elements = j <= dim ? j + 1 : 2 * dim - j + 1;
             const spaces = (rows - elements) / 2;
 
-            for (let s = 0; s < spaces; s++) {
+            for (let sp = 0; sp < spaces; sp++) {
                 const space = document.createElement("span");
                 space.className = "diamond-space";
                 row.appendChild(space);
@@ -237,22 +246,11 @@ export function init() {
             for (let i = 0; i < elements; i++) {
                 const valEl = document.createElement("span");
                 valEl.className = "diamond-value";
-
-                if (j === targetRowIndex) {
-                    const symmetricIndex = targetRowIndex - i;
-                    valEl.innerText =
-                        hodgeNumbers[i] ??
-                        hodgeNumbers[symmetricIndex] ??
-                        0;
-                } else {
-                    const condition = 2 * i === Math.min(j, 2 * (n - r) - j);
-                    valEl.innerText = condition ? "1" : "0";
-                }
-
+                valEl.innerText = blownDiamond[j]?.[i] ?? 0;
                 row.appendChild(valEl);
             }
 
-            for (let s = 0; s < spaces; s++) {
+            for (let sp = 0; sp < spaces; sp++) {
                 const space = document.createElement("span");
                 space.className = "diamond-space";
                 row.appendChild(space);
@@ -265,6 +263,8 @@ export function init() {
     const loadPreset = (n, r, degrees) => {
         nValue.value = String(n);
         nSlider.value = String(Math.min(n, Number(nSlider.max)));
+        sValue.value = "0";
+        sSlider.value = "0";
 
         lastUserSetR = r; // Remember the preset r
         updateRSlider();
@@ -314,6 +314,8 @@ export function init() {
         0,  // allow r = 0
         50
     );
+
+    syncSliderAndTextbox(sSlider, sValue, updateDiamond, 0, 1000);
 
     // Default preset
     loadPreset(4, 2, [3, 2]);

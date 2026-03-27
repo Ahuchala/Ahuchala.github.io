@@ -66,6 +66,11 @@ export function render() {
                         <div class="input-row">
                           <div id="degree-toggles"></div>
                         </div>
+                        <div class="input-row">
+                          <label for="s-slider">Blow-up points (\\(s\\)):</label>
+                          <input type="range" id="s-slider" min="0" max="20" value="0">
+                          <input type="number" id="s-value" min="0" max="1000" value="0" class="hodge-input">
+                        </div>
                       </div>
                     <div id="diamond-box">
                         <div class="hodge-diamond-description"></div>
@@ -148,6 +153,11 @@ export function render() {
                         </div>
                         <div class="input-row">
                             <div id="degree-toggles-grassmannian"></div>
+                        </div>
+                        <div class="input-row">
+                            <label for="s-slider-grassmannian">Blow-up points (\\(s\\)):</label>
+                            <input type="range" id="s-slider-grassmannian" min="0" max="20" value="0">
+                            <input type="number" id="s-value-grassmannian" min="0" max="1000" value="0" class="hodge-input">
                         </div>
                     </div>
                     <div id="diamond-box">

@@ -167,6 +167,11 @@ export function init() {
               `Hodge diamond for a smooth complete intersection of multidegree ${multidegreeStr} ` +
               `in \\(\\mathbb{P}^{${n}}\\)`;
           }
+          const sElCI = document.getElementById("s-value");
+          const sCI = sElCI ? (parseInt(sElCI.value, 10) || 0) : 0;
+          if (sCI > 0) {
+            descriptionText += `, blown up at \\(${sCI}\\) point${sCI === 1 ? "" : "s"} in general position`;
+          }
         }
       }
 
@@ -191,6 +196,11 @@ export function init() {
           const degrees = degreeInputs.map(input => input.value);
           const multidegreeStr = "(" + degrees.join(", ") + ")";
           descriptionText = `Hodge diamond for a smooth complete intersection of multidegree ${multidegreeStr} in \\(${ambientGr}\\)`;
+        }
+        const sElGr = document.getElementById("s-value-grassmannian");
+        const sGr = sElGr ? (parseInt(sElGr.value, 10) || 0) : 0;
+        if (sGr > 0) {
+          descriptionText += `, blown up at \\(${sGr}\\) point${sGr === 1 ? "" : "s"} in general position`;
         }
       }
       // For Abelian Varieties:
@@ -334,7 +344,23 @@ export function init() {
     }
     if (rValueG) rValueG.addEventListener("input", updateHodgeDiamondDescription);
     if (degreeTogglesG) degreeTogglesG.addEventListener("input", updateHodgeDiamondDescription);
-  
+
+    const sSliderCI = document.getElementById("s-slider");
+    const sValueCI = document.getElementById("s-value");
+    if (sSliderCI) {
+      sSliderCI.addEventListener("input", () => requestAnimationFrame(updateHodgeDiamondDescription));
+      sSliderCI.addEventListener("change", () => requestAnimationFrame(updateHodgeDiamondDescription));
+    }
+    if (sValueCI) sValueCI.addEventListener("input", updateHodgeDiamondDescription);
+
+    const sSliderGr = document.getElementById("s-slider-grassmannian");
+    const sValueGr = document.getElementById("s-value-grassmannian");
+    if (sSliderGr) {
+      sSliderGr.addEventListener("input", () => requestAnimationFrame(updateHodgeDiamondDescription));
+      sSliderGr.addEventListener("change", () => requestAnimationFrame(updateHodgeDiamondDescription));
+    }
+    if (sValueGr) sValueGr.addEventListener("input", updateHodgeDiamondDescription);
+
     const gSlider = document.getElementById("g-slider");
     const gValueEl = document.getElementById("g-value");
     if (gSlider) {

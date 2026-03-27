@@ -234,3 +234,18 @@ export function hodgePrimitiveMiddleRow(k, n, degrees) {
   }
   return result;
 }
+
+// Returns the Hodge diamond of Bl_s(Z), the blow-up of Z at s points in
+// general position. Formula: h^{p,p} += s for 1 <= p <= dim-1; all other
+// Hodge numbers unchanged. diamond is the 2D array from hodgeDiamondCI.
+export function applyBlowUp(diamond, s, dim) {
+  const result = diamond.map(row => row.slice());
+  if (s <= 0 || dim <= 1) return result;
+  for (let p = 1; p <= dim - 1; p++) {
+    const rowIdx = 2 * p;
+    // mirrorI = min(2p, 2*(dim-p)) = 2*min(p, dim-p), so colJ = min(p, dim-p)
+    const colJ = Math.min(p, dim - p);
+    result[rowIdx][colJ] += s;
+  }
+  return result;
+}

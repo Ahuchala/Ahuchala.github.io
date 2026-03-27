@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { chiCI, hodgeDiamondCI, hodgePrimitiveMiddleRow } from "../components/hodge/chiGrassmannianCI.js";
+import { chiCI, hodgeDiamondCI, hodgePrimitiveMiddleRow, applyBlowUp } from "../components/hodge/chiGrassmannianCI.js";
 import { hodgeDiamondProduct } from "../components/hodge/chiProductCI.js";
 import { hodgeGrassmannian } from "../components/hodge/grassmannianHodge.js";
 import { hodgeAbelianVariety } from "../components/hodge/abelianVarietyHodgeNumbers.js";
@@ -847,3 +847,65 @@ test("hodgeDiamondProduct P¹×P¹×P¹ (r=0): diagonal Hodge numbers", () => {
   assert.deepEqual(d[6], [1]);
 });
 
+
+// ─── applyBlowUp ─────────────────────────────────────────────────────────────
+
+// s=0: identity (deep copy, no change)
+test("applyBlowUp: s=0 is identity", () => {
+  const d = hodgeDiamondCI(1, 4, [4]); // K3
+  assert.deepEqual(applyBlowUp(d, 0, 2), d);
+});
+
+// dim=0: no intermediate diagonal, unchanged
+test("applyBlowUp: dim=0 unchanged", () => {
+  const d = hodgeDiamondCI(1, 3, [2, 2]); // two conics in P², dim=0
+  assert.deepEqual(applyBlowUp(d, 5, 0), d);
+});
+
+// dim=1 (elliptic curve): no intermediate diagonal entries, unchanged
+test("applyBlowUp: dim=1 (elliptic curve), s=5 → unchanged", () => {
+  const d = hodgeDiamondCI(1, 3, [3]); // elliptic curve
+  assert.deepEqual(applyBlowUp(d, 5, 1), d);
+});
+
+// dim=2, K3 quartic: h^{1,1}=20, blow-up at 1 point → h^{1,1}=21
+// Middle row is at index 2; h^{1,1} is at column min(1,2-1)=1 → row 2, col 1
+test("applyBlowUp: K3 quartic s=1 → h^{1,1}=21", () => {
+  const d = hodgeDiamondCI(1, 4, [4]); // dim=2, middle row [1,20,1]
+  const blown = applyBlowUp(d, 1, 2);
+  assert.equal(blown[2][1], 21); // h^{1,1} in middle row (p=1, colJ=min(1,1)=1)
+  assert.equal(blown[0][0], 1);  // h^{0,0} unchanged
+  assert.equal(blown[4][0], 1);  // h^{2,2} unchanged
+});
+
+// dim=2, cubic surface: h^{1,1}=7, blow-up at 3 points → h^{1,1}=10
+test("applyBlowUp: cubic surface s=3 → h^{1,1}=10", () => {
+  const d = hodgeDiamondCI(1, 4, [3]); // dim=2, middle row [0,7,0]
+  const blown = applyBlowUp(d, 3, 2);
+  assert.equal(blown[2][1], 10);
+});
+
+// dim=3, CY3 quintic: h^{1,1}=1, h^{2,2}=1; blow-up at 2 points → both become 3
+// p=1: rowIdx=2, colJ=min(1,2)=1 → row 2, col 1
+// p=2: rowIdx=4, colJ=min(2,1)=1 → row 4, col 1
+test("applyBlowUp: CY3 quintic s=2 → h^{1,1}=3, h^{2,2}=3", () => {
+  const d = hodgeDiamondCI(1, 5, [5]); // dim=3
+  const blown = applyBlowUp(d, 2, 3);
+  assert.equal(blown[2][1], 3); // h^{1,1}: row 2, col min(1,2)=1
+  assert.equal(blown[4][1], 3); // h^{2,2}: row 4, col min(2,1)=1
+  assert.equal(blown[0][0], 1); // h^{0,0} unchanged
+  assert.equal(blown[6][0], 1); // h^{3,3} unchanged
+  assert.deepEqual(blown[3], d[3]); // middle row unchanged
+});
+
+// dim=4: p=1,2,3 get +s; colJ=min(p,4-p)
+// p=1: row 2, col 1; p=2: row 4, col 2 (middle row!); p=3: row 6, col 1
+test("applyBlowUp: dim=4 CI, s=1 → correct column placement", () => {
+  const d = hodgeDiamondCI(1, 6, [3]); // cubic in P^5, dim=4
+  const blown = applyBlowUp(d, 1, 4);
+  assert.equal(blown[2][1], d[2][1] + 1); // p=1: col=min(1,3)=1
+  assert.equal(blown[4][2], d[4][2] + 1); // p=2: middle row, col=min(2,2)=2
+  assert.equal(blown[6][1], d[6][1] + 1); // p=3: col=min(3,1)=1
+  assert.equal(blown[0][0], d[0][0]);      // corners unchanged
+  assert.equal(blown[8][0], d[8][0]);
+});
