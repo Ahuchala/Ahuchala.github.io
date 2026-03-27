@@ -1115,3 +1115,37 @@ main {
     margin: 10px 0;
   }
 }
+
+/* ─── Page transition animations ──────────────────────────────────────────── */
+
+@keyframes nav-exit-left {
+  to { opacity: 0; transform: translateX(-20px); }
+}
+
+@keyframes nav-exit-right {
+  to { opacity: 0; transform: translateX(20px); }
+}
+
+@keyframes nav-exit-fade {
+  to { opacity: 0; }
+}
+
+@keyframes nav-enter-from-right {
+  from { opacity: 0; transform: translateX(20px); }
+}
+
+@keyframes nav-enter-from-left {
+  from { opacity: 0; transform: translateX(-20px); }
+}
+
+@keyframes nav-enter-fade {
+  from { opacity: 0; }
+}
+
+#app.exiting-left  { animation: nav-exit-left  150ms ease forwards; pointer-events: none; }
+#app.exiting-right { animation: nav-exit-right 150ms ease forwards; pointer-events: none; }
+#app.exiting       { animation: nav-exit-fade  150ms ease forwards; pointer-events: none; }
+
+#app.entering-from-right { animation: nav-enter-from-right 200ms ease both; }
+#app.entering-from-left  { animation: nav-enter-from-left  200ms ease both; }
+#app.entering            { animation: nav-enter-fade       200ms ease both; }

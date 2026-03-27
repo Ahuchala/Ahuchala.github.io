@@ -7,6 +7,16 @@ const routes = {
   '/oeis':      () => import('/pages/oeis.js'),
 }
 
+const navOrder = ['/', '/gallery', '/hodge', '/research', '/teaching', '/oeis']
+let currentPath = null
+
+function getTransitionType(from, to) {
+  const fromIdx = navOrder.indexOf(from)
+  const toIdx = navOrder.indexOf(to)
+  if (fromIdx === -1 || toIdx === -1 || fromIdx === toIdx) return 0
+  return toIdx > fromIdx ? 1 : -1
+}
+
 const pageTitles = {
   '/':          'Andy Huchala',
   '/gallery':   'Gallery | Andy Huchala',
@@ -74,6 +84,10 @@ function setupModal() {
 export async function navigate(path, pushState = true) {
   path = normalizePath(path)
 
+  const transitionType = getTransitionType(currentPath, path)
+  const exitClass   = transitionType > 0 ? 'exiting-left'       : transitionType < 0 ? 'exiting-right'      : 'exiting'
+  const enterClass  = transitionType > 0 ? 'entering-from-right' : transitionType < 0 ? 'entering-from-left' : 'entering'
+
   const loader = routes[path] || routes['/']
   const mod = await loader()
 
@@ -85,13 +99,18 @@ export async function navigate(path, pushState = true) {
     window._pageCleanup = null
   }
 
-  // Fade out
-  app.style.transition = 'opacity 0.15s ease'
+  // Exit animation (skip on initial load when currentPath is null)
+  if (currentPath !== null) {
+    app.classList.add(exitClass)
+    await new Promise(r => setTimeout(r, 160))
+    app.classList.remove(exitClass)
+  }
+
+  // Hold opacity at 0 during content swap to prevent flash
   app.style.opacity = '0'
-
-  await new Promise(r => setTimeout(r, 150))
-
   app.innerHTML = mod.render()
+  app.style.opacity = ''
+  currentPath = path
 
   if (pushState) {
     history.pushState({ path }, '', path)
@@ -101,10 +120,9 @@ export async function navigate(path, pushState = true) {
   updateActiveNav(path)
   setupModal()
 
-  // Fade in
-  requestAnimationFrame(() => {
-    app.style.opacity = '1'
-  })
+  // Enter animation
+  app.classList.add(enterClass)
+  app.addEventListener('animationend', () => app.classList.remove(enterClass), { once: true })
 
   // Run page-specific init (dynamic content, event listeners)
   if (mod.init) mod.init()
