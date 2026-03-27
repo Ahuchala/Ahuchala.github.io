@@ -78,6 +78,8 @@ function populateGallery(containerId, items) {
   const container = document.getElementById(containerId)
   if (!container) return
 
+  const playlist = items.filter(item => item.hasImage)
+
   items.forEach(item => {
     const wrapper = document.createElement('div')
     wrapper.className = 'gallery-item'
@@ -92,8 +94,9 @@ function populateGallery(containerId, items) {
       img.src = item.thumbnail
       img.alt = item.label ?? item.title
       img.style.cursor = 'pointer'
+      const playlistIndex = playlist.indexOf(item)
       img.addEventListener('click', () =>
-        window._openModal?.(item.full, item.title, item.description)
+        window._openGallery?.(playlist, playlistIndex)
       )
       wrapper.appendChild(img)
     } else {
