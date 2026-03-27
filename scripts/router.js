@@ -72,6 +72,18 @@ function setupModal() {
       ? `<p><a href="${item.original}" target="_blank" rel="noopener" class="original-link">↗ View full resolution</a></p>`
       : ''
 
+    // Preload adjacent images at low priority after a brief delay
+    setTimeout(() => {
+      [-1, 1].forEach(offset => {
+        const neighbor = playlist[index + offset]
+        if (neighbor?.full) {
+          const p = new Image()
+          p.fetchPriority = 'low'
+          p.src = neighbor.full
+        }
+      })
+    }, 300)
+
     if (!reduceMotion && dir !== 0) {
       const exitCls  = dir > 0 ? 'modal-exit-left'  : 'modal-exit-right'
       const enterCls = dir > 0 ? 'modal-enter-right' : 'modal-enter-left'
