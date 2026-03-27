@@ -99,6 +99,8 @@ export function init() {
   img.src = zetaImage.thumbnail
   img.alt = zetaImage.alt
   img.style.cursor = 'pointer'
+  img.style.maxWidth = '300px'
+  img.style.width = '100%'
   img.addEventListener('click', () =>
     window._openModal?.(zetaImage.full, zetaImage.title, zetaImage.description)
   )
