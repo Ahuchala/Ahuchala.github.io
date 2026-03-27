@@ -151,6 +151,16 @@ function setupModal() {
   document.addEventListener('keydown', window._modalKeyHandler)
 }
 
+// Prefetch a route's JS module and any images it declares
+const prefetched = new Set()
+export function prefetchRoute(path) {
+  path = normalizePath(path)
+  if (prefetched.has(path)) return
+  prefetched.add(path)
+  const loader = routes[path]
+  if (loader) loader().then(mod => mod.prefetch?.())
+}
+
 export async function navigate(path, pushState = true) {
   path = normalizePath(path)
 

@@ -27,6 +27,20 @@ const thetaItems = [
   title, description, hasImage: true,
 }))
 
+function prefetchImage(href) {
+  if (document.querySelector(`link[rel="prefetch"][href="${href}"]`)) return
+  const link = document.createElement('link')
+  link.rel = 'prefetch'
+  link.as = 'image'
+  link.href = href
+  document.head.appendChild(link)
+}
+
+export function prefetch() {
+  knightItems.filter(i => i.hasImage).forEach(({ thumbnail }) => prefetchImage(thumbnail))
+  thetaItems.forEach(({ thumbnail }) => prefetchImage(thumbnail))
+}
+
 export function render() {
   return /* html */`
     <section class="intro-alt featured">
