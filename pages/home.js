@@ -1,7 +1,6 @@
 export function render() {
   return /* html */`
     <section class="intro">
-      <div class="intro-highlight"></div>
       <div class="intro-content">
         <h2>Welcome!</h2>
         <p>A space for my work in research, teaching, and art.</p>
