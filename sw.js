@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v3'
+const CACHE_VERSION = 'v4'
 const STATIC_CACHE = `static-${CACHE_VERSION}`
 const IMAGE_CACHE  = `images-${CACHE_VERSION}`
 
@@ -17,6 +17,20 @@ const SHELL_URLS = [
   '/pages/home.js',
   '/pages/gallery.js',
   '/pages/hodge.js',
+  '/hodge/scripts.js',
+  '/components/hodge/completeIntersection.js',
+  '/components/hodge/abelianVariety.js',
+  '/components/hodge/grassmannian.js',
+  '/components/hodge/flag.js',
+  '/components/hodge/twisted.js',
+  '/components/hodge/productGrassmannian.js',
+  '/components/hodge/chiGrassmannianCI.js',
+  '/components/hodge/chiProductCI.js',
+  '/components/hodge/abelianVarietyHodgeNumbers.js',
+  '/components/hodge/flagHodge.js',
+  '/components/hodge/grassmannianHodge.js',
+  '/components/hodge/loadMath.js',
+  '/components/hodge/twistedHodge.js',
   '/pages/research.js',
   '/pages/teaching.js',
   '/pages/oeis.js',

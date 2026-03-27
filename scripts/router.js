@@ -155,12 +155,46 @@ function setupModal() {
   document.addEventListener('keydown', window._modalKeyHandler)
 }
 
+// Full transitive dependency list for routes with deep import trees.
+// Injecting modulepreload for all of them on hover collapses the waterfall
+// so every module starts downloading in parallel instead of in 3 waves.
+const routeDeps = {
+  '/hodge': [
+    '/pages/hodge.js',
+    '/hodge/scripts.js',
+    '/components/hodge/completeIntersection.js',
+    '/components/hodge/abelianVariety.js',
+    '/components/hodge/grassmannian.js',
+    '/components/hodge/twisted.js',
+    '/components/hodge/productGrassmannian.js',
+    '/components/hodge/chiGrassmannianCI.js',
+    '/components/hodge/chiProductCI.js',
+    '/components/hodge/abelianVarietyHodgeNumbers.js',
+    '/components/hodge/grassmannianHodge.js',
+    '/components/hodge/twistedHodge.js',
+    // flag.js + flagHodge.js + loadMath.js deferred until user clicks Flag Varieties
+  ],
+}
+
 // Prefetch a route's JS module and any images it declares
 const prefetched = new Set()
 export function prefetchRoute(path) {
   path = normalizePath(path)
   if (prefetched.has(path)) return
   prefetched.add(path)
+
+  // Inject modulepreload for the full dep tree so all modules download in parallel
+  const deps = routeDeps[path]
+  if (deps) {
+    deps.forEach(href => {
+      if (document.querySelector(`link[href="${href}"]`)) return
+      const link = document.createElement('link')
+      link.rel = 'modulepreload'
+      link.href = href
+      document.head.appendChild(link)
+    })
+  }
+
   const loader = routes[path]
   if (loader) loader().then(mod => mod.prefetch?.())
 }

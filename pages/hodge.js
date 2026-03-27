@@ -1,7 +1,6 @@
 import { init as initCI } from '/components/hodge/completeIntersection.js'
 import { init as initAbelian } from '/components/hodge/abelianVariety.js'
 import { init as initGrassmannian } from '/components/hodge/grassmannian.js'
-import { init as initFlag } from '/components/hodge/flag.js'
 import { init as initTwisted } from '/components/hodge/twisted.js'
 import { init as initProduct } from '/components/hodge/productGrassmannian.js'
 import { init as initHodgeScripts } from '/hodge/scripts.js'
@@ -346,8 +345,31 @@ export function init() {
   initCI()
   initAbelian()
   initGrassmannian()
-  initFlag()
   initTwisted()
   initProduct()
   initHodgeScripts()
+
+  // Flag variety calculator is deferred — preload modules on hover, init on first click
+  const flagBtn = document.getElementById('toggle-flag')
+  if (flagBtn) {
+    const flagDeps = [
+      '/components/hodge/flag.js',
+      '/components/hodge/flagHodge.js',
+      '/components/hodge/loadMath.js',
+    ]
+    flagBtn.addEventListener('mouseover', () => {
+      flagDeps.forEach(href => {
+        if (document.querySelector(`link[href="${href}"]`)) return
+        const link = document.createElement('link')
+        link.rel = 'modulepreload'
+        link.href = href
+        document.head.appendChild(link)
+      })
+    }, { once: true })
+
+    flagBtn.addEventListener('click', async () => {
+      const { init: initFlag } = await import('/components/hodge/flag.js')
+      initFlag()
+    }, { once: true })
+  }
 }
