@@ -46,12 +46,58 @@ function setupModal() {
   const modalImage = document.getElementById('modal-image')
   const modalTitle = document.getElementById('modal-title')
   const modalDescription = document.getElementById('modal-description')
+  const prevBtn = modal.querySelector('.modal-prev')
+  const nextBtn = modal.querySelector('.modal-next')
+
+  let playlist = null
+  let playlistIndex = 0
+  let transitioning = false
 
   function closeModal() {
     modal.style.display = 'none'
     modalImage.src = ''
     modalTitle.innerHTML = ''
     modalDescription.innerHTML = ''
+    playlist = null
+    if (prevBtn) prevBtn.style.display = 'none'
+    if (nextBtn) nextBtn.style.display = 'none'
+  }
+
+  function showItem(index, dir) {
+    if (!playlist) return
+    const item = playlist[index]
+    const reduceMotion = document.documentElement.classList.contains('reduce-motion')
+
+    if (!reduceMotion && dir !== 0) {
+      const exitCls  = dir > 0 ? 'modal-exit-left'  : 'modal-exit-right'
+      const enterCls = dir > 0 ? 'modal-enter-right' : 'modal-enter-left'
+      modalImage.classList.add(exitCls)
+      setTimeout(() => {
+        modalImage.classList.remove(exitCls)
+        modalImage.src = item.full
+        modalImage.alt = item.title
+        modalTitle.innerHTML = item.title
+        modalDescription.innerHTML = item.description
+        if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription])
+        modalImage.classList.add(enterCls)
+        modalImage.addEventListener('animationend', () => modalImage.classList.remove(enterCls), { once: true })
+        transitioning = false
+      }, 200)
+    } else {
+      modalImage.src = item.full
+      modalImage.alt = item.title
+      modalTitle.innerHTML = item.title
+      modalDescription.innerHTML = item.description
+      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription])
+      transitioning = false
+    }
+  }
+
+  function navigate(dir) {
+    if (!playlist || transitioning) return
+    transitioning = true
+    playlistIndex = ((playlistIndex + dir) % playlist.length + playlist.length) % playlist.length
+    showItem(playlistIndex, dir)
   }
 
   // Replace close button to remove old listeners
@@ -62,23 +108,43 @@ function setupModal() {
 
   modal.onclick = (e) => { if (e.target === modal) closeModal() }
 
-  // Expose for page modules to call
+  if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(-1) })
+  if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(1) })
+
+  // Single-image modal (research, OEIS, etc.)
   window._openModal = (fullImage, title, description) => {
+    playlist = null
     modal.style.display = 'flex'
     modalImage.src = fullImage
     modalImage.alt = title
     modalTitle.innerHTML = title
     modalDescription.innerHTML = description
+    if (prevBtn) prevBtn.style.display = 'none'
+    if (nextBtn) nextBtn.style.display = 'none'
     if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription])
   }
 
-  // Escape key — set only once
-  if (!window._escModalListenerSet) {
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.style.display === 'flex') closeModal()
-    })
-    window._escModalListenerSet = true
+  // Gallery carousel modal
+  window._openGallery = (items, startIndex) => {
+    playlist = items
+    playlistIndex = startIndex
+    modal.style.display = 'flex'
+    if (prevBtn) prevBtn.style.display = 'flex'
+    if (nextBtn) nextBtn.style.display = 'flex'
+    showItem(playlistIndex, 0)
   }
+
+  // Escape / arrow keys — replace handler each time so it closes over current navigate/closeModal
+  if (window._modalKeyHandler) {
+    document.removeEventListener('keydown', window._modalKeyHandler)
+  }
+  window._modalKeyHandler = (e) => {
+    if (modal.style.display !== 'flex') return
+    if (e.key === 'Escape') closeModal()
+    if (e.key === 'ArrowLeft')  navigate(-1)
+    if (e.key === 'ArrowRight') navigate(1)
+  }
+  document.addEventListener('keydown', window._modalKeyHandler)
 }
 
 export async function navigate(path, pushState = true) {

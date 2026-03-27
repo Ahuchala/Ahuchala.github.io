@@ -1,24 +1,64 @@
-/* Gallery Section */
+/* ─── Gallery grid ────────────────────────────────────────────────────────── */
+
 .gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .gallery img {
-    width: 100%;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06),
-                0 6px 16px rgba(0, 0, 0, 0.1);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    cursor: pointer;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06), 0 6px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
 }
 
 .gallery img:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1),
-                0 12px 28px rgba(0, 0, 0, 0.16);
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 12px 28px rgba(0, 0, 0, 0.16);
 }
+
+/* ─── Modal carousel arrows ───────────────────────────────────────────────── */
+
+.modal-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1001;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+  user-select: none;
+}
+
+.modal-arrow:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.modal-prev { left: 16px; }
+.modal-next { right: 16px; }
+
+/* ─── Modal image transition animations ──────────────────────────────────── */
+
+@keyframes modal-exit-left  { to   { opacity: 0; transform: translateX(-40px); } }
+@keyframes modal-exit-right { to   { opacity: 0; transform: translateX( 40px); } }
+@keyframes modal-enter-right { from { opacity: 0; transform: translateX( 40px); } }
+@keyframes modal-enter-left  { from { opacity: 0; transform: translateX(-40px); } }
+
+#modal-image.modal-exit-left   { animation: modal-exit-left   200ms ease forwards; }
+#modal-image.modal-exit-right  { animation: modal-exit-right  200ms ease forwards; }
+#modal-image.modal-enter-right { animation: modal-enter-right 200ms ease both; }
+#modal-image.modal-enter-left  { animation: modal-enter-left  200ms ease both; }

@@ -15,7 +15,7 @@ export function init() {
   const gallery = document.getElementById('gallery-grid')
   if (!gallery) return
 
-  images.forEach(({ thumbnail, full, alt, title, description }) => {
+  images.forEach(({ thumbnail, full, alt, title, description }, index) => {
     const wrapper = document.createElement('div')
     wrapper.className = 'gallery-item'
 
@@ -27,7 +27,7 @@ export function init() {
     img.src = thumbnail
     img.alt = alt
     img.style.cursor = 'pointer'
-    img.addEventListener('click', () => window._openModal?.(full, title, description))
+    img.addEventListener('click', () => window._openGallery?.(images, index))
 
     wrapper.appendChild(titleEl)
     wrapper.appendChild(img)
