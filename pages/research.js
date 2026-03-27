@@ -101,6 +101,12 @@ export function init() {
   img.style.cursor = 'pointer'
   img.style.maxWidth = '300px'
   img.style.width = '100%'
+  let preloaded = false
+  img.addEventListener('mouseenter', () => {
+    if (preloaded) return
+    const t = setTimeout(() => { preloaded = true; const p = new Image(); p.fetchPriority = 'low'; p.src = zetaImage.full }, 150)
+    img.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
+  })
   img.addEventListener('click', () =>
     window._openModal?.(zetaImage.full, zetaImage.title, zetaImage.description)
   )

@@ -42,6 +42,12 @@ export function init() {
     img.loading = 'lazy'
     img.decoding = 'async'
     img.style.cursor = 'pointer'
+    let preloaded = false
+    img.addEventListener('mouseenter', () => {
+      if (preloaded) return
+      const t = setTimeout(() => { preloaded = true; const p = new Image(); p.fetchPriority = 'low'; p.src = images[index].full }, 150)
+      img.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
+    })
     img.addEventListener('click', () => window._openGallery?.(images, index))
 
     wrapper.appendChild(titleEl)

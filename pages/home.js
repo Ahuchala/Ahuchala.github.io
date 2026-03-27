@@ -79,6 +79,12 @@ export function render() {
 export function init() {
   const featuredImg = document.getElementById('featured-img')
   if (featuredImg) {
+    let preloaded = false
+    featuredImg.addEventListener('mouseenter', () => {
+      if (preloaded) return
+      const t = setTimeout(() => { preloaded = true; const p = new Image(); p.fetchPriority = 'low'; p.src = '/images/gallery/museum_small.webp' }, 150)
+      featuredImg.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
+    })
     featuredImg.addEventListener('click', () => {
       window._openModal?.(
         '/images/gallery/museum_small.webp',

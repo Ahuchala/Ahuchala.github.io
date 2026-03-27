@@ -118,6 +118,12 @@ function populateGallery(containerId, items) {
       img.decoding = 'async'
       img.style.cursor = 'pointer'
       const playlistIndex = playlist.indexOf(item)
+      let preloaded = false
+      img.addEventListener('mouseenter', () => {
+        if (preloaded) return
+        const t = setTimeout(() => { preloaded = true; const p = new Image(); p.fetchPriority = 'low'; p.src = item.full }, 150)
+        img.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
+      })
       img.addEventListener('click', () =>
         window._openGallery?.(playlist, playlistIndex)
       )
