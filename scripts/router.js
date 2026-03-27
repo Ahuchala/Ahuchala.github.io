@@ -111,9 +111,12 @@ function setupModal() {
   if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(-1) })
   if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(1) })
 
+  const modalContent = modal.querySelector('.modal-content')
+
   // Single-image modal (research, OEIS, etc.)
   window._openModal = (fullImage, title, description) => {
     playlist = null
+    modalContent?.classList.remove('modal-carousel')
     modal.style.display = 'flex'
     modalImage.src = fullImage
     modalImage.alt = title
@@ -128,6 +131,7 @@ function setupModal() {
   window._openGallery = (items, startIndex) => {
     playlist = items
     playlistIndex = startIndex
+    modalContent?.classList.add('modal-carousel')
     modal.style.display = 'flex'
     if (prevBtn) prevBtn.style.display = 'flex'
     if (nextBtn) nextBtn.style.display = 'flex'

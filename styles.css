@@ -677,6 +677,32 @@ main {
   color: var(--text-color);
 }
 
+/* Fixed-size modal for carousel navigation — prevents jumping between images */
+.modal-content.modal-carousel {
+  width: min(90vw, 960px);
+  height: min(85vh, 620px);
+  max-width: min(90vw, 960px);
+  max-height: min(85vh, 620px);
+  overflow: hidden;
+  align-items: stretch;
+}
+
+.modal-content.modal-carousel #modal-image {
+  width: 45%;
+  max-width: 45%;
+  max-height: 100%;
+  flex-shrink: 0;
+  object-fit: contain;
+  align-self: center;
+}
+
+.modal-content.modal-carousel .modal-text {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  justify-content: flex-start;
+}
+
 .modal-title {
   position: absolute;
   top: 10%;
