@@ -3,7 +3,8 @@
 export const images = [
     {
       thumbnail: '/images/thumbnails/zetafunction.webp',
-      full: '/images/gallery/zetafunction.png',
+      full: '/images/gallery/zetafunction.webp',
+      original: '/images/gallery/zetafunction.png',
       alt: 'Zeta Function',
       title: 'Zeta Function',
       description: /* html */`
@@ -17,7 +18,8 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/museum_small.webp',
-      full: '/images/gallery/museum_small.png8',
+      full: '/images/gallery/museum_small.webp',
+      original: '/images/gallery/museum_9k.png',
       alt: 'Museum 9k',
       title: 'Museum Submission',
       description: /* html */`
@@ -35,7 +37,7 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/tile.webp',
-      full: '/images/gallery/tile.PNG',
+      full: '/images/gallery/tile.png',
       alt: 'Tile Pattern',
       title: 'Tile Pattern',
       description: /* html */`
@@ -46,7 +48,7 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/billion_center.webp',
-      full: '/images/gallery/billion_center.png8',
+      full: '/images/gallery/billion_center.png',
       alt: 'Billion Center',
       title: 'Billion Center',
       description: /* html */`
@@ -80,7 +82,8 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/char2,5.webp',
-      full: '/images/gallery/char2,5.png',
+      full: '/images/gallery/char2,5.webp',
+      original: '/images/gallery/char2,5.png',
       alt: 'Char2,5',
       title: 'Character (2,5)',
       description: /* html */`
@@ -94,7 +97,8 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/julia.webp',
-      full: '/images/gallery/julia.png',
+      full: '/images/gallery/julia.webp',
+      original: '/images/gallery/julia.png',
       alt: 'Julia',
       title: 'Julia Set',
       description: /* html */`
@@ -125,7 +129,8 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/inverse_constant.webp',
-      full: '/images/gallery/inverse_constant.png',
+      full: '/images/gallery/inverse_constant.webp',
+      original: '/images/gallery/inverse_constant.png',
       alt: 'Inverse Constant',
       title: 'Inverse Constant',
       description: /* html */`
@@ -143,7 +148,8 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/cracked.webp',
-      full: '/images/gallery/cracked.png8',
+      full: '/images/gallery/cracked.webp',
+      original: '/images/gallery/cracked.png',
       alt: 'Cracked',
       title: 'Cracked Glass',
       description: /* html */`
@@ -154,7 +160,8 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/julia_3.webp',
-      full: '/images/gallery/julia_3.PNG',
+      full: '/images/gallery/julia_3.webp',
+      original: '/images/gallery/julia_3.png',
       alt: 'Julia 3',
       title: 'Julia Variant',
       description: /* html */`
@@ -163,7 +170,7 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/tile2.webp',
-      full: '/images/gallery/tile2.PNG',
+      full: '/images/gallery/tile2.png',
       alt: 'Tile Pattern 2',
       title: 'Tile Pattern II',
       description: /* html */`
@@ -172,7 +179,8 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/knight31.webp',
-      full: '/images/gallery/knight31.PNG',
+      full: '/images/gallery/knight31.webp',
+      original: '/images/gallery/knight31.PNG',
       alt: 'Knight31',
       title: 'Knight31',
       description: /* html */`
@@ -182,7 +190,7 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/sand23_3k.webp',
-      full: '/images/gallery/sand23_3k.png8',
+      full: '/images/gallery/sand23_3k.png',
       alt: 'Sand 3k',
       title: 'Sand 3k',
       description: /* html */`
@@ -191,7 +199,8 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/inverse_wp.webp',
-      full: '/images/gallery/inverse_wp.png',
+      full: '/images/gallery/inverse_wp.webp',
+      original: '/images/gallery/inverse_wp.png',
       alt: 'Weierstrass Inverse',
       title: 'Weierstrass',
       description: /* html */`
@@ -203,7 +212,8 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/colormap2.webp',
-      full: '/images/gallery/colormap2.png',
+      full: '/images/gallery/colormap2.webp',
+      original: '/images/gallery/colormap2.png',
       alt: 'Knight\'s Domination',
       title: 'Knight\'s Domination',
       description: /* html */`
@@ -214,7 +224,8 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/lattice_weierstrass.webp',
-      full: '/images/gallery/lattice_weierstrass.png',
+      full: '/images/gallery/lattice_weierstrass.webp',
+      original: '/images/gallery/lattice_weierstrass.png',
       alt: 'Weierstrass Lattice',
       title: 'Weierstrass Lattice',
       description: /* html */`
@@ -226,7 +237,8 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/theta_4.webp',
-      full: '/images/gallery/theta_4.png',
+      full: '/images/gallery/theta_4.webp',
+      original: '/images/gallery/theta_4.png',
       alt: 'Theta 4',
       title: 'Theta 4',
       description: /* html */`
@@ -238,7 +250,8 @@ export const images = [
     },
     {
       thumbnail: '/images/thumbnails/graphene.webp',
-      full: '/images/gallery/graphene.png',
+      full: '/images/gallery/graphene.webp',
+      original: '/images/gallery/graphene.png',
       alt: 'Graphene',
       title: 'Graphene',
       description: /* html */`

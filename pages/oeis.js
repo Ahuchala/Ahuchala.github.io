@@ -8,7 +8,9 @@ const knightItems = knightNs.map(n => ({
   label: `n = ${n}`,
   hasImage: existingKnights.includes(n),
   thumbnail: `/images/thumbnails/knight${n}.webp`,
-  full: `/images/gallery/knight${n}.png`,
+  // knight31 is a large PNG that compresses well to webp; others are tiny and PNG is fine
+  full: n === 31 ? `/images/gallery/knight31.webp` : `/images/gallery/knight${n}.png`,
+  original: n === 31 ? `/images/gallery/knight31.PNG` : undefined,
   title: `Knight's Domination for n = ${n}`,
   description: `This is a minimal covering of an ${n} × ${n} board by knights.`,
 }))
@@ -21,11 +23,16 @@ const thetaItems = [
   { file: 'theta_32',  title: '<a href="https://oeis.org/A004670">A004670</a>: n = 32',  description: 'Theta series for the Barnes-Wall lattice of dimension $n = 32$. This is a modular form of weight 16, which may be written as $$E_4^4-960\\Delta E_4 = 1 + 146880q^2 + 64757760q^3 + 4844836800q^4+\\ldots$$ where $E_4$ is the Eisenstein series (with coefficients in A004009) and $\\Delta$ is the cusp form of weight 12.' },
   { file: 'theta_64',  title: '<a href="https://oeis.org/A103936">A103936</a>: n = 64',  description: 'Theta series for the Barnes-Wall lattice of dimension $n = 64$. This is given by $$1 + 9694080q^4 + 89754255360q^6 + 10164979630080q^7+\\ldots$$' },
   { file: 'theta_128', title: '<a href="https://oeis.org/A100004">A100004</a>: n = 128', description: 'Theta series for the Barnes-Wall lattice of dimension $n = 128$. This is given by $$1+1260230400q^4+211691822284800q^6+167823813692620800q^7+\\ldots$$ The noisiness in the image is largely due to the enormous size of the coefficients involved.' },
-].map(({ file, title, description }) => ({
-  thumbnail: `/images/thumbnails/${file}.webp`,
-  full:      `/images/gallery/${file}.png`,
-  title, description, hasImage: true,
-}))
+].map(({ file, title, description }) => {
+  // theta_32 compresses slightly larger as webp; all others are meaningfully smaller
+  const useWebp = file !== 'theta_32'
+  return {
+    thumbnail: `/images/thumbnails/${file}.webp`,
+    full:      useWebp ? `/images/gallery/${file}.webp` : `/images/gallery/${file}.png`,
+    original:  useWebp ? `/images/gallery/${file}.png`  : undefined,
+    title, description, hasImage: true,
+  }
+})
 
 function prefetchImage(href) {
   if (document.querySelector(`link[rel="prefetch"][href="${href}"]`)) return

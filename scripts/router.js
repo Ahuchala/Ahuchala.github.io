@@ -68,6 +68,10 @@ function setupModal() {
     const item = playlist[index]
     const reduceMotion = document.documentElement.classList.contains('reduce-motion')
 
+    const originalLink = item.original
+      ? `<p><a href="${item.original}" target="_blank" rel="noopener" class="original-link">↗ View full resolution</a></p>`
+      : ''
+
     if (!reduceMotion && dir !== 0) {
       const exitCls  = dir > 0 ? 'modal-exit-left'  : 'modal-exit-right'
       const enterCls = dir > 0 ? 'modal-enter-right' : 'modal-enter-left'
@@ -77,7 +81,7 @@ function setupModal() {
         modalImage.src = item.full
         modalImage.alt = item.title
         modalTitle.innerHTML = item.title
-        modalDescription.innerHTML = item.description
+        modalDescription.innerHTML = item.description + originalLink
         if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription])
         modalImage.classList.add(enterCls)
         modalImage.addEventListener('animationend', () => modalImage.classList.remove(enterCls), { once: true })
@@ -87,7 +91,7 @@ function setupModal() {
       modalImage.src = item.full
       modalImage.alt = item.title
       modalTitle.innerHTML = item.title
-      modalDescription.innerHTML = item.description
+      modalDescription.innerHTML = item.description + originalLink
       if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription])
       transitioning = false
     }

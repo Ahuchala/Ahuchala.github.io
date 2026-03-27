@@ -685,6 +685,7 @@ main {
   max-height: min(85vh, 620px);
   overflow: hidden;
   align-items: stretch;
+  flex-direction: row;
 }
 
 .modal-content.modal-carousel #modal-image {
@@ -702,6 +703,16 @@ main {
   overflow-y: auto;
   justify-content: flex-start;
 }
+
+.original-link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.85em;
+  opacity: 0.7;
+  text-decoration: none;
+  color: var(--link-color);
+}
+.original-link:hover { opacity: 1; }
 
 .modal-title {
   position: absolute;

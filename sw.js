@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v1'
+const CACHE_VERSION = 'v3'
 const STATIC_CACHE = `static-${CACHE_VERSION}`
 const IMAGE_CACHE  = `images-${CACHE_VERSION}`
 
@@ -57,11 +57,17 @@ self.addEventListener('fetch', event => {
   // Only handle GET requests from our own origin
   if (request.method !== 'GET' || url.origin !== self.location.origin) return
 
-  // Navigation → serve SPA shell (index.html) from cache
+  // Navigation → serve SPA shell, UNLESS the URL is a static file path.
+  // Chrome includes text/html in Accept for all navigations so we can't
+  // use the Accept header to distinguish. Check the URL path instead.
   if (request.mode === 'navigate') {
-    event.respondWith(
-      caches.match('/').then(cached => cached || fetch(request))
-    )
+    if (!url.pathname.startsWith('/images/')) {
+      event.respondWith(
+        caches.match('/').then(cached => cached || fetch(request))
+      )
+    }
+    // /images/* navigations (e.g. "View full resolution" in new tab) fall
+    // through to the browser's default fetch — no respondWith needed.
     return
   }
 
@@ -74,15 +80,16 @@ self.addEventListener('fetch', event => {
           return fetch(request).then(response => {
             if (response.ok) cache.put(request, response.clone())
             return response
-          })
+          }).catch(() => Response.error())
         })
       )
     )
     return
   }
 
-  // Everything else (JS, CSS, fonts) → stale-while-revalidate
-  // Serve cached copy immediately; refresh cache in background
+  // Everything else (JS, CSS) → stale-while-revalidate.
+  // Serve the cached copy immediately; refresh the cache in the background.
+  // Background fetch errors are swallowed — they're non-critical.
   event.respondWith(
     caches.open(STATIC_CACHE).then(cache =>
       cache.match(request).then(cached => {
@@ -90,7 +97,11 @@ self.addEventListener('fetch', event => {
           if (response.ok) cache.put(request, response.clone())
           return response
         })
-        return cached ?? networkFetch
+        if (cached) {
+          networkFetch.catch(() => {}) // swallow background revalidation errors
+          return cached
+        }
+        return networkFetch
       })
     )
   )
