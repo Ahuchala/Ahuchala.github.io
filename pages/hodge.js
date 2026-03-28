@@ -366,7 +366,7 @@ export function render() {
                 <div>
                     <h3>Smooth Hypersurfaces and Complete Intersections in $\\text{Gr}(k,n)$</h3>
                     <p>
-                        There is no known generating function such as the one from Hirzebruch in the case of a complete intersection in $\\text{Gr}(k,n)$. However, the hooklength algorithm used on this site is good enough at finding the holomorphic Euler characteristic of such a variety. Recall that for a holomorphic vector bundle $ E$ on $X$ we define the euler characteristic by
+                        There is no known generating function such as the one from Hirzebruch even for hypersurfaces in $\\text{Gr}(k,n)$. However, the hooklength algorithm used on this site is good enough at finding the holomorphic Euler characteristic of a smooth complete intersection $X$. Recall that for a holomorphic vector bundle $ E$ on $X$ we define the euler characteristic by
                         $$\\chi(X,E) = \\sum_{i} (-1)^i\\dim H^i(X,E)
                             $$
                         
