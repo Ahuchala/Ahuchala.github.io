@@ -1,7 +1,7 @@
 # Andy Huchala
 
-Personal research website for Andy Huchala, a mathematics grad student at the University of Oregon.
-The main feature is a suite of interactive Hodge diamond calculators.
+My personal research website. I'm a mathematics grad student at the University of Oregon.
+Main features of the site include a suite of interactive Hodge diamond calculators and a math art gallery.
 
 **[ahuchala.github.io](https://ahuchala.github.io)**
 
@@ -40,7 +40,7 @@ All off-diagonal Hodge numbers are zero except `h^{11,9} = h^{9,11} = 1`.
 
 The [gallery](/gallery) collects mathematical art and visualizations, including:
 
-- **Abelian sandpiles** — a 9000×9000 sandpile with 2³⁰ grains, rendered over a month on a GPU
+- **Abelian sandpiles** — a 9000×9000 sandpile
 - **Zeta functions** — complex plots of Hasse-Weil zeta functions of varieties over finite fields
 - **Ising model simulations**, Julia sets, Weierstrass functions, Lie algebra characters, and more
 
