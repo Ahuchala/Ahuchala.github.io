@@ -27,7 +27,7 @@ const timelineData = [
 export function render() {
   return /* html */`
     <section class="timeline-wrapper">
-      <h1 class="timeline-title">Teaching Experience</h1>
+      <h2 class="timeline-title">Teaching Experience</h2>
       <div class="timeline-description">
         <p>Below is a list of courses I've taught at the University of Oregon, from most recent to oldest:</p>
       </div>

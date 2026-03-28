@@ -49,8 +49,8 @@ export function render() {
         </div>
         <div class="grid-item">
           <a href="/hodge">
-            <img src="/images/thumbnails/theta_8.webp" alt="Hodge Diamond Calculator">
-            <p>Hodge Diamond Calculator</p>
+            <img src="/images/thumbnails/theta_8.webp" alt="Hodge Diamonds">
+            <p>Hodge Diamonds</p>
           </a>
         </div>
         <div class="grid-item">

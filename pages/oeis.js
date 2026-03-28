@@ -51,6 +51,7 @@ export function prefetch() {
 export function render() {
   return /* html */`
     <section class="intro-alt featured">
+      <h2 class="page-title">OEIS</h2>
       <p class="center-if-needed center-content">
         The Online Encyclopedia of Integer Sequences is an online database of integer-valued
         sequences that anyone can contribute to. It's got a lot of interesting problem

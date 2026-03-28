@@ -75,13 +75,12 @@ self.addEventListener('fetch', event => {
   // Chrome includes text/html in Accept for all navigations so we can't
   // use the Accept header to distinguish. Check the URL path instead.
   if (request.mode === 'navigate') {
-    if (!url.pathname.startsWith('/images/')) {
+    if (!url.pathname.startsWith('/images/') && !url.pathname.startsWith('/files/')) {
       event.respondWith(
         caches.match('/').then(cached => cached || fetch(request))
       )
     }
-    // /images/* navigations (e.g. "View full resolution" in new tab) fall
-    // through to the browser's default fetch — no respondWith needed.
+    // /images/* and /files/* navigations fall through to the browser's default fetch.
     return
   }
 

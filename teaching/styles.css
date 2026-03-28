@@ -63,11 +63,11 @@
 
 /* Section Title */
 .timeline-title {
-    text-align: center; /* Center-align the section title */
-    font-size: 2rem; /* Prominent font size */
-    font-weight: bold; /* Bold title */
-    margin-bottom: 20px; /* Spacing below the title */
-    /* color: var(--primary-dark); Match the timeline color scheme */
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: var(--section-header-text-color);
 }
 
 @media (max-width: 480px) {

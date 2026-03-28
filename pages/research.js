@@ -3,7 +3,7 @@ import { images } from '/components/gallery.js'
 export function render() {
   return /* html */`
     <div class="center-if-needed">
-      <a href="/files/cv/CV.pdf" target="_blank" rel="noreferrer"><h1>Curriculum Vitae</h1></a>
+      <a href="/files/cv/CV.pdf" target="_blank" rel="noreferrer" class="cv-button">Curriculum Vitae</a>
     </div>
 
     <section class="section">

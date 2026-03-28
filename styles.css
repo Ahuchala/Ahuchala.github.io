@@ -105,6 +105,7 @@ p {
 }
 
 h1 {
+  color: var(--section-header-text-color);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   letter-spacing: -0.02em;
 }
@@ -143,6 +144,25 @@ a:active, a:focus {
 
 .center-if-needed {
   text-align: center;
+}
+
+.cv-button {
+  display: inline-block;
+  padding: 0.6em 1.4em;
+  border: 2px solid var(--section-header-text-color);
+  border-radius: 6px;
+  color: var(--section-header-text-color);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.cv-button:hover,
+.cv-button:focus {
+  background: var(--section-header-text-color);
+  color: var(--bg-color);
 }
 
 .center-content {
@@ -503,6 +523,11 @@ main {
   margin-bottom: 20px;
   color: white;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.featured h2.page-title,
+.grid-section h2.page-title {
+  color: var(--section-header-text-color);
 }
 
 .featured p {
