@@ -34,7 +34,7 @@ export function init()
   {
     if (!slider || !textbox) return;
 
-    const debouncedOnChange = debounce(onChange, 80);
+    const debouncedOnChange = debounce(onChange, 40);
     const lo = parseInt(slider.min, 10);
     const hi = parseInt(slider.max, 10);
 

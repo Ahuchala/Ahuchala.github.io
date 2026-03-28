@@ -27,11 +27,11 @@ export function init() {
     let _gen = 0; // Incremented on each compute request; used to discard stale Worker responses
 
     // --- slider/textbox sync that allows blank, with configurable min/max ---
-    // input events (slider drag, typing) are debounced 80 ms so the diamond
+    // input events (slider drag, typing) are debounced 40 ms so the diamond
     // is only recomputed after the user pauses — not 60× per second while
     // dragging. blur is kept immediate so fields snap when the user tabs away.
     const syncSliderAndTextbox = (slider, textbox, onChange, minVal = 0, maxVal = 50) => {
-        const debouncedOnChange = debounce(onChange, 80);
+        const debouncedOnChange = debounce(onChange, 40);
 
         // slider → textbox
         slider.addEventListener("input", () => {
@@ -305,7 +305,7 @@ export function init() {
 
     // Debounced wrapper used by degree-input listeners (created after updateDiamond
     // so the closure captures the fully-initialized function reference).
-    const debouncedUpdateDiamond = debounce(updateDiamond, 80);
+    const debouncedUpdateDiamond = debounce(updateDiamond, 40);
 
     const loadPreset = (n, r, degrees) => {
         nValue.value = String(n);
