@@ -15,10 +15,10 @@ Given a smooth algebraic variety over ℂ, the **Hodge diamond** is the grid of 
 |---|---|
 | Complete intersections in **P**ⁿ | Quartic K3 surface in **P**³ |
 | Abelian varieties | Jacobian of a genus-3 curve |
-| Complete intersections in **Gr**(k,n) | Hyperplane in **Gr**(3,10) |
+| Complete intersections in **Gr**(k,n) |Debarre-Voisin Hyperplane in **Gr**(3,10) |
 | Flag varieties | Fl(1,2,3; 4) |
 | Twisted Hodge numbers | **Gr**(2,5) twisted by O(2) |
-| CIs in products of Grassmannians | Elliptic Curve in  **P**¹ x **P**¹|
+| CIs in products of Grassmannians | Elliptic Curve (Hypersurface of degree (2,2) in  **P**¹ x **P**¹)|
 
 **Quartic surface in P³ (K3 surface):**
 ```
