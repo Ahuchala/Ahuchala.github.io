@@ -43,11 +43,12 @@ export function render() {
             <!-- Toggle Menu -->
             <div id="toggle-menu">
                 <button id="toggle-complete-intersection" class="toggle-button pressed">Complete Intersections in $\\mathbb P^n$</button>
-                <button id="toggle-abelian-variety" class="toggle-button">Abelian Varieties</button>
                 <button id="toggle-grassmannian" class="toggle-button">Complete Intersections in $\\text{Gr}(k,n)$</button>
-                <button id="toggle-flag" class="toggle-button">Flag Varieties</button>
                 <button id="toggle-twisted" class="toggle-button">Twisted Hodge Numbers</button>
-                <button id="toggle-product-grassmannian" class="toggle-button">CIs in Products of Grassmannians</button>
+                <button id="toggle-abelian-variety" class="toggle-button toggle-advanced-item">Abelian Varieties</button>
+                <button id="toggle-flag" class="toggle-button toggle-advanced-item">Flag Varieties</button>
+                <button id="toggle-product-grassmannian" class="toggle-button toggle-advanced-item">CIs in Products of Grassmannians</button>
+                <button id="toggle-advanced" class="toggle-more-btn" aria-expanded="false">&#9656; more</button>
             </div>
         
             <!-- Calculator Containers -->

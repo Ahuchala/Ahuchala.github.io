@@ -91,6 +91,28 @@ export function init() {
       });
     }
 
+    // Show more / show less toggle for advanced calculators
+    const toggleMenu = document.getElementById("toggle-menu");
+    const toggleAdvancedBtn = document.getElementById("toggle-advanced");
+    const advancedContainers = [abelianVarietyContainer, flagContainer, productGrassmannianContainer];
+    const advancedToggles = [toggleAbelianVariety, toggleFlag, toggleProductGrassmannian];
+    if (toggleAdvancedBtn && toggleMenu) {
+      toggleAdvancedBtn.addEventListener("click", () => {
+        const expanding = !toggleMenu.classList.contains("show-advanced");
+        toggleMenu.classList.toggle("show-advanced", expanding);
+        toggleAdvancedBtn.setAttribute("aria-expanded", expanding);
+        toggleAdvancedBtn.innerHTML = expanding ? "&#9662; less" : "&#9656; more";
+        // If collapsing while an advanced calculator is visible, revert to CI
+        if (!expanding) {
+          const advancedVisible = advancedContainers.some(c => c && c.style.display !== "none");
+          if (advancedVisible) {
+            showContainer(completeIntersectionContainer);
+            setActiveToggle(toggleCompleteIntersection, ...advancedToggles, toggleGrassmannian, toggleTwisted);
+          }
+        }
+      });
+    }
+
     // Align the default-visible container on first paint.
     requestAnimationFrame(() => alignLabelsInContainer(completeIntersectionContainer));
 
