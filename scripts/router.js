@@ -196,6 +196,7 @@ const routeDeps = {
     '/components/hodge/abelianVarietyHodgeNumbers.js',
     '/components/hodge/grassmannianHodge.js',
     '/components/hodge/twistedHodge.js',
+    '/components/hodge/hodgeCIWorker.js',
     // flag.js + flagHodge.js + loadMath.js deferred until user clicks Flag Varieties
   ],
 }

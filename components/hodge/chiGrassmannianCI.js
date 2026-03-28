@@ -166,7 +166,15 @@ export function chiCI(k, n, degrees, t = 0) {
 //   2*dim+1 rows; row i has min(i+1, 2*dim+1-i) entries.
 // Non-middle rows: h^{p,p} from Grassmannian (Lefschetz + Hodge duality), all else 0.
 // Middle row: primitive Hodge numbers + Grassmannian diagonal contribution.
+
+// Module-level cache: keyed on "k,n,[d1,d2,...]" so repeated calls with the
+// same parameters (e.g. adjusting only the blow-up count s) skip recomputation.
+const _hodgeCICache = new Map()
+
 export function hodgeDiamondCI(k, n, degrees) {
+  const _cacheKey = `${k},${n},${JSON.stringify(degrees)}`
+  if (_hodgeCICache.has(_cacheKey)) return _hodgeCICache.get(_cacheKey)
+
   const m = n - k;
   const dim = k * m - degrees.length;
   if (dim < 0) throw new Error("dim Z < 0");
@@ -213,6 +221,7 @@ export function hodgeDiamondCI(k, n, degrees) {
     }
     diamond.push(row);
   }
+  _hodgeCICache.set(_cacheKey, diamond)
   return diamond;
 }
 

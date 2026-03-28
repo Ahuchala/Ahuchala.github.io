@@ -1,4 +1,16 @@
 import { hodgeDiamondCI, applyBlowUp } from "/components/hodge/chiGrassmannianCI.js";
+import { debounce } from "/scripts/utils.js";
+
+// Persistent Worker for the CI Hodge computation. Created lazily on first
+// init() call and kept alive for the full session so its module-level
+// memoization cache survives SPA navigations back to this page.
+let _ciWorker = null;
+function getCIWorker() {
+    if (!_ciWorker && typeof Worker !== "undefined") {
+        _ciWorker = new Worker("/components/hodge/hodgeCIWorker.js", { type: "module" });
+    }
+    return _ciWorker;
+}
 
 export function init() {
     const nSlider = document.getElementById("n-slider");
@@ -12,16 +24,22 @@ export function init() {
 
     const presetButtons = document.querySelectorAll(".preset-button");
     let lastUserSetR = parseInt(rSlider.value, 10) || 0; // Tracks last user-set value of r
+    let _gen = 0; // Incremented on each compute request; used to discard stale Worker responses
 
     // --- slider/textbox sync that allows blank, with configurable min/max ---
+    // input events (slider drag, typing) are debounced 80 ms so the diamond
+    // is only recomputed after the user pauses — not 60× per second while
+    // dragging. blur is kept immediate so fields snap when the user tabs away.
     const syncSliderAndTextbox = (slider, textbox, onChange, minVal = 0, maxVal = 50) => {
+        const debouncedOnChange = debounce(onChange, 80);
+
         // slider → textbox
         slider.addEventListener("input", () => {
             const v = Number(slider.value);
             const clamped = Math.max(minVal, Math.min(v, maxVal));
             slider.value = String(clamped);
             textbox.value = String(clamped);
-            onChange();
+            debouncedOnChange();
         });
 
         // textbox typing: allow blank, don't touch the slider or diamond until numeric
@@ -38,10 +56,10 @@ export function init() {
             const clamped = Math.max(minVal, Math.min(num, maxVal));
             textbox.value = String(clamped);
             slider.value = String(Math.max(minVal, Math.min(clamped, Number(slider.max))));
-            onChange();
+            debouncedOnChange();
         });
 
-        // on blur: if still blank, restore from slider; otherwise normalize
+        // on blur: if still blank, restore from slider; otherwise normalize (immediate)
         textbox.addEventListener("blur", () => {
             let raw = textbox.value.trim();
             if (raw === "") {
@@ -87,7 +105,7 @@ export function init() {
                 input.value = "2";
                 input.className = "hodge-input";
 
-                input.addEventListener("input", updateDiamond);
+                input.addEventListener("input", () => debouncedUpdateDiamond());
 
                 toggleContainer.appendChild(label);
                 toggleContainer.appendChild(input);
@@ -220,45 +238,74 @@ export function init() {
             return;
         }
 
-        let blownDiamond;
-        try {
-            blownDiamond = applyBlowUp(hodgeDiamondCI(1, n + 1, degrees), s, dim);
-        } catch (e) {
-            console.error("hodgeDiamondCI error:", e);
-            diamondContainer.innerHTML =
-                `<p class="placeholder">Unable to compute the Hodge diamond for these parameters.</p>`;
-            return;
-        }
+        // Render a pre-computed blown diamond into a container.
+        const renderBlownDiamond = (diamond, container) => {
+            container.innerHTML = "";
+            for (let j = 0; j < rows; j++) {
+                const row = document.createElement("div");
+                row.className = "diamond-row";
 
-        for (let j = 0; j < rows; j++) {
-            const row = document.createElement("div");
-            row.className = "diamond-row";
+                const elements = j <= dim ? j + 1 : 2 * dim - j + 1;
+                const spaces = (rows - elements) / 2;
 
-            const elements = j <= dim ? j + 1 : 2 * dim - j + 1;
-            const spaces = (rows - elements) / 2;
+                for (let sp = 0; sp < spaces; sp++) {
+                    const space = document.createElement("span");
+                    space.className = "diamond-space";
+                    row.appendChild(space);
+                }
 
-            for (let sp = 0; sp < spaces; sp++) {
-                const space = document.createElement("span");
-                space.className = "diamond-space";
-                row.appendChild(space);
+                for (let i = 0; i < elements; i++) {
+                    const valEl = document.createElement("span");
+                    valEl.className = "diamond-value";
+                    valEl.innerText = diamond[j]?.[i] ?? 0;
+                    row.appendChild(valEl);
+                }
+
+                for (let sp = 0; sp < spaces; sp++) {
+                    const space = document.createElement("span");
+                    space.className = "diamond-space";
+                    row.appendChild(space);
+                }
+
+                container.appendChild(row);
             }
+        };
 
-            for (let i = 0; i < elements; i++) {
-                const valEl = document.createElement("span");
-                valEl.className = "diamond-value";
-                valEl.innerText = blownDiamond[j]?.[i] ?? 0;
-                row.appendChild(valEl);
+        const gen = ++_gen;
+        const worker = getCIWorker();
+
+        if (worker) {
+            // Off-load computation to Worker so the main thread stays responsive.
+            // The generation counter discards responses from superseded requests.
+            diamondContainer.classList.add("diamond-loading");
+            worker.onmessage = ({ data }) => {
+                if (data.gen !== gen) return; // stale — a newer request is already in flight
+                diamondContainer.classList.remove("diamond-loading");
+                if (!data.ok) {
+                    console.error("hodgeDiamondCI Worker error:", data.error);
+                    diamondContainer.innerHTML =
+                        `<p class="placeholder">Unable to compute the Hodge diamond for these parameters.</p>`;
+                    return;
+                }
+                renderBlownDiamond(data.diamond, diamondContainer);
+            };
+            worker.postMessage({ k: 1, n: n + 1, degrees, s, dim, gen });
+        } else {
+            // Fallback: synchronous computation (e.g. Workers unavailable in this environment).
+            try {
+                const diamond = applyBlowUp(hodgeDiamondCI(1, n + 1, degrees), s, dim);
+                renderBlownDiamond(diamond, diamondContainer);
+            } catch (e) {
+                console.error("hodgeDiamondCI error:", e);
+                diamondContainer.innerHTML =
+                    `<p class="placeholder">Unable to compute the Hodge diamond for these parameters.</p>`;
             }
-
-            for (let sp = 0; sp < spaces; sp++) {
-                const space = document.createElement("span");
-                space.className = "diamond-space";
-                row.appendChild(space);
-            }
-
-            diamondContainer.appendChild(row);
         }
     };
+
+    // Debounced wrapper used by degree-input listeners (created after updateDiamond
+    // so the closure captures the fully-initialized function reference).
+    const debouncedUpdateDiamond = debounce(updateDiamond, 80);
 
     const loadPreset = (n, r, degrees) => {
         nValue.value = String(n);

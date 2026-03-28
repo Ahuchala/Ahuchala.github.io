@@ -19,7 +19,15 @@
  * In row i, if i is even (say i=2p), the “diagonal” entry (taken as the middle entry)
  * is set to the coefficient of q^p in the above q-multinomial; all other entries are 0.
  */
+// Module-level cache: keyed on JSON-stringified dims so that repeated calls
+// with the same flag type (e.g. when only the CI degree r changes) skip the
+// q-multinomial computation entirely.
+const _hodgeFlagCache = new Map()
+
 export function hodgeFlag(dims) {
+  const _cacheKey = JSON.stringify(dims)
+  if (_hodgeFlagCache.has(_cacheKey)) return _hodgeFlagCache.get(_cacheKey)
+
     // Compute ambient dimension n.
     const n = dims.reduce((a, b) => a + b, 0);
     // Compute complex dimension of F:
@@ -49,7 +57,8 @@ export function hodgeFlag(dims) {
       }
       diamond.push(row);
     }
-    
+
+    _hodgeFlagCache.set(_cacheKey, diamond)
     return diamond;
   }
   

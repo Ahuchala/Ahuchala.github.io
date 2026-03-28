@@ -1,5 +1,6 @@
 import { hodgeGrassmannian } from "/components/hodge/grassmannianHodge.js";
 import { hodgePrimitiveMiddleRow, applyBlowUp } from "/components/hodge/chiGrassmannianCI.js";
+import { debounce } from "/scripts/utils.js";
 
 export function init()
 {
@@ -28,21 +29,23 @@ export function init()
   }
 
   // ---------------- blank-friendly slider<->textbox sync ----------------
+  // input events are debounced 80 ms; blur stays immediate.
   const syncSliderAndTextbox = (slider, textbox, onChange) =>
   {
     if (!slider || !textbox) return;
 
+    const debouncedOnChange = debounce(onChange, 80);
     const lo = parseInt(slider.min, 10);
     const hi = parseInt(slider.max, 10);
 
     // slider → textbox (always numeric)
     slider.addEventListener("input", () => {
       textbox.value = slider.value;
-      onChange();
+      debouncedOnChange();
     });
     slider.addEventListener("change", () => {
       textbox.value = slider.value;
-      onChange();
+      debouncedOnChange();
     });
 
     // textbox typing: allow empty; don't force/clamp while typing
@@ -50,16 +53,16 @@ export function init()
       const v = intOrNull(textbox);
       if (v === null) {
         // user cleared it — leave slider as-is
-        onChange();
+        debouncedOnChange();
         return;
       }
       // Clamp slider to its physical range, but leave textbox free to exceed it
       const sliderVal = clamp(v, lo, hi);
       if (String(sliderVal) !== slider.value) slider.value = String(sliderVal);
-      onChange();
+      debouncedOnChange();
     });
 
-    // textbox blur: normalize if numeric; keep empty if blank
+    // textbox blur: normalize if numeric; keep empty if blank (immediate)
     textbox.addEventListener("blur", () => {
       const v = intOrNull(textbox);
       if (v === null) { onChange(); return; }

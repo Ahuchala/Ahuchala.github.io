@@ -262,6 +262,7 @@ body.hide-top-half .is-top-half {
 /* Greyed-out state while async Hodge data / math.js is loading.
    Applied before the fetch starts and removed after the new diamond is
    fully built, so there is never an empty-container flash. */
+#diamond-container,
 #diamond-container-grassmannian,
 #diamond-container-flag {
     transition: opacity 0.15s ease;
