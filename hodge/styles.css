@@ -17,6 +17,8 @@
                 0 4px 12px rgba(0, 0, 0, 0.06),
                 0 8px 24px rgba(0, 0, 0, 0.04);
     text-align: center;
+    position: relative;
+    z-index: 1;
 }
 .input-row {
     display: flex;
@@ -62,7 +64,6 @@
 }
 
 .diamond-scroll-wrapper {
-    overflow-x: auto;
     width: 100%;
 }
 
@@ -191,8 +192,6 @@
     flex-direction: column;
     align-items: center;
     width: max-content;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 #diamond-container {
@@ -280,4 +279,10 @@ body.hide-top-half .is-top-half {
 .diamond-loading {
     opacity: 0.35;
     pointer-events: none;
+}
+
+/* Allow the Hodge diamond to overflow its card and be scrollable via page scroll.
+   The class is added/removed by pages/hodge.js so it only applies on this page. */
+body.hodge-active {
+    overflow-x: auto;
 }

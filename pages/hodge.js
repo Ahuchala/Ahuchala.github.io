@@ -371,6 +371,47 @@ export function init() {
   initProduct()
   initHodgeScripts()
 
+  // Allow the diamond to overflow its card and be scrollable via page scroll.
+  // Cleaned up when navigating away so other pages are unaffected.
+  document.body.classList.add('hodge-active')
+  window._pageCleanup = () => document.body.classList.remove('hodge-active')
+
+  // Center each diamond horizontally within its #diamond-box card
+  // (the panel that also holds the description text above it).
+  const observers = []
+  document.querySelectorAll('.diamond-scroll-wrapper').forEach(wrapper => {
+    let rafId = 0
+    const centerDiamond = () => {
+      cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(() => {
+        const container = wrapper.firstElementChild
+        if (!container) return
+        const diamondWidth = container.getBoundingClientRect().width
+        if (diamondWidth === 0) return
+        const box = wrapper.parentElement
+        if (!box) return
+        const boxRect = box.getBoundingClientRect()
+        const wrapperRect = wrapper.getBoundingClientRect()
+        if (boxRect.width === 0 || wrapperRect.width === 0) return
+        const targetCenter = boxRect.left + boxRect.width / 2
+        const marginLeft = targetCenter - wrapperRect.left - diamondWidth / 2
+        container.style.marginLeft = marginLeft + 'px'
+      })
+    }
+    const mo = new MutationObserver(centerDiamond)
+    mo.observe(wrapper, { childList: true, subtree: true })
+    const ro = new ResizeObserver(centerDiamond)
+    ro.observe(wrapper)
+    ro.observe(document.documentElement)
+    observers.push(mo, ro)
+    centerDiamond()
+  })
+  const prevCleanup = window._pageCleanup
+  window._pageCleanup = () => {
+    prevCleanup()
+    observers.forEach(o => o.disconnect())
+  }
+
   // Flag variety calculator is deferred — preload modules on hover, init on first click
   const flagBtn = document.getElementById('toggle-flag')
   if (flagBtn) {
