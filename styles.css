@@ -18,7 +18,7 @@ html {
   --body-section-2: #eef3f8; /* Light neutral for alternating sections */
   --grid-item-color: rgba(255, 255, 255, 0.06); /* Neutral glass for grid items */
 
-  --text-color: #1e293b; /* Rich navy for readable text */
+  --text-color: #3d4f63; /* Soft slate for readable text */
   --secondary-text: #6c7a89; /* Muted gray for secondary elements */
 
   --header-color-1: #3d7de8; /* Vivid blue gradient start */
@@ -28,7 +28,7 @@ html {
   --border-color-2: #4f8ef7; /* Accent borders for emphasis */
 
   --header-text-color: #ffffff; /* Clear white for header text */
-  --section-header-text-color: #1e293b; /* Rich navy for section headers */
+  --section-header-text-color: #2d3f54; /* Soft navy for section headers */
 
   --oeis-sequence-background: #f4f8fb; /* Soft light gray for sequences */
   --intro-highlight-background: rgba(30, 41, 59, 0.05); /* Subtle intro circle highlight */
@@ -189,10 +189,17 @@ header {
 header .header-content h1 {
   font-size: 3rem;
   margin: 0;
-  font-weight: bold;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--header-text-color);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   position: relative;
   z-index: 3;
+}
+
+.header-tld {
+  color: var(--secondary-light);
+  font-weight: 400;
 }
 
 /*****************************************************
