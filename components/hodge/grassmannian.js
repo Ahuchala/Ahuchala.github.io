@@ -229,7 +229,7 @@ export function init()
     if (dimension < 0) {
       diamondContainerGrassmannian.innerHTML =
         `<p class="error">Error: Dimension is negative. Ensure \\( r \\leq k(n-k) \\).</p>`;
-      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([diamondContainerGrassmannian]);
+      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([diamondContainerGrassmannian]).catch(console.error);
       return;
     }
 

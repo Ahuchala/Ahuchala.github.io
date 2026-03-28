@@ -24,7 +24,7 @@ export function initModal() {
         modalDescription.innerHTML = description;
         
         if (window.MathJax) {
-          MathJax.typesetPromise([modalDescription]);
+          MathJax.typesetPromise([modalDescription]).catch(console.error);
         }
       });
     });

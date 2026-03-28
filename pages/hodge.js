@@ -436,10 +436,23 @@ export function init() {
     observers.push(mo, ro)
     centerDiamond()
   })
+  // Prevent scroll wheel from changing number-input values while on this page.
+  // Must be non-passive to call preventDefault(). Registered here (not in scripts.js)
+  // so the reference is captured and removed in _pageCleanup — otherwise it would
+  // accumulate a new copy on every Hodge page visit.
+  const wheelGuard = (e) => {
+    if (e.target.type === 'number') {
+      e.preventDefault()
+      window.scrollBy({ top: e.deltaY, left: e.deltaX, behavior: 'instant' })
+    }
+  }
+  document.addEventListener('wheel', wheelGuard, { passive: false })
+
   const prevCleanup = window._pageCleanup
   window._pageCleanup = () => {
     prevCleanup()
     observers.forEach(o => o.disconnect())
+    document.removeEventListener('wheel', wheelGuard)
   }
 
   // Flag variety calculator is deferred — preload modules on hover, init on first click

@@ -94,7 +94,7 @@ function setupModal() {
         modalImage.alt = item.title
         modalTitle.innerHTML = item.title
         modalDescription.innerHTML = item.description + originalLink
-        if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription])
+        if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).catch(console.error)
         modalImage.classList.add(enterCls)
         modalImage.addEventListener('animationend', () => modalImage.classList.remove(enterCls), { once: true })
         transitioning = false
@@ -104,7 +104,7 @@ function setupModal() {
       modalImage.alt = item.title
       modalTitle.innerHTML = item.title
       modalDescription.innerHTML = item.description + originalLink
-      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription])
+      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).catch(console.error)
       transitioning = false
     }
   }
@@ -140,7 +140,7 @@ function setupModal() {
     modalDescription.innerHTML = description
     if (prevBtn) prevBtn.style.display = 'none'
     if (nextBtn) nextBtn.style.display = 'none'
-    if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription])
+    if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).catch(console.error)
   }
 
   // Gallery carousel modal
@@ -263,9 +263,9 @@ export async function navigate(path, pushState = true) {
 
   // Re-typeset MathJax
   if (window.MathJax?.typesetPromise) {
-    MathJax.typesetPromise([app])
+    MathJax.typesetPromise([app]).catch(console.error)
   } else {
-    window.addEventListener('mathjax-ready', () => MathJax.typesetPromise([app]), { once: true })
+    window.addEventListener('mathjax-ready', () => MathJax.typesetPromise([app]).catch(console.error), { once: true })
   }
 
   window.scrollTo(0, 0)

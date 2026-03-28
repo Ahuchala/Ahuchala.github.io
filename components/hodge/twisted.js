@@ -175,7 +175,7 @@ export function init() {
       infoBox.innerHTML = `
         <p><strong>$H^{${q}}(\\Omega^{${p}}(t))$</strong> has no contributing partitions.</p>
       `;
-      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([infoBox]);
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([infoBox]).catch(console.error);
       return;
     }
 
@@ -194,7 +194,7 @@ export function init() {
 
     // Re-typeset MathJax for the updated box
     if (window.MathJax && MathJax.typesetPromise) {
-      MathJax.typesetPromise([infoBox]);
+      MathJax.typesetPromise([infoBox]).catch(console.error);
     }
 
   });

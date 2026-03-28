@@ -214,7 +214,7 @@ export function init() {
     if (validFactors.some(({ k, n }) => k <= 0 || n <= k)) {
       diamondContainerProduct.innerHTML =
         `<p class="error">Error: Need \\(0 &lt; k &lt; n\\) for each factor.</p>`;
-      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([diamondContainerProduct]);
+      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([diamondContainerProduct]).catch(console.error);
       return;
     }
 
@@ -225,7 +225,7 @@ export function init() {
       diamondContainerProduct.innerHTML =
         `<p class="error">Error: Dimension is negative. ` +
         `Ensure \\( r \\leq \\dim(X) \\).</p>`;
-      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([diamondContainerProduct]);
+      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([diamondContainerProduct]).catch(console.error);
       return;
     }
 
@@ -268,7 +268,7 @@ export function init() {
         `<p class="error">Error: Every component of each multidegree must be \\(\\geq 1\\). ` +
         `A component of 0 defines a non-ample divisor, so the Lefschetz hyperplane theorem ` +
         `fails and the Hodge number formula is invalid.</p>`;
-      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([diamondContainerProduct]);
+      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([diamondContainerProduct]).catch(console.error);
       return;
     }
 
