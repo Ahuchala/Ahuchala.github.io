@@ -147,11 +147,11 @@ function populateSequences(containerId, sequences) {
     const div = document.createElement('div')
     div.className = 'oeis-sequence'
 
-    const idEl = document.createElement('div')
+    const idEl = document.createElement('span')
     idEl.className = 'sequence-id'
     idEl.textContent = seq.id
 
-    const nameEl = document.createElement('div')
+    const nameEl = document.createElement('span')
     nameEl.className = 'sequence-name'
     nameEl.innerHTML = seq.name
 
@@ -162,7 +162,7 @@ function populateSequences(containerId, sequences) {
   })
 }
 
-function setupCollapsible(gridId, btnId, itemClass, itemMinWidth) {
+function setupCollapsible(gridId, btnId, itemClass, itemMinWidth, fixedPerRow = null, visibleDisplay = 'block') {
   const grid = document.getElementById(gridId)
   const btn = document.getElementById(btnId)
   if (!grid || !btn) return
@@ -171,17 +171,16 @@ function setupCollapsible(gridId, btnId, itemClass, itemMinWidth) {
 
   const applyVisibility = () => {
     const all = items()
-    const sectionWidth = grid.clientWidth
-    const perRow = Math.max(1, Math.floor(sectionWidth / itemMinWidth))
+    const perRow = fixedPerRow ?? Math.max(1, Math.floor(grid.clientWidth / itemMinWidth))
     const totalRows = Math.ceil(all.length / perRow)
 
     all.forEach((item, i) => {
       const row = Math.floor(i / perRow)
       if (row === 0 || totalRows <= 2) {
-        item.style.display = 'block'
+        item.style.display = visibleDisplay
         item.classList.remove('obscured', 'hidden')
       } else if (row === 1) {
-        item.style.display = 'block'
+        item.style.display = visibleDisplay
         item.classList.add('obscured')
         item.classList.remove('hidden')
       } else {
@@ -221,8 +220,8 @@ export function init() {
   const fns = [
     setupCollapsible('knight-gallery', 'btn-knight', 'gallery-item', 150),
     setupCollapsible('theta-gallery',  'btn-theta',  'gallery-item', 150),
-    setupCollapsible('grid-edits',     'btn-edits',  'oeis-sequence', 250),
-    setupCollapsible('grid-authored',  'btn-authored','oeis-sequence', 250),
+    setupCollapsible('grid-edits',     'btn-edits',  'oeis-sequence', 250, 8, 'grid'),
+    setupCollapsible('grid-authored',  'btn-authored','oeis-sequence', 250, 8, 'grid'),
   ].filter(Boolean)
 
   let resizeTimer
