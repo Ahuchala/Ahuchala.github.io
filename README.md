@@ -29,6 +29,21 @@ Given a smooth algebraic variety over ℂ, the **Hodge diamond** is the grid of 
         1
 ```
 
+**Debarre–Voisin 20-fold (hyperplane in Gr(3,10)):** a 20-dimensional variety; the diamond
+has 41 rows. Most Hodge numbers are zero — the non-trivial ones are:
+```
+h^{p,p} = 1, 1, 2, 3, 4, 5, 7, 8, 9, 10, 30, 10, 9, 8, 7, 5, 4, 3, 2, 1, 1   (p = 0…20)
+```
+All off-diagonal Hodge numbers are zero except `h^{11,9} = h^{9,11} = 1`.
+
+## Gallery
+
+The [gallery](/gallery) collects mathematical art and visualizations, including:
+
+- **Abelian sandpiles** — a 9000×9000 sandpile with 2³⁰ grains, rendered over a month on a GPU
+- **Zeta functions** — complex plots of Hasse-Weil zeta functions of varieties over finite fields
+- **Ising model simulations**, Julia sets, Weierstrass functions, Lie algebra characters, and more
+
 ## Running locally
 
 ```bash
