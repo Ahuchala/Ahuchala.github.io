@@ -1,5 +1,4 @@
 import { hodgeDiamondCI, applyBlowUp } from "/components/hodge/chiGrassmannianCI.js";
-import { debounce } from "/scripts/utils.js";
 
 // Persistent Worker for the CI Hodge computation. Created lazily on first
 // init() call and kept alive for the full session so its module-level
@@ -24,22 +23,21 @@ export function init() {
 
     const presetButtons = document.querySelectorAll(".preset-button");
     let lastUserSetR = parseInt(rSlider.value, 10) || 0; // Tracks last user-set value of r
-    let _gen = 0; // Incremented on each compute request; used to discard stale Worker responses
+    let _gen = 0;          // incremented on each Worker dispatch; echoed back by Worker
+    let _workerBusy = false;   // true while a Worker computation is in-flight
+    let _hasPendingUpdate = false; // true if a newer request arrived while Worker was busy
 
     // --- slider/textbox sync that allows blank, with configurable min/max ---
-    // input events (slider drag, typing) are debounced 40 ms so the diamond
-    // is only recomputed after the user pauses — not 60× per second while
-    // dragging. blur is kept immediate so fields snap when the user tabs away.
+    // Slider events trigger the diamond update immediately (no debounce).
+    // blur is kept immediate so fields snap when the user tabs away.
     const syncSliderAndTextbox = (slider, textbox, onChange, minVal = 0, maxVal = 50) => {
-        const debouncedOnChange = debounce(onChange, 40);
-
         // slider → textbox
         slider.addEventListener("input", () => {
             const v = Number(slider.value);
             const clamped = Math.max(minVal, Math.min(v, maxVal));
             slider.value = String(clamped);
             textbox.value = String(clamped);
-            debouncedOnChange();
+            onChange();
         });
 
         // textbox typing: allow blank, don't touch the slider or diamond until numeric
@@ -56,7 +54,7 @@ export function init() {
             const clamped = Math.max(minVal, Math.min(num, maxVal));
             textbox.value = String(clamped);
             slider.value = String(Math.max(minVal, Math.min(clamped, Number(slider.max))));
-            debouncedOnChange();
+            onChange();
         });
 
         // on blur: if still blank, restore from slider; otherwise normalize (immediate)
@@ -105,7 +103,7 @@ export function init() {
                 input.value = "2";
                 input.className = "hodge-input";
 
-                input.addEventListener("input", () => debouncedUpdateDiamond());
+                input.addEventListener("input", updateDiamond);
 
                 toggleContainer.appendChild(label);
                 toggleContainer.appendChild(input);
@@ -141,8 +139,6 @@ export function init() {
             return;
         }
 
-        diamondContainer.innerHTML = "";
-
         // Helper: read and validate degrees array (positive integers)
         const readDegrees = () => {
             const inputs = Array.from(
@@ -176,6 +172,7 @@ export function init() {
                 return;
             }
 
+            diamondContainer.innerHTML = "";
             const product = degrees.reduce((acc, degree) => acc * degree, 1);
 
             const singleRow = document.createElement("div");
@@ -192,6 +189,7 @@ export function init() {
 
         // Special case: r = 0 → projective space P^n
         if (r === 0) {
+            diamondContainer.innerHTML = "";
             for (let j = 0; j < rows; j++) {
                 const row = document.createElement("div");
                 row.className = "diamond-row";
@@ -271,15 +269,38 @@ export function init() {
             }
         };
 
-        const gen = ++_gen;
         const worker = getCIWorker();
 
         if (worker) {
+            // Coalesce: if a Worker computation is already in-flight, save this as the
+            // pending request (overwriting any previously queued one) and return immediately.
+            // The current diamond stays visible — no blank flash.
+            if (_workerBusy) {
+                _hasPendingUpdate = true;
+                return;
+            }
+
             // Off-load computation to Worker so the main thread stays responsive.
-            // The generation counter discards responses from superseded requests.
-            diamondContainer.classList.add("diamond-loading");
+            // Do NOT clear the container here — keep the old diamond visible until
+            // the new result is ready. renderBlownDiamond clears before rendering.
+            const gen = ++_gen;
+            _workerBusy = true;
+            _hasPendingUpdate = false;
+            // Delay the loading indicator — fast computations finish before it fires,
+            // so the diamond never flickers during normal slider dragging.
+            const loadingTimer = setTimeout(
+                () => diamondContainer.classList.add("diamond-loading"), 150
+            );
             worker.onmessage = ({ data }) => {
-                if (data.gen !== gen) return; // stale — a newer request is already in flight
+                clearTimeout(loadingTimer);
+                _workerBusy = false;
+                // If a newer request arrived while we were computing, dispatch it now.
+                if (_hasPendingUpdate) {
+                    _hasPendingUpdate = false;
+                    updateDiamond();
+                }
+                // Discard if a newer dispatch is already in flight (gen moved on).
+                if (data.gen !== _gen) return;
                 diamondContainer.classList.remove("diamond-loading");
                 if (!data.ok) {
                     console.error("hodgeDiamondCI Worker error:", data.error);
@@ -292,6 +313,7 @@ export function init() {
             worker.postMessage({ k: 1, n: n + 1, degrees, s, dim, gen });
         } else {
             // Fallback: synchronous computation (e.g. Workers unavailable in this environment).
+            diamondContainer.innerHTML = "";
             try {
                 const diamond = applyBlowUp(hodgeDiamondCI(1, n + 1, degrees), s, dim);
                 renderBlownDiamond(diamond, diamondContainer);
@@ -302,10 +324,6 @@ export function init() {
             }
         }
     };
-
-    // Debounced wrapper used by degree-input listeners (created after updateDiamond
-    // so the closure captures the fully-initialized function reference).
-    const debouncedUpdateDiamond = debounce(updateDiamond, 40);
 
     const loadPreset = (n, r, degrees) => {
         nValue.value = String(n);

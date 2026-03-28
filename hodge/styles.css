@@ -300,6 +300,15 @@ body.hide-top-half .is-top-half {
 #diamond-container-flag {
     transition: opacity 0.15s ease;
 }
+#diamond-container,
+#diamond-container-abelian,
+#diamond-container-grassmannian,
+#diamond-container-flag,
+#diamond-container-twisted,
+#diamond-container-product {
+    transition: opacity 180ms ease;
+}
+
 .diamond-loading {
     opacity: 0.35;
     pointer-events: none;
