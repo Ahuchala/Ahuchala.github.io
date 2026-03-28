@@ -25,6 +25,13 @@
     align-items: center;
     margin-bottom: 10px;
   }
+
+.blowup-row {
+    display: none;
+}
+body.show-blowups .blowup-row {
+    display: flex;
+}
   
   .input-row label {
     white-space: nowrap;  /* Prevents wrapping; label sizes to its text */

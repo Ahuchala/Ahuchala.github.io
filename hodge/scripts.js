@@ -596,6 +596,13 @@ export function init() {
       });
     }
 
+    const showBlowupsToggle = document.getElementById("show-blowups-toggle");
+    if (showBlowupsToggle) {
+      showBlowupsToggle.addEventListener("change", () => {
+        document.body.classList.toggle("show-blowups", showBlowupsToggle.checked);
+      });
+    }
+
     // Initial pass
     annotateAllDiamondCoords();   // NEW
 
@@ -609,6 +616,10 @@ export function init() {
       relabelAllTopHalf();
     } else {
       relabelAllTopHalf();
+    }
+
+    if (showBlowupsToggle?.checked) {
+      document.body.classList.add("show-blowups");
     }
 
     updateHodgeDiamondDescription();

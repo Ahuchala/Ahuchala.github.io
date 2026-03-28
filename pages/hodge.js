@@ -91,7 +91,7 @@ export function render() {
                         <div class="input-row">
                           <div id="degree-toggles"></div>
                         </div>
-                        <div class="input-row">
+                        <div class="input-row blowup-row">
                           <label for="s-slider">Blow-up points (\\(s\\)):</label>
                           <input type="range" id="s-slider" min="0" max="20" value="0">
                           <input type="number" id="s-value" min="0" max="1000" value="0" class="hodge-input">
@@ -179,7 +179,7 @@ export function render() {
                         <div class="input-row">
                             <div id="degree-toggles-grassmannian"></div>
                         </div>
-                        <div class="input-row">
+                        <div class="input-row blowup-row">
                             <label for="s-slider-grassmannian">Blow-up points (\\(s\\)):</label>
                             <input type="range" id="s-slider-grassmannian" min="0" max="20" value="0">
                             <input type="number" id="s-value-grassmannian" min="0" max="1000" value="0" class="hodge-input">
@@ -331,6 +331,12 @@ export function render() {
             Hide upper half of Hodge diamond
           </label>
         </div>
+        <div class="input-row" style="margin-top:.25rem">
+          <label>
+            <input type="checkbox" id="show-blowups-toggle">
+            Show blow-up controls
+          </label>
+        </div>
 
 
         <div class="how-does-it-work-div">
@@ -399,7 +405,10 @@ export function init() {
   // Allow the diamond to overflow its card and be scrollable via page scroll.
   // Cleaned up when navigating away so other pages are unaffected.
   document.body.classList.add('hodge-active')
-  window._pageCleanup = () => document.body.classList.remove('hodge-active')
+  window._pageCleanup = () => {
+    document.body.classList.remove('hodge-active')
+    document.body.classList.remove('show-blowups')
+  }
 
   // Center each diamond horizontally within its #diamond-box card
   // (the panel that also holds the description text above it).
