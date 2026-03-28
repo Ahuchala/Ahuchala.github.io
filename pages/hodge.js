@@ -341,13 +341,14 @@ export function render() {
 
         <div class="how-does-it-work-div">
             <section class="section">
+                <section class="section">
                 <h2>How does it work?</h2>
                 <p>
-                    The Hodge numbers of complete intersections in Grassmannians works using the Hirzebruch-Riemann-Roch theorem, adjunction formula, and Lefschetz hyperplane theorem, along with Hodge symmetry and Serre duality. Under the hood, a lot of this is computed in Macaulay2 using Schubert calculus. 
+                    The Hodge numbers of complete intersections in Grassmannians works using the Borel-Weil-Bott theorem, adjunction formula, and Lefschetz hyperplane theorem, along with Hodge symmetry and Serre duality. Additionally, results from <a href="https://arxiv.org/pdf/2510.17239">the paper I wrote with Fern Gossow</a> allows for efficient computations.
 
                 </p>
                 <p>
-                    Abelian varieties are a lot easier (over $\\mathbb C$) since topologically they are tori so the K&uuml;nneth theorem applies.
+                    Abelian varieties are a lot easier (over $\\mathbb C$) since topologically they are just tori so the K&uuml;nneth theorem applies.
 
                 </p>
                 <div>
@@ -359,22 +360,17 @@ export function render() {
                         $$
                     </p>
                     <p>
-                        You can find a nice implementation of this generating function approach on <a href="https://pbelmans.ncag.info/cohomology-tables/">Pieter Belman's website</a> (which also allows for some twists!). My website also uses this generating function for complete intersections in $\\mathbb P^n$.
+                        You can find a nice implementation of this generating function approach on <a href="https://pbelmans.ncag.info/cohomology-tables/">Pieter Belman's website</a> (which also allows for some twists!). My website doesn't use this generating function for complete intersections since it runs a hook-length algorithm based on Borel-Weil-Bott instead.
                     </p>
                 </div>
                 <div>
                     <h3>Smooth Hypersurfaces and Complete Intersections in $\\text{Gr}(k,n)$</h3>
                     <p>
-                        There is no known generating function such as the one from Hirzebruch in the case of $\\text{Gr}(k,n)$. However, we can use the Hirzebruch-Riemann-Roch theorem to determine the euler characteristic of $\\Omega^j(X)$, which in turn allows us to compute the Hodge numbers.
-                    </p>
-                    <p>
-                        Recall that for a holomorphic vector bundle $ E$ on $X$ we define the euler characteristic by
+                        There is no known generating function such as the one from Hirzebruch in the case of $\\text{Gr}(k,n)$. However, the hooklength algorithm used on this site is good enough at finding the holomorphic Euler characteristic. Recall that for a holomorphic vector bundle $ E$ on $X$ we define the euler characteristic by
                         $$\\chi(X,E) = \\sum_{i} (-1)^i\\dim H^i(X,E)
                             $$
-                        The Hirzebruch-Riemann-Roch theorem states that
-                        $$\\chi(X,E) = \\int_X \\text{ch}(E)\\wedge \\text{td}(T_X)
-                        $$
-                        where $\\text{ch}(E)$ denotes the Chern character of $E$ and $\\text{td}(T_X)$ denotes the Todd class of the tangent bundle of $X$. These are each computed symbolically in Macualay2 using the Schubert2 package. It turns out that computing $\\chi(X,\\Omega^j)$ provides enough information to deduce the Hodge numbers of $X$, by the Lefschetz hyperplane theorem: Let $X\\subset Y$ be an inclusion of nice enough spaces. Then
+                        
+                        It turns out that computing $\\chi(X,\\Omega^j)$ provides enough information to deduce the Hodge numbers of $X$, by the Lefschetz hyperplane theorem: Let $X\\subset Y$ be an inclusion of nice enough spaces. Then
                         $$H^i(X)\\cong H^i(Y)\\text{ for all }i<\\text{dim}\\,X-1
                         $$
                         and
