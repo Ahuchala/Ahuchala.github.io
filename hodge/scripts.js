@@ -1,3 +1,21 @@
+// hodge/scripts.js
+//
+// Cross-cutting init logic shared by all 6 Hodge calculators. Called once from
+// pages/hodge.js after every individual calculator's init() has run.
+//
+// Responsibilities:
+//   1. Calculator toggle buttons — show/hide container divs, mark active button
+//   2. Label alignment — equalize .input-row label widths within each container
+//   3. Preset button highlighting — keep preset buttons highlighted when active
+//   4. Dynamic diamond description — update the "Hodge diamond for a smooth ..."
+//      caption above each diamond in real time as inputs change
+//   5. Coordinate annotation — stamp data-i / data-j attributes and tooltip titles
+//      onto every diamond cell (used by the Twisted calculator's click handler)
+//   6. Zero-entry coloring — add .is-zero class to cells whose value is "0"
+//      when the "Alternate color for zero entries" toggle is on
+//   7. Hide-top-half toggle — add .is-top-half to rows above the middle row
+//   8. Scroll wheel guard — prevent number inputs from changing on wheel scroll
+
 export function init() {
     // --- Toggle Between Calculators ---
     const toggleCompleteIntersection = document.getElementById("toggle-complete-intersection");
@@ -433,7 +451,18 @@ export function init() {
       document.getElementById("diamond-container-product"),
     ].filter(Boolean);
 
-    // NEW: annotate (i,j) coordinates + title for ALL diamonds
+    // Stamp data-i, data-j, and a hover tooltip onto every cell of the given diamond root.
+    //
+    // Diamond convention: the diamond has 2N+1 rows. Row 0 (top) is h^{N,N}; row 2N
+    // (bottom) is h^{0,0}. In each row, the leftmost cell has the largest i value.
+    //
+    // For a row at DOM index idxTop (0 = top of diamond):
+    //   - "antidiagonal index" r = i + j = (2N) - idxTop  (bottom row → r=0, top row → r=2N)
+    //   - i ranges from iMax = min(r, N) down to iMin = max(0, r-N), left to right
+    //   - j = r - i
+    //
+    // These coordinates are consumed by the Twisted calculator's click handler to show
+    // which Schubert partitions contribute to the clicked h^{i,j} value.
     function annotateDiamondCoords(root) {
       if (!root) return;
 
@@ -442,15 +471,12 @@ export function init() {
       );
       if (!rows.length) return;
 
-      // querySelectorAll returns DOM order (top→bottom)
-
       const L = rows.length;
-      if (L % 2 === 0) return; // expect 2N+1 rows
-      const N = (L - 1) / 2;
+      if (L % 2 === 0) return; // expect 2N+1 rows; bail if something is wrong
+      const N = (L - 1) / 2;  // half-dimension: diamond spans h^{p,q} with p,q in [0,N]
 
       rows.forEach((row, idxTop) => {
-        // r = i + j, with bottom row having r = 0
-        const r = (L - 1) - idxTop;  // bottom-most row → r = 0
+        const r = (L - 1) - idxTop;  // antidiagonal: bottom row → r=0, top row → r=2N
 
         const spans = Array.from(
           row.querySelectorAll(".diamond-value, .hodge-cell, span")
@@ -460,10 +486,9 @@ export function init() {
         const iMin = Math.max(0, r - N);
         const iMax = Math.min(r, N);
 
-        // In your convention, **leftmost has largest i** (iMax),
-        // rightmost has smallest i (iMin).
+        // Leftmost span has i = iMax; i decreases by 1 per step going right
         spans.forEach((span, s) => {
-          const i = iMax - s;      // i decreases left → right
+          const i = iMax - s;
           const j = r - i;
 
           if (i < 0 || j < 0 || i > N || j > N) return;

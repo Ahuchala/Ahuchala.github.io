@@ -1,3 +1,15 @@
+// scripts/main.js — SPA entry point
+//
+// Boot order:
+//   1. Decode GitHub Pages redirect (?p= query param from 404.html)
+//   2. Inject <header> and <footer> components
+//   3. Register global event listeners:
+//       • mouseover  → prefetchRoute() to preload JS modules on hover
+//       • click      → intercept internal <a> clicks for SPA navigation
+//       • popstate   → handle browser back/forward buttons
+//   4. navigate() — render the current URL's page immediately
+//   5. Register service worker for offline caching on repeat visits
+
 import { setComponents } from '/components/setComponents.js'
 import { initMenuToggle, initSettings } from '/scripts.js'
 import { navigate, prefetchRoute } from '/scripts/router.js'

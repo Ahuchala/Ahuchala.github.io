@@ -106,6 +106,18 @@ export function init()
     }
   };
 
+  // Build the full middle row of the Hodge diamond from its left half.
+  //
+  // chiGrassmannianCI returns only the "left half" of the middle row — the entries
+  // h^{dim, 0}, h^{dim-1, 1}, ..., h^{ceil(dim/2), floor(dim/2)} — because the
+  // right half follows by Hodge symmetry h^{p,q} = h^{q,p}.
+  //
+  // For odd dim=2m+1: left half has m+1 entries [h^{2m+1,0}, ..., h^{m+1,m}].
+  //   Mirror appends [h^{m,m+1}, ..., h^{0,2m+1}] = same m+1 entries reversed.
+  //   Total: 2m+2 entries.
+  // For even dim=2m: left half has m+1 entries [h^{2m,0}, ..., h^{m,m}].
+  //   Mirror appends [h^{m-1,m+1}, ..., h^{0,2m}] = first m entries reversed (skip center).
+  //   Total: 2m+1 entries.
   function constructMiddleRow(dimension, jsonData)
   {
     const isOdd = dimension % 2 === 1;
@@ -113,14 +125,30 @@ export function init()
     const truncatedData = jsonData.slice(0, requiredLength);
     const middleRow = [...truncatedData];
     if (isOdd) {
+      // Odd: mirror includes the last entry (no shared center)
       for (let i = truncatedData.length - 1; i >= 0; i--) middleRow.push(truncatedData[i]);
     } else {
+      // Even: mirror skips the last entry (h^{m,m} is the center, already included once)
       for (let i = truncatedData.length - 2; i >= 0; i--) middleRow.push(truncatedData[i]);
     }
     return middleRow;
   }
 
-  // Renders the diamond once hodge data is available.
+  // Renders the Hodge diamond for a CI in Gr(k,n) (or the Grassmannian itself).
+  //
+  // Layout convention: row i (0-indexed from top) corresponds to p+q = i.
+  //   - Rows 0..dim-1: "upper half" — only diagonal h^{p,p} entries are nonzero,
+  //     copied from the ambient Grassmannian via Lefschetz hyperplane theorem.
+  //   - Row dim: "middle row" — the interesting row; built from primitive Hodge numbers.
+  //   - Rows dim+1..2*dim: "lower half" — Serre-dual mirror of the upper half.
+  //
+  // When isCompleteIntersection = false, the middle diagonal entry h^{m,m} (m = dim/2
+  // for even dim) is the *sum* of the Grassmannian's h^{m,m} and the primitive part,
+  // because the ambient contribution was not subtracted in hodgePrimitiveMiddleRow.
+  //
+  // Blow-up: each blow-up point adds s to each intermediate diagonal h^{p,p},
+  // 1 ≤ p ≤ dim−1. For the center cell (even dim, p = m) the blow-up contribution
+  // is added separately from the BigInt sum.
   function renderDiamond(k, n, r, degrees, hodgeNumbersForDegrees, isCompleteIntersection, s = 0) {
     const dimension = k * (n - k) - r;
     const rows = 2 * dimension + 1;
@@ -150,6 +178,11 @@ export function init()
         const valueCell = document.createElement("span");
         valueCell.className = "diamond-value";
         if (i === dimension) {
+          // Middle row. Two sub-cases:
+          // isCompleteIntersection=true → hodgeNumbersForDegrees already includes the
+          //   Grassmannian diagonal contribution (from hodgeDiamondCI), use directly.
+          // isCompleteIntersection=false → hodgeNumbersForDegrees is the *primitive* part;
+          //   add the Grassmannian diagonal h^{j,j}(Gr) on top.
           if (isCompleteIntersection) {
             valueCell.innerText = middleRow[j] ?? "0";
           } else {
@@ -161,8 +194,10 @@ export function init()
             valueCell.innerText = sum.toString();
           }
         } else if (i < dimension) {
+          // Upper half: only diagonal entries are nonzero (Lefschetz + blow-up delta)
           valueCell.innerText = String((fullHodgeNumbers[i]?.[j] ?? 0) + blowUpDelta(i, j));
         } else {
+          // Lower half: Serre-dual mirror of the upper half
           const mirrorRow = rows - i - 1;
           valueCell.innerText = String((fullHodgeNumbers[mirrorRow]?.[j] ?? 0) + blowUpDelta(i, j));
         }

@@ -1,3 +1,28 @@
+// pages/hodge.js
+//
+// Page module for the Hodge Diamond Calculator.
+//
+// render() — returns the full page HTML (all 6 calculator sections + toggle buttons).
+//   All sections exist in the DOM simultaneously; only one is visible at a time
+//   (controlled by hodge/scripts.js toggle logic).
+//
+// init() — wires up all 6 calculators, then handles two cross-cutting concerns:
+//
+//   1. body.hodge-active
+//      Global styles.css has `body { overflow-x: clip }` to suppress horizontal
+//      scrollbars on every page. Large Hodge diamonds (e.g. the hyperplane in Gr(3,10)
+//      has 29 columns) need to overflow their card. We add `hodge-active` to <body>
+//      so that hodge/styles.css can override to `overflow-x: auto` while on this page.
+//      The class is removed in _pageCleanup when the user navigates away.
+//
+//   2. Diamond centering (ResizeObserver + MutationObserver per wrapper)
+//      Each `.diamond-scroll-wrapper` gets a pair of observers that re-run whenever
+//      the diamond's content changes or the window resizes. The callback sets
+//      `container.style.marginLeft` to align the diamond's horizontal midpoint with
+//      the midpoint of its parent `#diamond-box` card (which also holds the description
+//      text). The `#inputs` panel is given z-index:1 in hodge/styles.css so it remains
+//      clickable even when a wide diamond's negative margin extends over it.
+
 import { init as initCI } from '/components/hodge/completeIntersection.js'
 import { init as initAbelian } from '/components/hodge/abelianVariety.js'
 import { init as initGrassmannian } from '/components/hodge/grassmannian.js'
