@@ -1,91 +1,87 @@
-/* General Timeline Wrapper */
 .timeline-wrapper {
-    max-width: 800px; /* Limit width for better readability */
-    margin: 0 auto; /* Center the timeline section */
-    padding: 20px; /* Add padding for breathing room */
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-/* Timeline Section */
-.timeline {
-    border-left: 2px solid var(--primary-dark); /* Vertical line for the timeline */
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Space between items */
-    list-style: none; /* Remove default bullets */
-    padding-left: 40px; /* Space for dots and text */
-}
-
-/* Timeline Items */
-.timeline-item {
-    position: relative;
-    background: var(--body-section-1);
-    border: 1px solid var(--border-color-1);
-    border-radius: 10px;
-    padding: 18px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04),
-                0 4px 12px rgba(0, 0, 0, 0.06),
-                0 8px 20px rgba(0, 0, 0, 0.04);
-}
-
-/* Timeline Item Dot */
-.timeline-item::before {
-    content: "";
-    position: absolute;
-    left: -25px; /* Align dot with the timeline */
-    top: 6px; /* Align with the first line of text */
-    width: 12px;
-    height: 12px;
-    background: var(--primary-dark); /* Dot color */
-    border-radius: 50%; /* Make it circular */
-    border: 2px solid #f7f7f7; /* Outline matches background */
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-/* Timeline Item Title */
-.timeline-item h2 {
-    margin: 0 0 10px;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--section-header-text-color);
-    line-height: 1.4;
-    margin-left: 10px;
-    letter-spacing: -0.01em;
-}
-
-/* Timeline Item Description */
-.timeline-item p {
-    margin: 0;
-    font-size: 1rem;
-    color: var(--secondary-text);
-    line-height: 1.5;
-    margin-left: 10px;
-}
-
-/* Section Title */
 .timeline-title {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: var(--section-header-text-color);
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: var(--section-header-text-color);
 }
 
-@media (max-width: 480px) {
-    .timeline {
-        padding-left: 24px;
-    }
-
-    .timeline-item::before {
-        left: -18px;
-    }
-}
-
-/* Section Description */
 .timeline-description {
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: 400;
-    color: var(--secondary-text);
-    margin-bottom: 40px;
-    line-height: 1.6;
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--secondary-text);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+/* ── Year groups ── */
+
+.teaching-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+
+.teaching-year {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary-dark);
+  border-bottom: 1px solid var(--border-color-1);
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.25rem;
+}
+
+/* ── Rows ── */
+
+.teaching-row {
+  display: grid;
+  grid-template-columns: 110px 80px 1fr;
+  column-gap: 1.25rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color-1) 60%, transparent);
+  align-items: baseline;
+  font-size: 0.95rem;
+}
+
+.teaching-rows .teaching-row:last-child {
+  border-bottom: none;
+}
+
+.teaching-term {
+  color: var(--secondary-text);
+  white-space: nowrap;
+}
+
+.teaching-role {
+  color: var(--secondary-text);
+  font-size: 0.85rem;
+}
+
+.teaching-course {
+  color: var(--text-color);
+}
+
+@media (max-width: 540px) {
+  .teaching-row {
+    grid-template-columns: 1fr;
+    row-gap: 0.1rem;
+    padding: 0.55rem 0;
+  }
+
+  .teaching-term {
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .teaching-role {
+    font-size: 0.8rem;
+  }
 }

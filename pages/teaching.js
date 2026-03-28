@@ -24,18 +24,43 @@ const timelineData = [
   { term: 'Fall 2019',   role: 'TA',         course: 'Math 111: Precalculus' },
 ]
 
+function academicYear(term) {
+  const [season, yearStr] = term.split(' ')
+  const year = parseInt(yearStr, 10)
+  return (season === 'Fall' || season === 'Summer') ? `${year}\u2013${year + 1}` : `${year - 1}\u2013${year}`
+}
+
+function groupByYear(data) {
+  const map = new Map()
+  for (const entry of data) {
+    const yr = academicYear(entry.term)
+    if (!map.has(yr)) map.set(yr, [])
+    map.get(yr).push(entry)
+  }
+  return [...map.entries()]
+}
+
 export function render() {
+  const groups = groupByYear(timelineData)
   return /* html */`
     <section class="timeline-wrapper">
       <h2 class="timeline-title">Teaching Experience</h2>
       <div class="timeline-description">
-        <p>Below is a list of courses I've taught at the University of Oregon, from most recent to oldest:</p>
+        <p>Courses taught at the University of Oregon:</p>
       </div>
-      <div id="timeline" class="timeline">
-        ${timelineData.map(({ term, role, course }) => `
-          <div class="timeline-item">
-            <h2>${term}</h2>
-            <p><strong>${role}</strong> for <em>${course}</em></p>
+      <div class="teaching-groups">
+        ${groups.map(([year, entries]) => `
+          <div class="teaching-year-group">
+            <div class="teaching-year">${year}</div>
+            <div class="teaching-rows">
+              ${entries.map(({ term, role, course }) => `
+                <div class="teaching-row">
+                  <span class="teaching-term">${term}</span>
+                  <span class="teaching-role">${role}</span>
+                  <span class="teaching-course">${course}</span>
+                </div>
+              `).join('')}
+            </div>
           </div>
         `).join('')}
       </div>
