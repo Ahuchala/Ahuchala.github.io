@@ -131,9 +131,36 @@ a:hover {
   text-decoration: underline;
 }
 
-a:active, a:focus {
+a:active {
   color: var(--hover-dark);
-  outline: none;
+}
+
+/* Show a visible focus ring for keyboard users, suppress it for mouse/touch. */
+a:focus-visible {
+  outline: 2px solid var(--secondary-light);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Skip-to-main-content link — visually hidden until focused by keyboard */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: var(--header-color-1);
+  color: #fff;
+  border-radius: 0 0 6px 6px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--secondary-light);
+  outline-offset: 2px;
 }
 
 /* Utility classes */
@@ -162,7 +189,7 @@ a:active, a:focus {
 .cv-button:hover,
 .cv-button:focus {
   background: var(--section-header-text-color);
-  color: var(--bg-color);
+  color: var(--body-bg-1);
 }
 
 .center-content {
@@ -197,10 +224,6 @@ header .header-content h1 {
   z-index: 3;
 }
 
-.header-tld {
-  color: var(--secondary-light);
-  font-weight: 400;
-}
 
 /*****************************************************
  * 5. NAVBAR
@@ -262,6 +285,13 @@ header .header-content h1 {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   text-shadow: none;
+}
+
+.navbar a.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /*****************************************************
@@ -606,11 +636,6 @@ main {
   /* border: 2px solid rgba(255, 255, 255, 0.2); */
 }
 
-.grid-item img:hover {
-  /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); */
-  /* border-color: var(--hover-dark); */
-}
-
 .grid-item p {
   margin-top: 10px;
   font-size: 1rem;
@@ -631,13 +656,6 @@ main {
 /*****************************************************
  * 11. MODAL
  *****************************************************/
-
-/* .oeis-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-  padding: 20px;
-} */
 
 .modal {
   display: none;
@@ -742,34 +760,15 @@ main {
   font-size: 0.85em;
   opacity: 0.7;
   text-decoration: none;
-  color: var(--link-color);
+  color: var(--secondary-light);
 }
 .original-link:hover { opacity: 1; }
-
-.modal-title {
-  position: absolute;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: 10px;
-  font-size: 1.5rem;
-  color: white;
-  font-weight: bold;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  text-align: center;
-}
-
-.modal-description {
-  font-size: 1.2rem;
-  color: var(--secondary-text);
-  line-height: 1.6;
-}
 
 /* Title above the thumbnails */
 .thumbnail-title {
   text-align: center;
   font-size: 1.2rem;
-  color: var(--primary-dark);
+  color: var(--text-color);
   margin-bottom: 8px;
   font-weight: bold;
 }
@@ -841,27 +840,6 @@ main {
   display: none;
 }
 
-/* Fully visible first row */
-.collapsible .gallery-item.first,
-.collapsible .oeis-sequence.first {
-  display: block;
-  opacity: 1;
-}
-
-/* Obscured second row */
-.collapsible .gallery-item.second,
-.collapsible .oeis-sequence.second {
-  display: block;
-  opacity: 0.7;
-  pointer-events: auto;
-}
-
-/* Hidden rows beyond the second */
-.collapsible .gallery-item.hidden,
-.collapsible .oeis-sequence.hidden {
-  display: none;
-}
-
 /* Show More button */
 .show-more {
   display: inline-block;
@@ -922,10 +900,6 @@ main {
   position: relative;
   z-index: 5;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.circle-container {
-  /* overflow: hidden; */
 }
 
 /*****************************************************
@@ -1220,3 +1194,31 @@ main {
 #app.entering-from-right { animation: nav-enter-from-right 200ms ease both; }
 #app.entering-from-left  { animation: nav-enter-from-left  200ms ease both; }
 #app.entering            { animation: nav-enter-fade       200ms ease both; }
+
+/* ─── Reduce motion ────────────────────────────────────────────────────────── */
+/* Honour the user's reduce-motion preference (set via the settings toggle     */
+/* or inherited from the OS via prefers-reduced-motion).                       */
+
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Page transitions are skipped entirely in JS when reduce-motion is on,
+   but belt-and-suspenders: kill the animations in CSS too. */
+.reduce-motion #app.exiting-left,
+.reduce-motion #app.exiting-right,
+.reduce-motion #app.exiting,
+.reduce-motion #app.entering-from-right,
+.reduce-motion #app.entering-from-left,
+.reduce-motion #app.entering {
+  animation: none;
+}
+
+/* The intro highlight animation should also stop. */
+.reduce-motion .intro-highlight {
+  animation: none;
+}

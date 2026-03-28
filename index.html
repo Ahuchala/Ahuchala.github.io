@@ -4,29 +4,56 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Andy Huchala</title>
+  <meta name="description" content="Personal website of Andy Huchala — math graduate student at the University of Oregon. Research in algebraic geometry, interactive Hodge diamond calculator, mathematical art, and more.">
+
+  <!-- Open Graph / social sharing -->
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="Andy Huchala">
+  <meta property="og:description" content="Math graduate student at the University of Oregon. Research, teaching, art, and an interactive Hodge diamond calculator.">
+  <meta property="og:url"         content="https://ahuchala.com">
+  <meta property="og:image"       content="https://ahuchala.com/images/thumbnails/sand23_3k.webp">
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Andy Huchala">
+  <meta name="twitter:description" content="Math graduate student at the University of Oregon. Research, teaching, art, and an interactive Hodge diamond calculator.">
+  <meta name="twitter:image"       content="https://ahuchala.com/images/thumbnails/sand23_3k.webp">
+
+  <!-- Browser chrome color (matches header gradient start) -->
+  <meta name="theme-color" content="#3d7de8">
+
+  <!-- Prevent flash of wrong color scheme: set dark-mode class before CSS renders -->
+  <script>
+    (function () {
+      var saved = localStorage.getItem('darkMode')
+      var osDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (saved === 'enabled' || (saved === null && osDark)) {
+        document.documentElement.classList.add('dark-mode')
+      }
+    })()
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
 
   <script>
     window.MathJax = {
       tex: {
-        inlineMath:  [["$", "$"], ["\\(", "\\)"]],
-        displayMath: [["$$", "$$"], ["\\[", "\\]"]]
+        inlineMath:  [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
       },
-      svg: { fontCache: "global" },
+      svg: { fontCache: 'global' },
       startup: {
         ready() {
-          MathJax.startup.defaultReady();
+          MathJax.startup.defaultReady()
           MathJax.startup.promise.then(() =>
-            window.dispatchEvent(new CustomEvent("mathjax-ready"))
-          );
+            window.dispatchEvent(new CustomEvent('mathjax-ready'))
+          )
         }
       }
-    };
+    }
   </script>
   <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
@@ -53,20 +80,22 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
   <link rel="manifest" href="/favicon/manifest.json">
-  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileColor" content="#3d7de8">
   <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png">
 </head>
 <body>
+  <a href="#app" class="skip-link">Skip to main content</a>
   <div id="header"></div>
 
   <main id="app"></main>
 
-  <div class="footer"></div>
+  <footer class="footer"></footer>
 
-  <div id="image-modal" class="modal" style="display:none">
+  <div id="image-modal" class="modal" style="display:none"
+       role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <button class="modal-arrow modal-prev" aria-label="Previous image" style="display:none">&#8592;</button>
     <div class="modal-content">
-      <span class="close">&times;</span>
+      <button class="close" aria-label="Close">&times;</button>
       <img id="modal-image" src="" alt="">
       <div class="modal-text">
         <h2 id="modal-title"></h2>

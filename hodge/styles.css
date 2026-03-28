@@ -146,10 +146,6 @@ body.show-blowups .blowup-row {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-.preset-button:active {
-    /* transform: scale(1.05); */
-}
-
 /* Additional Styling for Toggle Menu */
 #toggle-menu {
     margin-bottom: 20px;
@@ -174,10 +170,6 @@ body.show-blowups .blowup-row {
     background-color: var(--hover-dark);
     transform: scale(1.02);
     /* color: var(--primary-dark); */
-}
-
-.toggle-button:active {
-    /* transform: scale(0.95); */
 }
 
 #diamond-container,

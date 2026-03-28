@@ -302,7 +302,7 @@ export function init() {
         const n = nValueEl.value;
         const k = kValueEl.value;
         const t = parseInt(tValueEl.value, 10);
-        if ( t === 0) {
+        if (t === 0) {
           descriptionText = `Hodge diamond for \\(\\text{Gr}(${k},${n})\\)`;
         } else {
           descriptionText = `Hodge diamond for \\(\\Omega_{\\text{Gr}(${k},${n})}\\otimes\\mathcal O_{\\text{Gr}(${k},${n})}(${t})\\)`;

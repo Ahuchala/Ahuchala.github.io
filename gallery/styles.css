@@ -22,6 +22,16 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 12px 28px rgba(0, 0, 0, 0.16);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .gallery img {
+    transition: none;
+  }
+
+  .gallery img:hover {
+    transform: none;
+  }
+}
+
 /* ─── Modal carousel arrows ───────────────────────────────────────────────── */
 
 .modal-arrow {
@@ -48,6 +58,11 @@
   background: rgba(0, 0, 0, 0.7);
 }
 
+.modal-arrow:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
 .modal-prev { left: 16px; }
 .modal-next { right: 16px; }
 
@@ -58,7 +73,11 @@
 @keyframes modal-enter-right { from { opacity: 0; transform: translateX( 40px); } }
 @keyframes modal-enter-left  { from { opacity: 0; transform: translateX(-40px); } }
 
-#modal-image.modal-exit-left   { animation: modal-exit-left   200ms ease forwards; }
-#modal-image.modal-exit-right  { animation: modal-exit-right  200ms ease forwards; }
-#modal-image.modal-enter-right { animation: modal-enter-right 200ms ease both; }
-#modal-image.modal-enter-left  { animation: modal-enter-left  200ms ease both; }
+/* JS guards these classes behind a reduce-motion check; the media query below
+   is an extra CSS-level safety net for the rare case where JS hasn't run yet. */
+@media (prefers-reduced-motion: no-preference) {
+  #modal-image.modal-exit-left   { animation: modal-exit-left   200ms ease forwards; }
+  #modal-image.modal-exit-right  { animation: modal-exit-right  200ms ease forwards; }
+  #modal-image.modal-enter-right { animation: modal-enter-right 200ms ease both; }
+  #modal-image.modal-enter-left  { animation: modal-enter-left  200ms ease both; }
+}

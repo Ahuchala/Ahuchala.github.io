@@ -1,13 +1,5 @@
 import { images } from '/components/gallery.js'
-
-function prefetchImage(href) {
-  if (document.querySelector(`link[rel="prefetch"][href="${href}"]`)) return
-  const link = document.createElement('link')
-  link.rel = 'prefetch'
-  link.as = 'image'
-  link.href = href
-  document.head.appendChild(link)
-}
+import { prefetchImage } from '/scripts/utils.js'
 
 export function prefetch() {
   images.forEach(({ thumbnail }) => prefetchImage(thumbnail))

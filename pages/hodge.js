@@ -474,8 +474,12 @@ export function init() {
     }, { once: true })
 
     flagBtn.addEventListener('click', async () => {
-      const { init: initFlag } = await import('/components/hodge/flag.js')
-      initFlag()
+      try {
+        const { init: initFlag } = await import('/components/hodge/flag.js')
+        initFlag()
+      } catch (e) {
+        console.error('Failed to load flag variety calculator:', e)
+      }
     }, { once: true })
   }
 }

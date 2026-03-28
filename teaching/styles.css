@@ -46,6 +46,7 @@
   grid-template-columns: 110px 80px 1fr;
   column-gap: 1.25rem;
   padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(30, 41, 59, 0.07); /* fallback for browsers without color-mix() */
   border-bottom: 1px solid color-mix(in srgb, var(--border-color-1) 60%, transparent);
   align-items: baseline;
   font-size: 0.95rem;

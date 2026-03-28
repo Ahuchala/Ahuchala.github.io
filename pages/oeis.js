@@ -1,4 +1,5 @@
 import { editedSequences, authoredSequences, favoriteSequences } from '/components/oeis.js'
+import { prefetchImage } from '/scripts/utils.js'
 
 // ─── Knight data ────────────────────────────────────────────────────────────
 const knightNs = Array.from({ length: 37 }, (_, i) => i + 4)
@@ -33,15 +34,6 @@ const thetaItems = [
     title, description, hasImage: true,
   }
 })
-
-function prefetchImage(href) {
-  if (document.querySelector(`link[rel="prefetch"][href="${href}"]`)) return
-  const link = document.createElement('link')
-  link.rel = 'prefetch'
-  link.as = 'image'
-  link.href = href
-  document.head.appendChild(link)
-}
 
 export function prefetch() {
   knightItems.filter(i => i.hasImage).forEach(({ thumbnail }) => prefetchImage(thumbnail))
@@ -196,7 +188,7 @@ function setupCollapsible(gridId, btnId, itemClass, itemMinWidth, fixedPerRow = 
   btn.addEventListener('click', () => {
     if (btn.textContent === 'Show More') {
       items().forEach(item => {
-        item.style.display = 'block'
+        item.style.display = visibleDisplay
         item.classList.remove('obscured', 'hidden')
       })
       btn.textContent = 'Show Less'

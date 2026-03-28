@@ -39,32 +39,6 @@
 }
 
 
-.oeis-grid-container {
-    margin: 40px auto;
-    padding: 28px;
-    text-align: center;
-    background-color: var(--body-section-1);
-    border: 1px solid var(--border-color-1);
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04),
-                0 4px 12px rgba(0, 0, 0, 0.06),
-                0 8px 24px rgba(0, 0, 0, 0.04);
-}
-
-.oeis-grid-container h2 {
-    color: var(--primary-dark);
-    margin-bottom: 10px;
-    font-size: 1.8rem;
-}
-
-.oeis-grid-container p {
-    margin-bottom: 20px;
-    font-size: 1rem;
-    color: #555;
-}
-
-
-
 .oeis-grid {
     display: flex;
     flex-direction: column;
@@ -76,6 +50,7 @@
     grid-template-columns: 90px 1fr;
     column-gap: 1.25rem;
     padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(30, 41, 59, 0.07); /* fallback for browsers without color-mix() */
     border-bottom: 1px solid color-mix(in srgb, var(--border-color-1) 60%, transparent);
     align-items: baseline;
     cursor: pointer;
@@ -87,6 +62,7 @@
 }
 
 .oeis-sequence:hover {
+    background: rgba(30, 41, 59, 0.04); /* fallback for browsers without color-mix() */
     background: color-mix(in srgb, var(--border-color-1) 30%, transparent);
 }
 

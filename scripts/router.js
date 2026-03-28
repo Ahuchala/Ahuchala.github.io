@@ -46,12 +46,16 @@ function setupModal() {
   const modalImage = document.getElementById('modal-image')
   const modalTitle = document.getElementById('modal-title')
   const modalDescription = document.getElementById('modal-description')
+  if (!modalImage || !modalTitle || !modalDescription) return
+
   const prevBtn = modal.querySelector('.modal-prev')
   const nextBtn = modal.querySelector('.modal-next')
 
   let playlist = null
   let playlistIndex = 0
   let transitioning = false
+
+  let lastFocusedElement = null
 
   function closeModal() {
     modal.style.display = 'none'
@@ -61,6 +65,8 @@ function setupModal() {
     playlist = null
     if (prevBtn) prevBtn.style.display = 'none'
     if (nextBtn) nextBtn.style.display = 'none'
+    // Return focus to the element that triggered the modal
+    lastFocusedElement?.focus()
   }
 
   function showItem(index, dir) {
@@ -131,6 +137,7 @@ function setupModal() {
 
   // Single-image modal (research, OEIS, etc.)
   window._openModal = (fullImage, title, description) => {
+    lastFocusedElement = document.activeElement
     playlist = null
     modalContent?.classList.remove('modal-carousel')
     modal.style.display = 'flex'
@@ -141,10 +148,13 @@ function setupModal() {
     if (prevBtn) prevBtn.style.display = 'none'
     if (nextBtn) nextBtn.style.display = 'none'
     if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).catch(console.error)
+    // Move focus into the modal for keyboard/screen-reader users
+    modal.querySelector('.close')?.focus()
   }
 
   // Gallery carousel modal
   window._openGallery = (items, startIndex) => {
+    lastFocusedElement = document.activeElement
     playlist = items
     playlistIndex = startIndex
     modalContent?.classList.add('modal-carousel')
@@ -152,6 +162,8 @@ function setupModal() {
     if (prevBtn) prevBtn.style.display = 'flex'
     if (nextBtn) nextBtn.style.display = 'flex'
     showItem(playlistIndex, 0)
+    // Move focus into the modal for keyboard/screen-reader users
+    modal.querySelector('.close')?.focus()
   }
 
   // Escape / arrow keys — replace handler each time so it closes over current navigate/closeModal

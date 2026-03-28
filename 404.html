@@ -1,17 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
 <head>
   <meta charset="utf-8">
   <title>Andy Huchala</title>
   <script>
     // GitHub Pages SPA redirect trick.
-    // When GH Pages serves a 404 for a clean URL like /gallery,
-    // we redirect to /?p=/gallery so the React app can restore it.
-    var l = window.location;
+    // GH Pages serves this 404.html for any unknown path (e.g. /gallery).
+    // We encode the path as a query param and redirect to the root so the
+    // SPA's router can restore the correct page.
+    var l = window.location
     l.replace(
       l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
       '/?p=' + encodeURIComponent(l.pathname + l.search) + l.hash
-    );
+    )
   </script>
 </head>
 <body></body>
