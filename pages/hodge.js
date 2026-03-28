@@ -370,7 +370,7 @@ export function render() {
                         $$\\chi(X,E) = \\sum_{i} (-1)^i\\dim H^i(X,E)
                             $$
                         
-                        It turns out that computing $\\chi(X,\\Omega^j)$ provides enough information to deduce the Hodge numbers of $X$, by the Lefschetz hyperplane theorem: Let $X\\subset Y$ be an inclusion of nice enough spaces. Then
+                        It turns out that computing $\\chi(X,\\Omega^j)$ provides enough information to deduce the (untwisted) Hodge numbers of $X$, by the Lefschetz hyperplane theorem: Let $X\\subset Y$ be an inclusion of nice enough spaces. Then
                         $$H^i(X)\\cong H^i(Y)\\text{ for all }i<\\text{dim}\\,X-1
                         $$
                         and
