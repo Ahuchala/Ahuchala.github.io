@@ -180,15 +180,6 @@ body.show-blowups .blowup-row {
     /* transform: scale(0.95); */
 }
 
-#hodge-container {
-    display: flex;
-    gap: 20px;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap; /* Allows wrapping for small screens */
-}
-
-
 #diamond-container,
 #diamond-container-abelian,
 #diamond-container-grassmannian,

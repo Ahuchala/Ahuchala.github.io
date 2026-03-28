@@ -208,7 +208,7 @@ export function prefetchRoute(path) {
   }
 
   const loader = routes[path]
-  if (loader) loader().then(mod => mod.prefetch?.())
+  if (loader) loader().then(mod => mod.prefetch?.()).catch(console.error)
 }
 
 export async function navigate(path, pushState = true) {

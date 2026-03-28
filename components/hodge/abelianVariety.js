@@ -27,7 +27,7 @@ export function init() {
             }
 
             // numeric:
-            let v = parseInt(raw);
+            let v = parseInt(raw, 10);
             if (!Number.isFinite(v)) v = 1;
             v = Math.max(1, Math.min(v, maxValue));
 
@@ -40,7 +40,7 @@ export function init() {
         // on blur: normalize blank → 1
         textbox.addEventListener("blur", () => {
             if (textbox.value.trim() === "") textbox.value = "1";
-            let v = parseInt(textbox.value);
+            let v = parseInt(textbox.value, 10);
             if (!Number.isFinite(v)) v = 1;
             v = Math.max(1, Math.min(v, maxValue));
             textbox.value = v;
@@ -50,7 +50,7 @@ export function init() {
     };
 
     const updateDiamondAbelian = () => {
-        const g = parseInt(gValue.value);
+        const g = parseInt(gValue.value, 10);
 
         if (!Number.isFinite(g) || g < 1) {
             diamondContainerAbelian.innerHTML =
@@ -89,7 +89,7 @@ export function init() {
     presetButtonsAbelian.addEventListener("click", (event) => {
         const target = event.target;
         if (target.classList.contains("preset-button")) {
-            const g = parseInt(target.dataset.g);
+            const g = parseInt(target.dataset.g, 10);
             loadPresetAbelian(g);
         }
     });

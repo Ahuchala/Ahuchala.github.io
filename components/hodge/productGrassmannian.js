@@ -118,7 +118,7 @@ export function init() {
     // Typeset only the new row, then realign
     const newRow = factorInputsProduct.lastElementChild;
     if (window.MathJax?.typesetPromise) {
-      MathJax.typesetPromise([newRow]).then(alignLabels);
+      MathJax.typesetPromise([newRow]).then(alignLabels).catch(console.error);
     }
   });
 
@@ -302,7 +302,7 @@ export function init() {
     updateDiamondProduct();
     // Realign after MathJax re-typesets the newly created factor rows
     if (window.MathJax?.typesetPromise) {
-      MathJax.typesetPromise([factorInputsProduct]).then(alignLabels);
+      MathJax.typesetPromise([factorInputsProduct]).then(alignLabels).catch(console.error);
     } else {
       alignLabels();
     }
@@ -350,7 +350,7 @@ export function init() {
     MathJax.typesetPromise([factorInputsProduct]).then(() => {
       const c = document.getElementById("product-grassmannian-container");
       if (c && c.style.display !== "none") alignLabels();
-    });
+    }).catch(console.error);
   }
   if (window.MathJax?.typesetPromise) {
     typesetFactorRows();

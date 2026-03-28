@@ -208,7 +208,7 @@ export function init()
     diamondContainerGrassmannian.replaceChildren(...newRows);
   }
 
-  const updateDiamondGrassmannian = async () =>
+  const updateDiamondGrassmannian = () =>
   {
     // read core inputs as nullable
     const n = intOrNull(nValueGrassmannian);

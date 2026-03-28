@@ -98,18 +98,18 @@ export function init() {
     const updateAllPressedButtons = () => {
       // Complete Intersection Presets
       const completeIntersectionButtons = document.querySelectorAll("#complete-intersection-container .preset-button");
-      const nValue = parseInt(document.getElementById("n-value")?.value || 0);
-      const kValue = parseInt(document.getElementById("k-value")?.value || 0);
+      const nValue = parseInt(document.getElementById("n-value")?.value || 0, 10);
+      const kValue = parseInt(document.getElementById("k-value")?.value || 0, 10);
       const degreeToggles = document.getElementById("degree-toggles");
-  
+
       completeIntersectionButtons.forEach((button) => {
-        const n = parseInt(button.dataset.n);
-        const k = parseInt(button.dataset.k);
+        const n = parseInt(button.dataset.n, 10);
+        const k = parseInt(button.dataset.k, 10);
         const degrees = button.dataset.degrees?.split(",").map(Number);
         const isActive =
           n === nValue &&
           k === kValue &&
-          degrees?.every((deg, i) => deg === parseInt(degreeToggles.children[i]?.querySelector("input")?.value || 0));
+          degrees?.every((deg, i) => deg === parseInt(degreeToggles.children[i]?.querySelector("input")?.value || 0, 10));
         if (isActive) {
           button.classList.add("pressed");
         } else {
@@ -119,9 +119,9 @@ export function init() {
   
       // Abelian Variety Presets
       const abelianVarietyButtons = document.querySelectorAll("#abelian-variety-container .preset-button");
-      const gValue = parseInt(document.getElementById("g-value")?.value || 0);
+      const gValue = parseInt(document.getElementById("g-value")?.value || 0, 10);
       abelianVarietyButtons.forEach((button) => {
-        const g = parseInt(button.dataset.g);
+        const g = parseInt(button.dataset.g, 10);
         if (g === gValue) {
           button.classList.add("pressed");
         } else {
