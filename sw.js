@@ -104,29 +104,35 @@ self.addEventListener('fetch', event => {
 
   // Everything else (JS, CSS) → stale-while-revalidate.
   // Serve the cached copy immediately; refresh the cache in the background.
-  // Background fetch errors are swallowed — they're non-critical.
+  //
+  // fetch() failures are handled at the point of creation (.catch → null) so
+  // the rejection never becomes "naked" — attaching .catch() to a derived
+  // promise after the fact is not always sufficient to suppress Chrome's
+  // "Uncaught (in promise)" warning when the fetch fails synchronously before
+  // the derived-promise handler has been attached.
   event.respondWith(
     caches.open(STATIC_CACHE).then(cache =>
       cache.match(request).then(cached => {
-        const networkFetch = fetch(request).then(response => {
-          if (response.ok) cache.put(request, response.clone())
-          return response
-        })
-        if (cached) {
-          networkFetch.catch(() => {}) // swallow background revalidation errors
-          return cached
-        }
-        // No cached copy. For bare SPA-route paths (no file extension), serve the
-        // shell so that speculative/prefetch requests for routes like /teaching or
-        // /gallery get a valid response instead of a network error. For real
-        // assets, let the network result stand; if that also fails, return an
-        // opaque error response rather than letting the promise reject (which
-        // would flood the console with uncaught-promise errors).
+        // Inline catch on fetch so the promise always resolves (Response | null).
+        const networkFetch = fetch(request)
+          .then(response => {
+            if (response.ok) cache.put(request, response.clone())
+            return response
+          })
+          .catch(() => null)
+
+        if (cached) return cached // background revalidation runs silently
+
+        // No cached copy. For bare SPA-route paths (no file extension), fall
+        // back to the shell so speculative / prefetch requests for routes like
+        // /teaching or /gallery get a valid response.
         const hasExtension = /\.\w+(\?.*)?$/.test(url.pathname)
         if (!hasExtension) {
-          return caches.match('/').then(shell => shell || networkFetch.catch(() => Response.error()))
+          return caches.match('/').then(shell =>
+            shell || networkFetch.then(r => r ?? Response.error())
+          )
         }
-        return networkFetch.catch(() => Response.error())
+        return networkFetch.then(r => r ?? Response.error())
       })
     )
   )
