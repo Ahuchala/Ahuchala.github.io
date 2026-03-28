@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v5'
+const CACHE_VERSION = 'v6'
 const STATIC_CACHE = `static-${CACHE_VERSION}`
 const IMAGE_CACHE  = `images-${CACHE_VERSION}`
 
@@ -31,6 +31,8 @@ const SHELL_URLS = [
   '/components/hodge/grassmannianHodge.js',
   '/components/hodge/loadMath.js',
   '/components/hodge/twistedHodge.js',
+  '/components/hodge/hodgeCIWorker.js',
+  '/scripts/utils.js',
   '/pages/research.js',
   '/pages/teaching.js',
   '/pages/oeis.js',
@@ -114,7 +116,17 @@ self.addEventListener('fetch', event => {
           networkFetch.catch(() => {}) // swallow background revalidation errors
           return cached
         }
-        return networkFetch
+        // No cached copy. For bare SPA-route paths (no file extension), serve the
+        // shell so that speculative/prefetch requests for routes like /teaching or
+        // /gallery get a valid response instead of a network error. For real
+        // assets, let the network result stand; if that also fails, return an
+        // opaque error response rather than letting the promise reject (which
+        // would flood the console with uncaught-promise errors).
+        const hasExtension = /\.\w+(\?.*)?$/.test(url.pathname)
+        if (!hasExtension) {
+          return caches.match('/').then(shell => shell || networkFetch.catch(() => Response.error()))
+        }
+        return networkFetch.catch(() => Response.error())
       })
     )
   )
