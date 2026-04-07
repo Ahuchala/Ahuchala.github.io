@@ -126,24 +126,44 @@ body.show-blowups .blowup-row {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+#preset-buttons,
+#preset-buttons-abelian,
+#preset-buttons-grassmannian,
+#preset-buttons-product {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
 .preset-button {
-    background: var(--header-color-1);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin: 5px;
+    background: transparent;
+    color: var(--border-color-2);
+    border: 2px solid var(--border-color-2);
+    padding: 8px 16px;
+    margin: 0;
     border-radius: 25px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: bold;
     cursor: pointer;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    flex: 0 1 calc(33% - 8px);
+    min-width: 140px;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .preset-button:hover {
-    background: var(--hover-dark);
+    background: var(--border-color-2);
+    color: white;
     transform: scale(1.02);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+.preset-button.pressed {
+    background: var(--border-color-2);
+    color: white;
+}
+html.dark-mode .preset-button.pressed {
+    background: rgba(79, 138, 245, 0.3);
+    color: var(--border-color-2);
 }
 .preset-button:focus { outline: none; }
 .preset-button:focus-visible { box-shadow: 0 0 0 2px var(--link-color, #4fa3e0); }
@@ -151,27 +171,30 @@ body.show-blowups .blowup-row {
 /* Additional Styling for Toggle Menu */
 #toggle-menu {
     margin-bottom: 20px;
-    text-align: center;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
 }
 
 .toggle-button {
     background-color: var(--header-color-2);
     color: white;
     border: none;
-    padding: 10px 15px;
-    border-radius: 20px;
-    font-size: 2rem;
+    padding: 14px 20px;
+    border-radius: 25px;
+    font-size: 1.05rem;
     font-weight: bold;
     cursor: pointer;
-    margin: 5px;
+    margin: 0;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .toggle-button:hover {
     background-color: var(--hover-dark);
     transform: scale(1.02);
-    /* color: var(--primary-dark); */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 .toggle-button:focus { outline: none; }
 .toggle-button:focus-visible { box-shadow: 0 0 0 2px var(--link-color, #4fa3e0); }
@@ -181,7 +204,7 @@ body.show-blowups .blowup-row {
     display: none;
 }
 #toggle-menu.show-advanced .toggle-advanced-item {
-    display: inline-block;
+    display: block;
 }
 
 /* Show more / show less button */
@@ -189,11 +212,13 @@ body.show-blowups .blowup-row {
     background: none;
     border: none;
     color: var(--header-color-2);
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     padding: 6px 10px;
-    margin: 5px;
+    margin: 0;
+    grid-column: 1 / -1;
+    justify-self: center;
     border-radius: 12px;
     transition: color 0.2s ease, background-color 0.2s ease;
     vertical-align: middle;
@@ -283,6 +308,12 @@ body.hide-top-half .is-top-half {
 
 .diamond-value.has-contrib {
     cursor: pointer;
+}
+
+@media (max-width: 640px) {
+    #toggle-menu {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
 
 @media (max-width: 768px) {

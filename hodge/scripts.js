@@ -116,52 +116,83 @@ export function init() {
     // Align the default-visible container on first paint.
     requestAnimationFrame(() => alignLabelsInContainer(completeIntersectionContainer));
 
-    // --- Preset Button State Updates (existing code) ---
-    const updateAllPressedButtons = () => {
-      // Complete Intersection Presets
-      const completeIntersectionButtons = document.querySelectorAll("#complete-intersection-container .preset-button");
-      const nValue = parseInt(document.getElementById("n-value")?.value || 0, 10);
-      const kValue = parseInt(document.getElementById("k-value")?.value || 0, 10);
-      const degreeToggles = document.getElementById("degree-toggles");
+    // --- Preset Button State Updates ---
+    const getDegrees = (container) =>
+      [...(container?.children || [])].map(row => parseInt(row.querySelector("input")?.value || 0, 10));
 
-      completeIntersectionButtons.forEach((button) => {
-        const n = parseInt(button.dataset.n, 10);
-        const k = parseInt(button.dataset.k, 10);
-        const degrees = button.dataset.degrees?.split(",").map(Number);
-        const isActive =
-          n === nValue &&
-          k === kValue &&
-          degrees?.every((deg, i) => deg === parseInt(degreeToggles.children[i]?.querySelector("input")?.value || 0, 10));
-        if (isActive) {
-          button.classList.add("pressed");
-        } else {
-          button.classList.remove("pressed");
-        }
+    const updateAllPressedButtons = () => {
+      // Complete Intersection (P^n)
+      const nValue = parseInt(document.getElementById("n-value")?.value || 0, 10);
+      const degreeToggles = document.getElementById("degree-toggles");
+      const ciDegrees = getDegrees(degreeToggles);
+      document.querySelectorAll("#complete-intersection-container .preset-button").forEach(btn => {
+        const n = parseInt(btn.dataset.n, 10);
+        const degrees = btn.dataset.degrees?.split(",").map(Number) ?? [];
+        const match = n === nValue && degrees.length === ciDegrees.length &&
+          degrees.every((d, i) => d === ciDegrees[i]);
+        btn.classList.toggle("pressed", match);
       });
-  
-      // Abelian Variety Presets
-      const abelianVarietyButtons = document.querySelectorAll("#abelian-variety-container .preset-button");
+
+      // Abelian Variety
       const gValue = parseInt(document.getElementById("g-value")?.value || 0, 10);
-      abelianVarietyButtons.forEach((button) => {
-        const g = parseInt(button.dataset.g, 10);
-        if (g === gValue) {
-          button.classList.add("pressed");
-        } else {
-          button.classList.remove("pressed");
-        }
+      document.querySelectorAll("#abelian-variety-container .preset-button").forEach(btn => {
+        btn.classList.toggle("pressed", parseInt(btn.dataset.g, 10) === gValue);
+      });
+
+      // Grassmannian
+      const grN = parseInt(document.getElementById("n-value-grassmannian")?.value || 0, 10);
+      const grK = parseInt(document.getElementById("k-value-grassmannian")?.value || 0, 10);
+      const grR = parseInt(document.getElementById("r-value-grassmannian")?.value || 0, 10);
+      const grDegToggles = document.getElementById("degree-toggles-grassmannian");
+      const grDegrees = getDegrees(grDegToggles);
+      document.querySelectorAll("#grassmannian-container .preset-button").forEach(btn => {
+        const n = parseInt(btn.dataset.n, 10);
+        const k = parseInt(btn.dataset.k, 10);
+        const r = parseInt(btn.dataset.r, 10);
+        const degrees = btn.dataset.degrees?.split(",").map(Number) ?? [];
+        const match = n === grN && k === grK && r === grR &&
+          degrees.length === grDegrees.length && degrees.every((d, i) => d === grDegrees[i]);
+        btn.classList.toggle("pressed", match);
+      });
+
+      // Product Grassmannian
+      const prodR = parseInt(document.getElementById("r-value-product")?.value || 0, 10);
+      const prodDegToggles = document.getElementById("degree-toggles-product");
+      const prodDegrees = getDegrees(prodDegToggles);
+      const factorRows = [...(document.getElementById("factor-inputs-product")?.children || [])];
+      const currentFactors = factorRows.flatMap(row => [
+        parseInt(row.querySelector(".factor-k-value")?.value || 0, 10),
+        parseInt(row.querySelector(".factor-n-value")?.value || 0, 10),
+      ]);
+      document.querySelectorAll("#product-grassmannian-container .preset-button[data-factors]").forEach(btn => {
+        const btnFactors = btn.dataset.factors?.split(",").map(Number) ?? [];
+        const btnR = parseInt(btn.dataset.r, 10);
+        const btnDegrees = btn.dataset.degrees ? btn.dataset.degrees.split(",").map(Number) : [];
+        const match = btnR === prodR &&
+          btnFactors.length === currentFactors.length &&
+          btnFactors.every((f, i) => f === currentFactors[i]) &&
+          btnDegrees.length === prodDegrees.length &&
+          btnDegrees.every((d, i) => d === prodDegrees[i]);
+        btn.classList.toggle("pressed", match);
       });
     };
-  
+
     const delayedUpdate = () => setTimeout(updateAllPressedButtons, 0);
     const attachListeners = (selector, eventType) => {
-      document.querySelectorAll(selector).forEach((element) => {
-        element.addEventListener(eventType, delayedUpdate);
-      });
+      document.querySelectorAll(selector).forEach(el => el.addEventListener(eventType, delayedUpdate));
     };
-  
+
     attachListeners("#n-slider, #k-slider, #g-slider", "input");
     attachListeners("#n-value, #k-value, #g-value", "input");
     attachListeners(".preset-button", "click");
+    document.getElementById("degree-toggles")?.addEventListener("input", delayedUpdate);
+    attachListeners("#n-value-grassmannian, #k-value-grassmannian, #r-value-grassmannian, #n-slider-grassmannian, #k-slider-grassmannian, #r-slider-grassmannian", "input");
+    document.getElementById("degree-toggles-grassmannian")?.addEventListener("input", delayedUpdate);
+    document.getElementById("factor-inputs-product")?.addEventListener("input", delayedUpdate);
+    document.getElementById("r-value-product")?.addEventListener("input", delayedUpdate);
+    document.getElementById("r-slider-product")?.addEventListener("input", delayedUpdate);
+    document.getElementById("degree-toggles-product")?.addEventListener("input", delayedUpdate);
+
     updateAllPressedButtons();
   
     // --- Unified Dynamic Hodge Diamond Description ---
