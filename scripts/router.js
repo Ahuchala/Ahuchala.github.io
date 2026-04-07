@@ -148,8 +148,9 @@ function setupModal() {
     if (prevBtn) prevBtn.style.display = 'none'
     if (nextBtn) nextBtn.style.display = 'none'
     if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).catch(console.error)
-    // Move focus into the modal for keyboard/screen-reader users
-    modal.querySelector('.close')?.focus()
+    // Move focus into the modal for keyboard/screen-reader users.
+    // Focusing the backdrop (not .close) avoids a visible focus ring on open.
+    modal.focus()
   }
 
   // Gallery carousel modal
@@ -162,8 +163,9 @@ function setupModal() {
     if (prevBtn) prevBtn.style.display = 'flex'
     if (nextBtn) nextBtn.style.display = 'flex'
     showItem(playlistIndex, 0)
-    // Move focus into the modal for keyboard/screen-reader users
-    modal.querySelector('.close')?.focus()
+    // Move focus into the modal for keyboard/screen-reader users.
+    // Focusing the backdrop (not .close) avoids a visible focus ring on open.
+    modal.focus()
   }
 
   // Escape / arrow keys — replace handler each time so it closes over current navigate/closeModal

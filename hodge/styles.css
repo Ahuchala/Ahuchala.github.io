@@ -145,6 +145,8 @@ body.show-blowups .blowup-row {
     transform: scale(1.02);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
+.preset-button:focus { outline: none; }
+.preset-button:focus-visible { box-shadow: 0 0 0 2px var(--link-color, #4fa3e0); }
 
 /* Additional Styling for Toggle Menu */
 #toggle-menu {
@@ -171,6 +173,8 @@ body.show-blowups .blowup-row {
     transform: scale(1.02);
     /* color: var(--primary-dark); */
 }
+.toggle-button:focus { outline: none; }
+.toggle-button:focus-visible { box-shadow: 0 0 0 2px var(--link-color, #4fa3e0); }
 
 /* Advanced calculators hidden until expanded */
 .toggle-advanced-item {
@@ -203,6 +207,19 @@ html.dark-mode .toggle-more-btn {
 }
 html.dark-mode .toggle-more-btn:hover {
     background-color: rgba(96, 165, 250, 0.12);
+}
+.toggle-more-btn:focus { outline: none; }
+.toggle-more-btn:focus-visible { box-shadow: 0 0 0 2px var(--link-color, #4fa3e0); }
+
+/* Checkbox labels in Hodge controls */
+.input-row label:has(input[type="checkbox"]) {
+    cursor: pointer;
+    user-select: none;
+}
+.input-row label:has(input[type="checkbox"]):hover { opacity: 0.8; }
+.input-row input[type="checkbox"] {
+    accent-color: var(--link-color, #4fa3e0);
+    cursor: pointer;
 }
 
 #diamond-container,

@@ -318,8 +318,9 @@ header .header-content h1 {
 .menu-button:focus {
   background: var(--hover-dark);
   transform: scale(1.05);
-  outline: none;
 }
+.menu-button:focus { outline: none; }
+.menu-button:focus-visible { box-shadow: 0 0 0 2px var(--link-color, #4fa3e0); }
 
 /* The hamburger icon itself */
 .hamburger {
@@ -669,6 +670,7 @@ main {
   justify-content: center;
   align-items: center;
 }
+.modal:focus { outline: none; }
 
 .modal .close {
   position: absolute;
@@ -686,6 +688,7 @@ main {
   justify-content: center;
   align-items: center;
   text-align: center;
+  border: none;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.8);
   transition: transform 0.2s ease, color 0.2s ease, background-color 0.2s ease;
@@ -696,6 +699,9 @@ main {
   background-color: rgba(255, 230, 230, 0.8);
   transform: scale(1.2);
 }
+.modal .close:focus { outline: none; }
+.modal .close:focus-visible { box-shadow: 0 0 0 3px var(--link-color, #4fa3e0); }
+.modal .close:active { transform: scale(0.9); }
 
 .modal-content {
   position: relative;
@@ -753,6 +759,7 @@ main {
   overflow-y: auto;
   justify-content: flex-start;
 }
+
 
 .original-link {
   display: inline-block;
