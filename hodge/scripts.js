@@ -646,5 +646,235 @@ export function init() {
 
     updateHodgeDiamondDescription();
 
+    // --- URL State: encode current calculator state into query params ---
+    function encodeState() {
+        const params = new URLSearchParams();
+
+        let calc = 'ci';
+        if (abelianVarietyContainer.style.display !== 'none')          calc = 'abelian';
+        else if (grassmannianContainer.style.display !== 'none')       calc = 'grassmannian';
+        else if (flagContainer.style.display !== 'none')               calc = 'flag';
+        else if (twistedContainer.style.display !== 'none')            calc = 'twisted';
+        else if (productGrassmannianContainer?.style.display !== 'none') calc = 'product';
+        params.set('calc', calc);
+
+        if (calc === 'ci') {
+            params.set('n', document.getElementById('n-value').value);
+            const r = document.getElementById('r-value').value;
+            params.set('r', r);
+            if (parseInt(r) > 0) {
+                const degs = Array.from(document.querySelectorAll('#degree-toggles .hodge-input')).map(i => i.value);
+                if (degs.length) params.set('deg', degs.join(','));
+            }
+            const s = document.getElementById('s-value')?.value;
+            if (s && s !== '0') params.set('s', s);
+
+        } else if (calc === 'abelian') {
+            params.set('g', document.getElementById('g-value').value);
+
+        } else if (calc === 'grassmannian') {
+            params.set('n', document.getElementById('n-value-grassmannian').value);
+            params.set('k', document.getElementById('k-value-grassmannian').value);
+            const r = document.getElementById('r-value-grassmannian').value;
+            params.set('r', r);
+            if (parseInt(r) > 0) {
+                const degs = Array.from(document.querySelectorAll('#degree-toggles-grassmannian .hodge-input')).map(i => i.value);
+                if (degs.length) params.set('deg', degs.join(','));
+            }
+            const s = document.getElementById('s-value-grassmannian')?.value;
+            if (s && s !== '0') params.set('s', s);
+
+        } else if (calc === 'flag') {
+            params.set('dims', (document.getElementById('dims-input')?.value ?? '').replace(/\s/g, ''));
+            params.set('r', document.getElementById('r-value-flag')?.value ?? '0');
+            const flagInputs = document.querySelectorAll('#degree-toggles-flag .hodge-input');
+            if (flagInputs.length) {
+                params.set('md', Array.from(flagInputs).map(i => i.value.replace(/\s/g, '')).join('|'));
+            }
+
+        } else if (calc === 'twisted') {
+            params.set('n', document.getElementById('n-value-twisted').value);
+            params.set('k', document.getElementById('k-value-twisted').value);
+            params.set('t', document.getElementById('t-value-twisted').value);
+
+        } else if (calc === 'product') {
+            const factorRows = document.querySelectorAll('#factor-inputs-product .factor-row-product');
+            const pairs = Array.from(factorRows).map(row =>
+                row.querySelector('.factor-k-value').value + ',' + row.querySelector('.factor-n-value').value
+            );
+            params.set('factors', pairs.join(','));
+            const r = document.getElementById('r-value-product')?.value ?? '0';
+            params.set('r', r);
+            if (parseInt(r) > 0) {
+                const degRows = document.querySelectorAll('#degree-toggles-product .degree-toggle');
+                const tuples = Array.from(degRows).map(row =>
+                    Array.from(row.querySelectorAll('.hodge-input')).map(i => i.value).join(',')
+                );
+                if (tuples.length) params.set('md', tuples.join('|'));
+            }
+        }
+
+        if (document.getElementById('zero-color-toggle')?.checked)  params.set('color', '1');
+        if (document.getElementById('hide-top-half-toggle')?.checked) params.set('half', '1');
+        if (document.getElementById('show-blowups-toggle')?.checked) params.set('blowups', '1');
+
+        return params;
+    }
+
+    // --- URL State: restore calculator state from query params on page load ---
+    function decodeState() {
+        const params = new URLSearchParams(window.location.search);
+        const calc = params.get('calc');
+        if (!calc) return;
+
+        function fire(el) { el?.dispatchEvent(new Event('input', { bubbles: true })); }
+        function setVal(id, val) {
+            if (val === null) return;
+            const el = document.getElementById(id);
+            if (el) { el.value = val; fire(el); }
+        }
+
+        // Switch to the requested tab (CI is already active by default so skip its click)
+        const tabBtns = { abelian: toggleAbelianVariety, grassmannian: toggleGrassmannian,
+                          flag: toggleFlag, twisted: toggleTwisted, product: toggleProductGrassmannian };
+        if (tabBtns[calc]) tabBtns[calc].click();
+
+        if (calc === 'ci') {
+            setVal('n-value', params.get('n'));
+            setVal('r-value', params.get('r'));
+            setVal('s-value', params.get('s') ?? '0');
+            const deg = params.get('deg');
+            if (deg) {
+                requestAnimationFrame(() => {
+                    const inputs = document.querySelectorAll('#degree-toggles .hodge-input');
+                    deg.split(',').forEach((d, i) => {
+                        if (inputs[i]) { inputs[i].value = d; fire(inputs[i]); }
+                    });
+                });
+            }
+
+        } else if (calc === 'abelian') {
+            setVal('g-value', params.get('g'));
+
+        } else if (calc === 'grassmannian') {
+            setVal('n-value-grassmannian', params.get('n'));
+            setVal('k-value-grassmannian', params.get('k'));
+            setVal('r-value-grassmannian', params.get('r'));
+            setVal('s-value-grassmannian', params.get('s') ?? '0');
+            const deg = params.get('deg');
+            if (deg) {
+                requestAnimationFrame(() => {
+                    const inputs = document.querySelectorAll('#degree-toggles-grassmannian .hodge-input');
+                    deg.split(',').forEach((d, i) => {
+                        if (inputs[i]) { inputs[i].value = d; fire(inputs[i]); }
+                    });
+                });
+            }
+
+        } else if (calc === 'flag') {
+            // Flag is lazily loaded; wait for the async import triggered by clicking toggle-flag
+            setTimeout(() => {
+                setVal('dims-input', (params.get('dims') ?? '').replace(/,/g, ', '));
+                setVal('r-value-flag', params.get('r'));
+                const md = params.get('md');
+                if (md) {
+                    setTimeout(() => {
+                        const inputs = document.querySelectorAll('#degree-toggles-flag .hodge-input');
+                        md.split('|').forEach((val, i) => {
+                            if (inputs[i]) { inputs[i].value = val; fire(inputs[i]); }
+                        });
+                    }, 200);
+                }
+            }, 500);
+
+        } else if (calc === 'twisted') {
+            setVal('n-value-twisted', params.get('n'));
+            setVal('k-value-twisted', params.get('k'));
+            setVal('t-value-twisted', params.get('t'));
+
+        } else if (calc === 'product') {
+            const factorsStr = params.get('factors');
+            if (factorsStr && productGrassmannianContainer?._loadPreset) {
+                const flat = factorsStr.split(',').map(Number);
+                const factors = [];
+                for (let i = 0; i + 1 < flat.length; i += 2) factors.push({ k: flat[i], n: flat[i + 1] });
+                const rNum = parseInt(params.get('r')) || 0;
+                const md = params.get('md');
+                const degrees = md ? md.split('|').map(row => row.split(',').map(Number)) : [];
+                productGrassmannianContainer._loadPreset(factors, rNum, degrees);
+            }
+        }
+
+        if (params.get('color') === '1') {
+            const el = document.getElementById('zero-color-toggle');
+            if (el) { el.checked = true; el.dispatchEvent(new Event('change')); }
+        }
+        if (params.get('half') === '1') {
+            const el = document.getElementById('hide-top-half-toggle');
+            if (el) { el.checked = true; el.dispatchEvent(new Event('change')); }
+        }
+        if (params.get('blowups') === '1') {
+            const el = document.getElementById('show-blowups-toggle');
+            if (el) { el.checked = true; el.dispatchEvent(new Event('change')); }
+        }
+    }
+
+    // Keep the URL in sync with the current calculator state as inputs change
+    let _urlUpdateTimer = null;
+    function scheduleUrlUpdate() {
+        clearTimeout(_urlUpdateTimer);
+        _urlUpdateTimer = setTimeout(() => {
+            const params = encodeState();
+            history.replaceState(history.state, '', '/hodge?' + params.toString());
+        }, 300);
+    }
+    document.getElementById('app')?.addEventListener('input', scheduleUrlUpdate);
+    document.getElementById('app')?.addEventListener('change', scheduleUrlUpdate);
+    document.getElementById('app')?.addEventListener('click', (e) => {
+        if (e.target.closest('.preset-button')) scheduleUrlUpdate();
+    });
+    // Also update when switching tabs (tab buttons fire click, not input)
+    [toggleCompleteIntersection, toggleAbelianVariety, toggleGrassmannian,
+     toggleFlag, toggleTwisted, toggleProductGrassmannian].forEach(btn => {
+        btn?.addEventListener('click', () => setTimeout(scheduleUrlUpdate, 0));
+    });
+    ['add-factor-product', 'remove-factor-product'].forEach(id => {
+        document.getElementById(id)?.addEventListener('click', scheduleUrlUpdate);
+    });
+
+    // Copy Link button: encode state to URL, update address bar, copy to clipboard
+    const copyLinkBtn = document.getElementById('copy-link-btn');
+    if (copyLinkBtn) {
+        copyLinkBtn.addEventListener('click', () => {
+            clearTimeout(_urlUpdateTimer);
+            const params = encodeState();
+            const search = '?' + params.toString();
+            const fullUrl = window.location.origin + '/hodge' + search;
+            history.replaceState(history.state, '', '/hodge' + search);
+
+            const flash = (ok) => {
+                const orig = copyLinkBtn.textContent;
+                copyLinkBtn.textContent = ok ? 'Copied!' : 'Copy failed';
+                copyLinkBtn.disabled = true;
+                setTimeout(() => { copyLinkBtn.textContent = orig; copyLinkBtn.disabled = false; }, 1500);
+            };
+
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(fullUrl).then(() => flash(true)).catch(() => flash(false));
+            } else {
+                // Fallback for browsers without clipboard API
+                const ta = document.createElement('textarea');
+                ta.value = fullUrl;
+                ta.style.cssText = 'position:fixed;opacity:0';
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy'); flash(true); } catch { flash(false); }
+                document.body.removeChild(ta);
+            }
+        });
+    }
+
+    // Restore state from URL query params (shared links, back-button navigation)
+    decodeState();
 
 }

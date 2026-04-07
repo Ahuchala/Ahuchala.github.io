@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "vanilla-spa",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "-p", "5173", "-s", "."],
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["-c", "PATH=/opt/homebrew/bin:$PATH npx serve -p 5173 -s ."],
       "port": 5173
     }
   ]

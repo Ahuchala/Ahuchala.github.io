@@ -338,6 +338,10 @@ export function init() {
 
   degreeTogglesProduct.addEventListener("input", updateDiamondProduct);
 
+  // Expose loadPreset so hodge/scripts.js can restore state from URL params
+  const productContainer = document.getElementById('product-grassmannian-container');
+  if (productContainer) productContainer._loadPreset = loadPreset;
+
   // ---------------- initial render ----------------
   addFactorRow(1, 2); // Factor 1: default Gr(1,2) = P¹
   addFactorRow(1, 2); // Factor 2: default Gr(1,2) = P¹

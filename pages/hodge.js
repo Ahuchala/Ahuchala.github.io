@@ -338,6 +338,9 @@ export function render() {
             Show blow-up controls
           </label>
         </div>
+        <div class="input-row" style="margin-top:.5rem">
+          <button id="copy-link-btn" class="preset-button" type="button">Copy shareable link</button>
+        </div>
 
 
         <div class="how-does-it-work-div">
