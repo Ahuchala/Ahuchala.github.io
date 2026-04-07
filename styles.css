@@ -701,7 +701,7 @@ main {
 }
 .modal .close:focus { outline: none; }
 .modal .close:focus-visible { box-shadow: 0 0 0 3px var(--link-color, #4fa3e0); }
-.modal .close:active { transform: scale(0.9); }
+.modal .close:active { background-color: rgba(255, 200, 200, 0.9); }
 
 .modal-content {
   position: relative;
