@@ -971,7 +971,11 @@ main {
   border: none;
   background: transparent;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  border-radius: 50%;
+  transition: transform 0.3s ease, background 0.2s ease;
+}
+.settings-container:not(.active) .settings-button:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .settings-container.active .settings-button {
@@ -1110,7 +1114,7 @@ main {
 }
 
 .settings-button:hover svg.gear-icon {
-  transform: scale(1.0);
+  transform: scale(1.15);
   stroke: var(--secondary-light);
 }
 
