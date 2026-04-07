@@ -736,8 +736,8 @@ main {
 /* Fixed-size modal for carousel navigation — prevents jumping between images */
 .modal-content.modal-carousel {
   width: min(90vw, 960px);
-  height: min(85vh, 620px);
   max-width: min(90vw, 960px);
+  min-height: 320px;
   max-height: min(85vh, 620px);
   overflow: hidden;
   align-items: stretch;
@@ -747,7 +747,7 @@ main {
 .modal-content.modal-carousel #modal-image {
   width: 45%;
   max-width: 45%;
-  max-height: 100%;
+  max-height: min(85vh, 580px);
   flex-shrink: 0;
   object-fit: contain;
   align-self: center;
@@ -758,6 +758,30 @@ main {
   min-width: 0;
   overflow-y: auto;
   justify-content: flex-start;
+  padding: 1.25rem 1.25rem 1.25rem 0.75rem;
+}
+
+#modal-title {
+  text-align: left;
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.4);
+  font-size: 1.4rem;
+}
+
+#modal-description {
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+#modal-description p {
+  margin-top: 0;
+  margin-bottom: 0.85rem;
+}
+
+#modal-description p:last-child {
+  margin-bottom: 0;
 }
 
 
