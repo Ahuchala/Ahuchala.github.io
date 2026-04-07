@@ -158,7 +158,8 @@ export function init() {
       // Product Grassmannian
       const prodR = parseInt(document.getElementById("r-value-product")?.value || 0, 10);
       const prodDegToggles = document.getElementById("degree-toggles-product");
-      const prodDegrees = getDegrees(prodDegToggles);
+      // Each degree row has multiple inputs (one per factor) — read them all as a flat array
+      const prodDegrees = [...(prodDegToggles?.querySelectorAll("input") || [])].map(inp => parseInt(inp.value || 0, 10));
       const factorRows = [...(document.getElementById("factor-inputs-product")?.children || [])];
       const currentFactors = factorRows.flatMap(row => [
         parseInt(row.querySelector(".factor-k-value")?.value || 0, 10),
