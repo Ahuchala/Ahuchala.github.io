@@ -48,7 +48,7 @@ export function render() {
                 <button id="toggle-abelian-variety" class="toggle-button toggle-advanced-item">Abelian Varieties</button>
                 <button id="toggle-flag" class="toggle-button toggle-advanced-item">Flag Varieties</button>
                 <button id="toggle-product-grassmannian" class="toggle-button toggle-advanced-item">CIs in Products of Grassmannians</button>
-                <button id="toggle-advanced" class="toggle-more-btn" aria-expanded="false">&#9656; more</button>
+                <button id="toggle-advanced" class="toggle-more-btn" aria-expanded="false">▼ Show more</button>
             </div>
         
             <!-- Calculator Containers -->

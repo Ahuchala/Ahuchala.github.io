@@ -168,6 +168,12 @@ html.dark-mode .preset-button.pressed {
 .preset-button:focus { outline: none; }
 .preset-button:focus-visible { box-shadow: 0 0 0 2px var(--link-color, #4fa3e0); }
 
+#copy-link-btn {
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    flex: none;
+}
+
 /* Additional Styling for Toggle Menu */
 #toggle-menu {
     margin-bottom: 20px;
@@ -209,29 +215,22 @@ html.dark-mode .preset-button.pressed {
 
 /* Show more / show less button */
 .toggle-more-btn {
-    background: none;
-    border: none;
-    color: var(--header-color-2);
-    font-size: 1rem;
+    background: transparent;
+    border: 2px solid var(--border-color-2);
+    color: var(--border-color-2);
+    font-size: 0.9rem;
     font-weight: bold;
     cursor: pointer;
-    padding: 6px 10px;
+    padding: 6px 20px;
     margin: 0;
     grid-column: 1 / -1;
     justify-self: center;
-    border-radius: 12px;
-    transition: color 0.2s ease, background-color 0.2s ease;
-    vertical-align: middle;
+    border-radius: 25px;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 .toggle-more-btn:hover {
-    background-color: rgba(30, 41, 59, 0.08); /* fallback */
-    background-color: color-mix(in srgb, var(--header-color-2) 12%, transparent);
-}
-html.dark-mode .toggle-more-btn {
-    color: var(--secondary-light);
-}
-html.dark-mode .toggle-more-btn:hover {
-    background-color: rgba(96, 165, 250, 0.12);
+    background: var(--border-color-2);
+    color: white;
 }
 .toggle-more-btn:focus { outline: none; }
 .toggle-more-btn:focus-visible { box-shadow: 0 0 0 2px var(--link-color, #4fa3e0); }

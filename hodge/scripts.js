@@ -101,7 +101,7 @@ export function init() {
         const expanding = !toggleMenu.classList.contains("show-advanced");
         toggleMenu.classList.toggle("show-advanced", expanding);
         toggleAdvancedBtn.setAttribute("aria-expanded", expanding);
-        toggleAdvancedBtn.innerHTML = expanding ? "&#9662; less" : "&#9656; more";
+        toggleAdvancedBtn.textContent = expanding ? "▲ Show less" : "▼ Show more";
         // If collapsing while an advanced calculator is visible, revert to CI
         if (!expanding) {
           const advancedVisible = advancedContainers.some(c => c && c.style.display !== "none");
