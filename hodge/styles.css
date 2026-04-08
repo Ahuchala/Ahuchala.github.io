@@ -168,6 +168,23 @@ html.dark-mode .preset-button.pressed {
 .preset-button:focus { outline: none; }
 .preset-button:focus-visible { box-shadow: 0 0 0 2px var(--link-color, #4fa3e0); }
 
+/* Add/Remove Factor utility buttons */
+.factor-btn {
+    background: var(--body-section-2);
+    color: var(--text-color);
+    border: 1px solid var(--border-color-1);
+    padding: 5px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+}
+.factor-btn:hover:not(:disabled) { background: var(--hover-dark); color: white; }
+.factor-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.factor-btn:focus { outline: none; }
+.factor-btn:focus-visible { box-shadow: 0 0 0 2px var(--link-color, #4fa3e0); }
+
 #copy-link-btn {
     font-size: 0.8rem;
     padding: 5px 12px;
@@ -267,8 +284,8 @@ html.dark-mode .preset-button.pressed {
 }
 
 .how-does-it-work-div {
-    margin-left: 100px;
-    margin-right: 100px;
+    margin-left: clamp(16px, 8vw, 100px);
+    margin-right: clamp(16px, 8vw, 100px);
 }
 
 #diamond-container-twisted {
@@ -320,11 +337,6 @@ body.hide-top-half .is-top-half {
     #diamond-box {
         flex-basis: 100%;
         max-width: 100%;
-    }
-
-    .how-does-it-work-div {
-        margin-left: 16px;
-        margin-right: 16px;
     }
 
     /* Stack label above slider+number so controls fit in the narrow box */

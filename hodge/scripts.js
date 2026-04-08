@@ -139,15 +139,17 @@ export function init() {
         btn.classList.toggle("pressed", parseInt(btn.dataset.g, 10) === gValue);
       });
 
-      // Grassmannian
+      // Grassmannian — apply Gr(k,n)≅Gr(n-k,n) symmetry reduction before comparing
       const grN = parseInt(document.getElementById("n-value-grassmannian")?.value || 0, 10);
-      const grK = parseInt(document.getElementById("k-value-grassmannian")?.value || 0, 10);
+      const grKRaw = parseInt(document.getElementById("k-value-grassmannian")?.value || 0, 10);
+      const grK = Math.min(grKRaw, grN - grKRaw);  // canonical form
       const grR = parseInt(document.getElementById("r-value-grassmannian")?.value || 0, 10);
       const grDegToggles = document.getElementById("degree-toggles-grassmannian");
       const grDegrees = getDegrees(grDegToggles);
       document.querySelectorAll("#grassmannian-container .preset-button").forEach(btn => {
         const n = parseInt(btn.dataset.n, 10);
-        const k = parseInt(btn.dataset.k, 10);
+        const kRaw = parseInt(btn.dataset.k, 10);
+        const k = Math.min(kRaw, n - kRaw);  // canonical form
         const r = parseInt(btn.dataset.r, 10);
         const degrees = btn.dataset.degrees?.split(",").map(Number) ?? [];
         const match = n === grN && k === grK && r === grR &&

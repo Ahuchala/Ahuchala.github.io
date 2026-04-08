@@ -296,8 +296,8 @@ export function render() {
                             <!-- Factor rows are created dynamically by productGrassmannian.js -->
                         </div>
                         <div class="input-row">
-                            <button id="add-factor-product" class="preset-button" type="button">+ Add Factor</button>
-                            <button id="remove-factor-product" class="preset-button" type="button" disabled>&#8722; Remove Factor</button>
+                            <button id="add-factor-product" class="factor-btn" type="button">+ Add Factor</button>
+                            <button id="remove-factor-product" class="factor-btn" type="button" disabled>&#8722; Remove Factor</button>
                         </div>
                         <div class="input-row">
                             <label for="r-slider-product">Number of Hypersurfaces (\\(r\\)):</label>

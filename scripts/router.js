@@ -130,8 +130,17 @@ function setupModal() {
 
   modal.onclick = (e) => { if (e.target === modal) closeModal() }
 
-  if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(-1) })
-  if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(1) })
+  // Arrow buttons are persistent DOM nodes — remove old listeners before adding new ones
+  if (prevBtn) {
+    if (prevBtn._clickHandler) prevBtn.removeEventListener('click', prevBtn._clickHandler)
+    prevBtn._clickHandler = (e) => { e.stopPropagation(); navigate(-1) }
+    prevBtn.addEventListener('click', prevBtn._clickHandler)
+  }
+  if (nextBtn) {
+    if (nextBtn._clickHandler) nextBtn.removeEventListener('click', nextBtn._clickHandler)
+    nextBtn._clickHandler = (e) => { e.stopPropagation(); navigate(1) }
+    nextBtn.addEventListener('click', nextBtn._clickHandler)
+  }
 
   const modalContent = modal.querySelector('.modal-content')
 
