@@ -46,4 +46,13 @@ export function init() {
     wrapper.appendChild(img)
     gallery.appendChild(wrapper)
   })
+
+  // If a specific item was requested (e.g. from the home page museum modal link),
+  // open the gallery carousel at that index after the grid is built.
+  if (window._pendingGalleryOpen !== undefined) {
+    const idx = window._pendingGalleryOpen
+    window._pendingGalleryOpen = undefined
+    // Defer one frame so the gallery grid is fully in the DOM
+    requestAnimationFrame(() => window._openGallery?.(images, idx))
+  }
 }

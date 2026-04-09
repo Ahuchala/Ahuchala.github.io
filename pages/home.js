@@ -1,3 +1,6 @@
+import { navigate } from '/scripts/router.js'
+import { images } from '/components/gallery.js'
+
 export function render() {
   return /* html */`
     <section class="intro">
@@ -71,6 +74,27 @@ export function render() {
 }
 
 export function init() {
+  // Intercept the "gallery" link inside the museum modal description.
+  // When clicked: set _pendingGalleryOpen so gallery.js opens the right item,
+  // then navigate (router.js will close the modal before the content swap).
+  const museumIdx = images.findIndex(img => img.thumbnail.includes('museum'))
+  const galleryLinkHandler = (e) => {
+    const link = e.target.closest('a[href="/gallery"]')
+    if (!link || !link.closest('#modal-description')) return
+    e.preventDefault()
+    e.stopPropagation()
+    window._pendingGalleryOpen = museumIdx >= 0 ? museumIdx : 0
+    navigate('/gallery')
+  }
+  document.addEventListener('click', galleryLinkHandler, true) // capture: fires before main.js handler
+
+  // Clean up listener when navigating away from home
+  const prevCleanup = window._pageCleanup
+  window._pageCleanup = () => {
+    prevCleanup?.()
+    document.removeEventListener('click', galleryLinkHandler, true)
+  }
+
   const featuredImg = document.getElementById('featured-img')
   if (featuredImg) {
     let preloaded = false

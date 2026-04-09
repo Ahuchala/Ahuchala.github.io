@@ -808,7 +808,9 @@ export function init() {
             // then wait for _flagInitPromise (set up in pages/hodge.js) to resolve
             // before restoring state. This replaces the old fragile setTimeout(500/200).
             toggleFlag?.click();
-            (window._flagInitPromise || Promise.resolve()).then(() => {
+            (window._flagInitPromise || Promise.resolve())
+            .catch(e => console.error('Flag init failed, skipping state restore:', e))
+            .then(() => {
                 setVal('dims-input', (params.get('dims') ?? '').replace(/,/g, ', '));
                 setVal('r-value-flag', params.get('r'));
                 const md = params.get('md');

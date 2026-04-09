@@ -110,7 +110,12 @@ self.addEventListener('fetch', event => {
       fetch(request)
         .then(response => {
           if (response.ok) {
-            caches.open(STATIC_CACHE).then(c => c.put(request, response.clone()))
+            // Clone synchronously before returning response — once the browser
+            // starts reading the body, response.clone() throws "body already used".
+            const toCache = response.clone()
+            caches.open(STATIC_CACHE)
+              .then(c => c.put(request, toCache))
+              .catch(err => console.warn('SW cache write failed:', err))
           }
           return response
         })

@@ -253,6 +253,11 @@ export async function navigate(path, pushState = true) {
     window._pageCleanup = null
   }
 
+  // Close any open modal before the content swap — modals live in index.html
+  // outside #app so they persist across SPA navigations unless explicitly closed.
+  const modal = document.getElementById('image-modal')
+  if (modal) modal.style.display = 'none'
+
   const reduceMotion = document.documentElement.classList.contains('reduce-motion')
 
   // Exit animation (skip on initial load or when reduce motion is enabled)

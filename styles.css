@@ -31,7 +31,6 @@ html {
   --section-header-text-color: #2d3f54; /* Soft navy for section headers */
 
   --oeis-sequence-background: #f4f8fb; /* Soft light gray for sequences */
-  --intro-highlight-background: rgba(30, 41, 59, 0.05); /* Subtle intro circle highlight */
   --link-color: #4f8ef7; /* Accent blue for focus rings / links */
 }
 
@@ -62,7 +61,6 @@ html.dark-mode {
   --header-text-color: #f4f6fa; /* Header text color */
   --section-header-text-color: #c5c8d3; /* Section headers */
   --oeis-sequence-background: #1e2640; /* Background for sequences */
-  --intro-highlight-background: rgba(255, 255, 255, 0.05); /* Subtle circle highlight */
   --link-color: #5b8af5; /* Accent blue for focus rings / links (dark mode) */
 }
 
@@ -427,40 +425,6 @@ main {
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.intro-highlight {
-  position: absolute;
-  top: -50px;
-  left: -50px;
-  width: 200px;
-  height: 200px;
-  background: var(--intro-highlight-background);
-  border-radius: 50%;
-  animation: subtle-highlight 30s ease-in-out infinite;
-  z-index: 15;
-}
-
-@keyframes subtle-highlight {
-  0% {
-    transform: translate(-50px, -50px) scale(1);
-    opacity: 0.4;
-  }
-  25% {
-    transform: translate(20px, 20px) scale(1.1);
-    opacity: 0.6;
-  }
-  50% {
-    transform: translate(50px, 50px) scale(1.2);
-    opacity: 0.8;
-  }
-  75% {
-    transform: translate(20px, 20px) scale(1.1);
-    opacity: 0.6;
-  }
-  100% {
-    transform: translate(-50px, -50px) scale(1);
-    opacity: 0.4;
-  }
-}
 
 .intro-content {
   position: relative;
@@ -1275,7 +1239,3 @@ main {
   animation: none;
 }
 
-/* The intro highlight animation should also stop. */
-.reduce-motion .intro-highlight {
-  animation: none;
-}
