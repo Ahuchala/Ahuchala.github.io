@@ -1,5 +1,25 @@
 /* Research page styles.
  *
- * The .gallery grid used by the research image is defined in gallery/styles.css,
- * which is loaded globally in index.html. No additional rules are needed here.
+ * Scoped under .research-page to avoid affecting other pages that also use
+ * the global .section class.
  */
+
+/* Left-align prose paragraphs — the global .section is text-align:center which
+   works fine for short callouts but makes long academic paragraphs hard to read. */
+.research-page .section p {
+  text-align: left;
+}
+
+/* Keep section headings centered for visual consistency with the rest of the site */
+.research-page .section h2,
+.research-page .section h3 {
+  text-align: center;
+}
+
+/* The CV button row above the sections stays centered */
+.research-page .center-if-needed {
+  text-align: center;
+}
+
+/* The gallery grid used by the research image is defined in gallery/styles.css,
+   which is loaded globally in index.html. No additional rules are needed there. */

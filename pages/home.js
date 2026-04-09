@@ -36,12 +36,6 @@ export function render() {
       <h2>Explore More</h2>
       <div class="grid-container">
         <div class="grid-item">
-          <a href="/">
-            <img src="/images/thumbnails/sand23_3k.webp" alt="Home">
-            <p>Home</p>
-          </a>
-        </div>
-        <div class="grid-item">
           <a href="/gallery">
             <img src="/images/thumbnails/cracked.webp" alt="Gallery">
             <p>Gallery</p>

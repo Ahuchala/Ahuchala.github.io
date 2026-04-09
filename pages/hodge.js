@@ -459,7 +459,9 @@ export function init() {
     document.removeEventListener('wheel', wheelGuard)
   }
 
-  // Flag variety calculator is deferred — preload modules on hover, init on first click
+  // Flag variety calculator is deferred — preload modules on hover, init on first click.
+  // Create the ready-promise upfront so hodge/scripts.js decodeState() can await it
+  // when restoring flag calculator state from a shared URL.
   const flagBtn = document.getElementById('toggle-flag')
   if (flagBtn) {
     const flagDeps = [
@@ -477,12 +479,17 @@ export function init() {
       })
     }, { once: true })
 
+    let resolveFlagReady
+    window._flagInitPromise = new Promise(r => { resolveFlagReady = r })
+
     flagBtn.addEventListener('click', async () => {
       try {
         const { init: initFlag } = await import('/components/hodge/flag.js')
-        initFlag()
+        await initFlag()
       } catch (e) {
         console.error('Failed to load flag variety calculator:', e)
+      } finally {
+        resolveFlagReady()
       }
     }, { once: true })
   }

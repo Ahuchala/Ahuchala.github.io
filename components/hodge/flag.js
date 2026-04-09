@@ -389,10 +389,10 @@ export function init() {
     updateDiamondFlag();
   });
 
-  // Initial update (no default stomping; respects any preset values already in the DOM).
-  updateDiamondFlag();
-
   // Expose update function to container (used by your main scripts).
   const flagContainer = document.getElementById("flag-container");
   if (flagContainer) flagContainer.updateCalculator = updateDiamondFlag;
+
+  // Initial update — return the promise so callers can await full initialization.
+  return updateDiamondFlag();
 }

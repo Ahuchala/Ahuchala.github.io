@@ -804,20 +804,21 @@ export function init() {
             }
 
         } else if (calc === 'flag') {
-            // Flag is lazily loaded; wait for the async import triggered by clicking toggle-flag
-            setTimeout(() => {
+            // Flag is lazily loaded — click the toggle to trigger the dynamic import,
+            // then wait for _flagInitPromise (set up in pages/hodge.js) to resolve
+            // before restoring state. This replaces the old fragile setTimeout(500/200).
+            toggleFlag?.click();
+            (window._flagInitPromise || Promise.resolve()).then(() => {
                 setVal('dims-input', (params.get('dims') ?? '').replace(/,/g, ', '));
                 setVal('r-value-flag', params.get('r'));
                 const md = params.get('md');
                 if (md) {
-                    setTimeout(() => {
-                        const inputs = document.querySelectorAll('#degree-toggles-flag .hodge-input');
-                        md.split('|').forEach((val, i) => {
-                            if (inputs[i]) { inputs[i].value = val; fire(inputs[i]); }
-                        });
-                    }, 200);
+                    const inputs = document.querySelectorAll('#degree-toggles-flag .hodge-input');
+                    md.split('|').forEach((val, i) => {
+                        if (inputs[i]) { inputs[i].value = val; fire(inputs[i]); }
+                    });
                 }
-            }, 500);
+            });
 
         } else if (calc === 'twisted') {
             setVal('n-value-twisted', params.get('n'));

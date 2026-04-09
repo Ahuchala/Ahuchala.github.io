@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v8'
+const CACHE_VERSION = 'v9'
 const STATIC_CACHE = `static-${CACHE_VERSION}`
 const IMAGE_CACHE  = `images-${CACHE_VERSION}`
 
@@ -102,7 +102,24 @@ self.addEventListener('fetch', event => {
     return
   }
 
-  // Everything else (JS, CSS) → stale-while-revalidate.
+  // JS and CSS → network-first: always fetch fresh from the network so code
+  // changes are picked up immediately without requiring a CACHE_VERSION bump.
+  // Falls back to the cached copy only when offline.
+  if (/\.(js|css)(\?|$)/.test(url.pathname)) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          if (response.ok) {
+            caches.open(STATIC_CACHE).then(c => c.put(request, response.clone()))
+          }
+          return response
+        })
+        .catch(() => caches.match(request).then(r => r ?? Response.error()))
+    )
+    return
+  }
+
+  // Everything else → stale-while-revalidate.
   // Serve the cached copy immediately; refresh the cache in the background.
   //
   // fetch() failures are handled at the point of creation (.catch → null) so
