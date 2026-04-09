@@ -32,6 +32,7 @@ html {
 
   --oeis-sequence-background: #f4f8fb; /* Soft light gray for sequences */
   --intro-highlight-background: rgba(30, 41, 59, 0.05); /* Subtle intro circle highlight */
+  --link-color: #4f8ef7; /* Accent blue for focus rings / links */
 }
 
 html.dark-mode {
@@ -62,6 +63,7 @@ html.dark-mode {
   --section-header-text-color: #c5c8d3; /* Section headers */
   --oeis-sequence-background: #1e2640; /* Background for sequences */
   --intro-highlight-background: rgba(255, 255, 255, 0.05); /* Subtle circle highlight */
+  --link-color: #5b8af5; /* Accent blue for focus rings / links (dark mode) */
 }
 
 html, body {
@@ -187,10 +189,11 @@ a:focus-visible {
 }
 
 .cv-button:hover,
-.cv-button:focus {
+.cv-button:focus-visible {
   background: var(--section-header-text-color);
   color: var(--body-bg-1);
 }
+.cv-button:focus { outline: none; }
 
 .center-content {
   display: flex;
@@ -292,6 +295,12 @@ header .header-content h1 {
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.3);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar a:focus { outline: none; }
+.navbar a:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
 }
 
 /*****************************************************
@@ -862,6 +871,9 @@ main {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+.footer-button:focus { outline: none; }
+.footer-button:focus-visible { box-shadow: 0 0 0 2px var(--link-color); }
+
 /*****************************************************
  * 13. COLLAPSIBLE & SHOW MORE
  *****************************************************/
@@ -898,6 +910,9 @@ main {
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
+
+.show-more:focus { outline: none; }
+.show-more:focus-visible { box-shadow: 0 0 0 2px var(--link-color); }
 
 /*****************************************************
  * 14. VISIBILITY CLASSES

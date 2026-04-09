@@ -669,10 +669,8 @@ export function init() {
 
     if (hideTopHalfToggle?.checked) {
       document.body.classList.add("hide-top-half");
-      relabelAllTopHalf();
-    } else {
-      relabelAllTopHalf();
     }
+    relabelAllTopHalf();
 
     if (showBlowupsToggle?.checked) {
       document.body.classList.add("show-blowups");
@@ -875,6 +873,13 @@ export function init() {
     ['add-factor-product', 'remove-factor-product'].forEach(id => {
         document.getElementById(id)?.addEventListener('click', scheduleUrlUpdate);
     });
+
+    // Extend _pageCleanup to cancel any pending URL update timer on navigation
+    const prevCleanupUrl = window._pageCleanup;
+    window._pageCleanup = () => {
+        prevCleanupUrl?.();
+        clearTimeout(_urlUpdateTimer);
+    };
 
     // Copy Link button: encode state to URL, update address bar, copy to clipboard
     const copyLinkBtn = document.getElementById('copy-link-btn');
