@@ -909,3 +909,103 @@ test("applyBlowUp: dim=4 CI, s=1 → correct column placement", () => {
   assert.equal(blown[0][0], d[0][0]);      // corners unchanged
   assert.equal(blown[8][0], d[8][0]);
 });
+
+// ─── Additional abelian variety examples ─────────────────────────────────────
+
+// h^{p,q}(A_g) = C(g,p)·C(g,q)  (Griffiths–Harris)
+test("Abelian variety g=4: full Hodge diamond", () => {
+  // h^{p,q} = C(4,p)·C(4,q); dim=4
+  assert.deepEqual(hodgeAbelianVariety(4), [
+    [1],
+    [4, 4],
+    [6, 16, 6],
+    [4, 24, 24, 4],
+    [1, 16, 36, 16, 1],
+    [4, 24, 24, 4],
+    [6, 16, 6],
+    [4, 4],
+    [1],
+  ]);
+});
+
+test("Abelian variety g=5: full Hodge diamond", () => {
+  // h^{p,q} = C(5,p)·C(5,q); dim=5
+  assert.deepEqual(hodgeAbelianVariety(5), [
+    [1],
+    [5, 5],
+    [10, 25, 10],
+    [10, 50, 50, 10],
+    [5, 50, 100, 50, 5],
+    [1, 25, 100, 100, 25, 1],
+    [5, 50, 100, 50, 5],
+    [10, 50, 50, 10],
+    [10, 25, 10],
+    [5, 5],
+    [1],
+  ]);
+});
+
+// ─── Additional Grassmannian examples ────────────────────────────────────────
+
+// h^{p,p}(Gr(2,6)) = [1,1,2,2,3,2,2,1,1] for p=0..8
+// (partitions fitting in a 2×4 box; sum = C(6,2) = 15)
+test("Gr(2,6): full Hodge diamond", () => {
+  assert.deepEqual(hodgeGrassmannian(2, 6), [
+    [1],
+    [0, 0],
+    [0, 1, 0],
+    [0, 0, 0, 0],
+    [0, 0, 2, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 2, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 3, 0, 0, 0, 0],   // middle: h^{4,4}=3
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 2, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 2, 0, 0],
+    [0, 0, 0, 0],
+    [0, 1, 0],
+    [0, 0],
+    [1],
+  ]);
+});
+
+test("Gr(2,6) ≅ Gr(4,6): duality of Grassmannians", () => {
+  assert.deepEqual(hodgeGrassmannian(2, 6), hodgeGrassmannian(4, 6));
+});
+
+// ─── Additional twisted Hodge examples ───────────────────────────────────────
+
+// H⁰(Gr(k,n), O(1)) = dim ∧^k C^n = C(n,k)  (Borel–Weil / Plücker)
+test("Twisted k=2,n=5,t=1: H⁰(Gr(2,5),O(1))=10 (Plücker embedding)", () => {
+  const m = twistedMap(hodgeTwisted(2, 5, 1));
+  assert.equal(m.get("0,0"), 10);  // C(5,2) = 10
+});
+
+test("Twisted k=3,n=6,t=1: H⁰(Gr(3,6),O(1))=20 (Plücker embedding)", () => {
+  const m = twistedMap(hodgeTwisted(3, 6, 1));
+  assert.equal(m.get("0,0"), 20);  // C(6,3) = 20
+});
+
+// ─── Additional flag variety examples ────────────────────────────────────────
+
+// Fl(5) = [1,1,1,1,1]: Poincaré polynomial = [5]_q! = [2]_q[3]_q[4]_q[5]_q
+// h^{p,p} = |{σ ∈ S_5 : l(σ)=p}|  (Mahonian distribution)
+//          = [1,4,9,15,20,22,20,15,9,4,1]   (sum = 5! = 120)
+test("Flag [1,1,1,1,1] = Fl(5): diagonal Hodge numbers (Mahonian distribution)", () => {
+  const d = hodgeFlag([1, 1, 1, 1, 1]);
+  // rows ≤ dim=10: row 2p has h^{p,p} at colIndex p
+  assert.equal(d[0][0],   1);   // h^{0,0}
+  assert.equal(d[2][1],   4);   // h^{1,1}
+  assert.equal(d[4][2],   9);   // h^{2,2}
+  assert.equal(d[6][3],  15);   // h^{3,3}
+  assert.equal(d[8][4],  20);   // h^{4,4}
+  assert.equal(d[10][5], 22);   // h^{5,5} (middle, maximum)
+  // rows > dim=10: row r has pMin=r-10, h^{p,p} at colIndex p-pMin
+  assert.equal(d[12][4], 20);   // h^{6,6}: pMin=2, colIndex=6-2=4
+  assert.equal(d[14][3], 15);   // h^{7,7}: pMin=4, colIndex=7-4=3
+  assert.equal(d[16][2],  9);   // h^{8,8}: pMin=6, colIndex=8-6=2
+  assert.equal(d[18][1],  4);   // h^{9,9}: pMin=8, colIndex=9-8=1
+  assert.equal(d[20][0],  1);   // h^{10,10}: pMin=10, colIndex=0
+});
