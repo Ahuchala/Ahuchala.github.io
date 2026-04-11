@@ -53,14 +53,14 @@ export function render() {
     </section>
 
     <section class="section collapsible">
-      <h2 style="text-align:center">A261752 (Knight&rsquo;s Domination)</h2>
+      <h3 style="text-align:center">A261752 (Knight&rsquo;s Domination)</h3>
       <p style="text-align:center">&ldquo;Minimum number of knights on an $n\\times n$ chessboard such that every square is attacked.&rdquo;</p>
       <div class="gallery-grid" id="knight-gallery"></div>
       <button class="show-more" id="btn-knight">Show More</button>
     </section>
 
     <section class="section collapsible">
-      <h2 style="text-align:center">A004670 (and friends): Barnes-Wall Lattice Theta Series</h2>
+      <h3 style="text-align:center">A004670 (and friends): Barnes-Wall Lattice Theta Series</h3>
       <p style="text-align:center">Theta series of Barnes-Wall lattices in dimension $n=2^k$. A theta series of a lattice counts the number of points with a given squared distance from the origin. For example, in the typical square grid lattice $\\mathbb{Z}^2$ there is one point of square distance 0, 4 points of square distance 1, 4 points of square distance 2, etc. This is encoded in the function $1+4z+4z^2+4z^4+8z^5+\\ldots$.<br><br>Theta functions have some nice mathematical properties which ultimately arise from the symmetries of the lattices they arise from.<br><br>The Barnes-Wall lattices are a special class of lattices of dimension $2^k$. Since they are even lattices, they never have vectors of odd square length, so I adopt the convention to list their theta functions in powers of $q = z^2$. These plots were generated with Sage.</p>
       <div class="gallery-grid" id="theta-gallery"></div>
       <button class="show-more" id="btn-theta">Show More</button>
@@ -110,6 +110,7 @@ function populateGallery(containerId, items) {
       img.loading = 'lazy'
       img.decoding = 'async'
       img.style.cursor = 'pointer'
+      img.onerror = () => { img.style.display = 'none'; wrapper.classList.add('img-error') }
       const playlistIndex = playlist.indexOf(item)
       let preloaded = false
       img.addEventListener('mouseenter', () => {

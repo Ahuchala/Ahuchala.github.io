@@ -39,32 +39,32 @@ export function render() {
       <h2>Explore More</h2>
       <div class="grid-container">
         <div class="grid-item">
-          <a href="/gallery">
-            <img src="/images/thumbnails/cracked.webp" alt="Gallery">
+          <a href="/gallery" aria-label="Go to Gallery">
+            <img src="/images/thumbnails/cracked.webp" alt="">
             <p>Gallery</p>
           </a>
         </div>
         <div class="grid-item">
-          <a href="/hodge">
-            <img src="/images/thumbnails/theta_8.webp" alt="Hodge Diamonds">
+          <a href="/hodge" aria-label="Go to Hodge Diamond Calculator">
+            <img src="/images/thumbnails/theta_8.webp" alt="">
             <p>Hodge Diamonds</p>
           </a>
         </div>
         <div class="grid-item">
-          <a href="/research">
-            <img src="/images/thumbnails/zetafunction.webp" alt="Research">
+          <a href="/research" aria-label="Go to Research">
+            <img src="/images/thumbnails/zetafunction.webp" alt="">
             <p>Research</p>
           </a>
         </div>
         <div class="grid-item">
-          <a href="/teaching">
-            <img src="/images/thumbnails/broken.webp" alt="Teaching">
+          <a href="/teaching" aria-label="Go to Teaching">
+            <img src="/images/thumbnails/broken.webp" alt="">
             <p>Teaching</p>
           </a>
         </div>
         <div class="grid-item">
-          <a href="/oeis">
-            <img src="/images/thumbnails/knight31.webp" alt="OEIS">
+          <a href="/oeis" aria-label="Go to OEIS">
+            <img src="/images/thumbnails/knight31.webp" alt="">
             <p>OEIS</p>
           </a>
         </div>

@@ -42,11 +42,15 @@ function groupByYear(data) {
 
 export function render() {
   const groups = groupByYear(timelineData)
+  const instructorCount = timelineData.filter(e => e.role === 'Instructor').length
+  const taCount = timelineData.filter(e => e.role === 'TA').length
+  const graderCount = timelineData.filter(e => e.role === 'Grader').length
   return /* html */`
     <section class="timeline-wrapper">
       <h2 class="timeline-title">Teaching Experience</h2>
       <div class="timeline-description">
         <p>Courses taught at the University of Oregon:</p>
+        <p class="teaching-summary">${instructorCount} terms as instructor &middot; ${taCount} as TA &middot; ${graderCount} as grader</p>
       </div>
       <div class="teaching-groups">
         ${groups.map(([year, entries]) => `

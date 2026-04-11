@@ -555,6 +555,16 @@ main {
   text-shadow: none;
 }
 
+/* Fallback shown when a gallery thumbnail fails to load */
+.gallery-item.img-error::after {
+  content: 'Image unavailable';
+  display: block;
+  padding: 1rem 0.5rem;
+  color: var(--secondary-text);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
 /*****************************************************
  * 10. FEATURED & GRID SECTIONS
  *****************************************************/
@@ -693,7 +703,7 @@ main {
   position: absolute;
   top: 12px;
   right: 12px;
-  color: black;
+  color: var(--text-color);
   font-size: 2.5rem;
   font-weight: bold;
   cursor: pointer;
@@ -719,6 +729,8 @@ main {
 .modal .close:focus { outline: none; }
 .modal .close:focus-visible { box-shadow: 0 0 0 3px var(--link-color, #4fa3e0); }
 .modal .close:active { background-color: rgba(255, 200, 200, 0.9); }
+html.dark-mode .modal .close { color: #f0f0f0; background-color: rgba(255, 255, 255, 0.12); }
+html.dark-mode .modal .close:hover { background-color: rgba(255, 100, 100, 0.25); }
 
 .modal-content {
   position: relative;

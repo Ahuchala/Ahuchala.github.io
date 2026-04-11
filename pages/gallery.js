@@ -34,6 +34,7 @@ export function init() {
     img.loading = 'lazy'
     img.decoding = 'async'
     img.style.cursor = 'pointer'
+    img.onerror = () => { img.style.display = 'none'; wrapper.classList.add('img-error') }
     let preloaded = false
     img.addEventListener('mouseenter', () => {
       if (preloaded) return

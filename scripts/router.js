@@ -35,7 +35,9 @@ function normalizePath(path) {
 function updateActiveNav(path) {
   document.querySelectorAll('.navbar-items a').forEach(a => {
     const linkPath = normalizePath(new URL(a.href, window.location.origin).pathname)
-    a.classList.toggle('active', linkPath === path)
+    const isActive = linkPath === path
+    a.classList.toggle('active', isActive)
+    a.setAttribute('aria-current', isActive ? 'page' : 'false')
   })
 }
 
@@ -183,9 +185,27 @@ function setupModal() {
   }
   window._modalKeyHandler = (e) => {
     if (modal.style.display !== 'flex') return
-    if (e.key === 'Escape') closeModal()
-    if (e.key === 'ArrowLeft')  navigate(-1)
-    if (e.key === 'ArrowRight') navigate(1)
+    if (e.key === 'Escape') { closeModal(); return }
+    if (e.key === 'ArrowLeft')  { navigate(-1); return }
+    if (e.key === 'ArrowRight') { navigate(1); return }
+    if (e.key === 'Tab') {
+      // Focus trap: keep keyboard navigation inside the modal while it is open
+      const closeBtnEl = modal.querySelector('.close')
+      const focusable = [
+        ...(prevBtn?.style.display !== 'none' ? [prevBtn] : []),
+        closeBtnEl,
+        ...Array.from(modalDescription.querySelectorAll('a[href]')),
+        ...(nextBtn?.style.display !== 'none' ? [nextBtn] : []),
+      ].filter(Boolean)
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last  = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus()
+      }
+    }
   }
   document.addEventListener('keydown', window._modalKeyHandler)
 }
@@ -243,7 +263,18 @@ export async function navigate(path, pushState = true) {
   const enterClass  = transitionType > 0 ? 'entering-from-right' : transitionType < 0 ? 'entering-from-left' : 'entering'
 
   const loader = routes[path] || routes['/']
-  const mod = await loader()
+  let mod
+  try {
+    mod = await loader()
+  } catch (err) {
+    console.error('Failed to load page:', err)
+    const app = document.getElementById('app')
+    if (app) {
+      app.style.opacity = ''
+      app.innerHTML = `<section class="section"><p class="error">Failed to load this page. Please refresh and try again.</p></section>`
+    }
+    return
+  }
 
   const app = document.getElementById('app')
 

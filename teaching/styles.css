@@ -20,6 +20,13 @@
   line-height: 1.6;
 }
 
+.teaching-summary {
+  font-size: 0.9rem;
+  margin-top: 0.35rem;
+  letter-spacing: 0.02em;
+  opacity: 0.75;
+}
+
 /* ── Year groups ── */
 
 .teaching-groups {

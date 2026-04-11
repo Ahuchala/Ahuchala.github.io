@@ -488,6 +488,10 @@ export function init() {
         await initFlag()
       } catch (e) {
         console.error('Failed to load flag variety calculator:', e)
+        const diamondFlag = document.getElementById('diamond-container-flag')
+        if (diamondFlag) {
+          diamondFlag.innerHTML = `<p class="error">Failed to load the flag variety calculator. Please refresh and try again.</p>`
+        }
       } finally {
         resolveFlagReady()
       }
