@@ -97,7 +97,13 @@ export function init() {
   let preloaded = false
   img.addEventListener('mouseenter', () => {
     if (preloaded) return
-    const t = setTimeout(() => { preloaded = true; const p = new Image(); p.fetchPriority = 'low'; p.src = zetaImage.full }, 150)
+    const t = setTimeout(() => {
+      preloaded = true
+      const p = new Image()
+      p.fetchPriority = 'low'
+      p.onerror = () => console.warn('Failed to preload featured image:', zetaImage.full)
+      p.src = zetaImage.full
+    }, 150)
     img.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
   })
   img.addEventListener('click', () =>

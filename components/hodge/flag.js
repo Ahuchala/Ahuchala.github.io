@@ -160,7 +160,11 @@ export function init() {
   }
 
   // --- main render ---
+  // Generation counter: incremented on every call so stale async results are
+  // discarded if a newer call has already started.
+  let _renderGen = 0;
   async function updateDiamondFlag() {
+    const thisGen = ++_renderGen;
     const dimsRaw = (dimsInput?.value ?? "").trim();
 
     if (dimsRaw === "") {
@@ -279,12 +283,15 @@ export function init() {
     try {
       [polyArray] = await Promise.all([fetchFlagKey(dims, r), ensureMath()]);
     } catch (err) {
+      if (thisGen !== _renderGen) return; // superseded by a newer call
       diamondContainer.classList.remove("diamond-loading");
       diamondContainer.innerHTML =
         `<p class="error">Error: No precomputed Hodge data for [${dims.join(", ")}] r=${r}.</p>`;
       console.error(err);
       return;
     }
+    // Discard this result if a newer render call has already started.
+    if (thisGen !== _renderGen) return;
 
     // Evaluate JSON polynomials → half middle row
     const halfMiddleRow = polyArray.map(poly => {
