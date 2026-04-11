@@ -41,7 +41,62 @@ function updateActiveNav(path) {
   })
 }
 
+// ── Idle-time image prefetch for open gallery carousels ──────────────────────
+// Tracks the active idle callback and which indices have already been kicked off.
+let _idleHandle = null
+let _idlePreloaded = new Set()
+
+function cancelIdlePrefetch() {
+  if (_idleHandle === null) return
+  if (typeof cancelIdleCallback !== 'undefined') cancelIdleCallback(_idleHandle)
+  _idleHandle = null
+}
+
+// Prefetches every full image in `items` using browser idle time, spiraling
+// outward from `fromIndex`. Adjacent images (+/-1) are already handled by the
+// 300 ms setTimeout inside showItem(), so they're seeded into _idlePreloaded
+// to avoid duplicate requests.
+function startIdlePrefetch(items, fromIndex) {
+  cancelIdlePrefetch()
+  if (!items || items.length <= 3 || typeof requestIdleCallback === 'undefined') return
+
+  // Mark current + adjacent as already handled so idle fetch skips them.
+  ;[-1, 0, 1].forEach(o => {
+    _idlePreloaded.add(((fromIndex + o) % items.length + items.length) % items.length)
+  })
+
+  // Build a queue spiraling outward: [+2, -2, +3, -3, …]
+  const queue = []
+  const queued = new Set()
+  for (let offset = 2; offset < items.length; offset++) {
+    const fwd = (fromIndex + offset) % items.length
+    const bwd = ((fromIndex - offset) % items.length + items.length) % items.length
+    if (!_idlePreloaded.has(fwd) && !queued.has(fwd)) { queued.add(fwd); queue.push(fwd) }
+    if (!_idlePreloaded.has(bwd) && !queued.has(bwd)) { queued.add(bwd); queue.push(bwd) }
+  }
+  if (queue.length === 0) return
+
+  function prefetchNext(deadline) {
+    while ((deadline.timeRemaining() > 8 || deadline.didTimeout) && queue.length > 0) {
+      const idx = queue.shift()
+      if (!_idlePreloaded.has(idx) && items[idx]?.full) {
+        _idlePreloaded.add(idx)
+        const p = new Image()
+        p.fetchPriority = 'low'
+        p.src = items[idx].full
+      }
+    }
+    _idleHandle = queue.length > 0
+      ? requestIdleCallback(prefetchNext, { timeout: 8000 })
+      : null
+  }
+
+  _idleHandle = requestIdleCallback(prefetchNext, { timeout: 8000 })
+}
+
 function setupModal() {
+  cancelIdlePrefetch() // stop any prior idle prefetch when navigating to a new page
+
   const modal = document.getElementById('image-modal')
   if (!modal) return
 
@@ -59,12 +114,26 @@ function setupModal() {
 
   let lastFocusedElement = null
 
+  // Scan description HTML for quoted strings that match a gallery title in the
+  // current playlist, and wrap them in a <button> that jumps the carousel there.
+  // Only activates in carousel mode (playlist !== null).
+  function linkifyDescRefs(html) {
+    if (!playlist) return html
+    const titleMap = new Map(playlist.map((it, i) => [it.title, i]))
+    return html.replace(/(?<!=)"([^"<>]+)"/g, (match, inner) => {
+      const idx = titleMap.get(inner)
+      if (idx === undefined || idx === playlistIndex) return match
+      return `<button class="gallery-xref" data-idx="${idx}" aria-label="Jump to ${inner} in gallery">${match}</button>`
+    })
+  }
+
   function closeModal() {
     modal.style.display = 'none'
     modalImage.src = ''
     modalTitle.innerHTML = ''
     modalDescription.innerHTML = ''
     playlist = null
+    cancelIdlePrefetch()
     if (prevBtn) prevBtn.style.display = 'none'
     if (nextBtn) nextBtn.style.display = 'none'
     // Return focus to the element that triggered the modal
@@ -101,7 +170,7 @@ function setupModal() {
         modalImage.src = item.full
         modalImage.alt = item.title
         modalTitle.innerHTML = item.title
-        modalDescription.innerHTML = item.description + originalLink
+        modalDescription.innerHTML = linkifyDescRefs(item.description + originalLink)
         if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).catch(console.error)
         modalImage.classList.add(enterCls)
         modalImage.addEventListener('animationend', () => modalImage.classList.remove(enterCls), { once: true })
@@ -111,7 +180,7 @@ function setupModal() {
       modalImage.src = item.full
       modalImage.alt = item.title
       modalTitle.innerHTML = item.title
-      modalDescription.innerHTML = item.description + originalLink
+      modalDescription.innerHTML = linkifyDescRefs(item.description + originalLink)
       if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).catch(console.error)
       transitioning = false
     }
@@ -131,6 +200,23 @@ function setupModal() {
   newClose.addEventListener('click', closeModal)
 
   modal.onclick = (e) => { if (e.target === modal) closeModal() }
+
+  // Delegated click handler for cross-reference buttons injected by linkifyDescRefs().
+  // Remove the old handler first so setupModal() calls don't stack listeners.
+  if (modalDescription._xrefHandler) {
+    modalDescription.removeEventListener('click', modalDescription._xrefHandler)
+  }
+  modalDescription._xrefHandler = (e) => {
+    const btn = e.target.closest('.gallery-xref')
+    if (!btn || !playlist || transitioning) return
+    const idx = parseInt(btn.dataset.idx, 10)
+    if (isNaN(idx) || idx < 0 || idx >= playlist.length) return
+    transitioning = true
+    const dir = idx > playlistIndex ? 1 : -1
+    playlistIndex = idx
+    showItem(playlistIndex, dir)
+  }
+  modalDescription.addEventListener('click', modalDescription._xrefHandler)
 
   // Arrow buttons are persistent DOM nodes — remove old listeners before adding new ones
   if (prevBtn) {
@@ -169,11 +255,13 @@ function setupModal() {
     lastFocusedElement = document.activeElement
     playlist = items
     playlistIndex = startIndex
+    _idlePreloaded = new Set() // fresh session — clear any prior prefetch tracking
     modalContent?.classList.add('modal-carousel')
     modal.style.display = 'flex'
     if (prevBtn) prevBtn.style.display = 'flex'
     if (nextBtn) nextBtn.style.display = 'flex'
     showItem(playlistIndex, 0)
+    startIdlePrefetch(items, startIndex)
     // Move focus into the modal for keyboard/screen-reader users.
     // Focusing the backdrop (not .close) avoids a visible focus ring on open.
     modal.focus()
