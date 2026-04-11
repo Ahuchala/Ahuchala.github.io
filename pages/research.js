@@ -16,7 +16,7 @@ export function render() {
           $p$-adic cohomology.
         </p>
 
-        <section class="publications section">
+        <section class="publications sub-section">
           <h3>Publications and Preprints</h3>
           <p>
             A preprint of my paper with Fern Gossow on bounded core partitions and the
@@ -30,7 +30,7 @@ export function render() {
           </p>
         </section>
 
-        <section class="section">
+        <section class="sub-section">
           <h3>Zeta Functions</h3>
           <p>
             We recall the definition of the Hasse-Weil zeta function of a projective variety $X$

@@ -23,7 +23,7 @@
 .input-row {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
 .blowup-row {
@@ -122,8 +122,14 @@ body.show-blowups .blowup-row {
     font-size: 1rem;
     border: 1px solid var(--border-color-1);
     border-radius: 5px;
-    background-color: var(--body-section-2);
+    background-color: var(--body-section-1);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.hodge-input:focus { outline: none; }
+.hodge-input:focus-visible {
+    outline: 2px solid var(--link-color, #4f8ef7);
+    outline-offset: 1px;
+    border-color: var(--link-color, #4f8ef7);
 }
 
 #preset-buttons,
@@ -209,6 +215,7 @@ html.dark-mode .preset-button.pressed {
     font-weight: bold;
     cursor: pointer;
     margin: 0;
+    letter-spacing: 0.01em;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
@@ -299,6 +306,10 @@ html.dark-mode .preset-button.pressed {
   color: var(--zero-highlight, #9aa0a6) !important; /* tweak variable/color as you like */
 }
 .zero-alt-on .is-zero { fill: var(--zero-highlight, #9aa0a6) !important; }
+html.dark-mode .zero-alt-on .is-zero { color: #6b7280 !important; fill: #6b7280 !important; }
+
+/* Soften the diamond-value accent in dark mode */
+html.dark-mode .diamond-value { background-color: rgba(96, 165, 250, 0.75); }
 
 body.hide-top-half .is-top-half {
   display: none;
@@ -312,10 +323,10 @@ body.hide-top-half .is-top-half {
   background-color: var(--body-section-2);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   text-align: left;
-  max-height: 250px;
+  max-height: 280px;
   overflow-y: auto;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 .twisted-info-box ul {
   margin: 0.5rem 0 0;
