@@ -1179,11 +1179,18 @@ html.dark-mode .modal .close:hover { background-color: rgba(255, 100, 100, 0.25)
   }
 
   .settings-container {
-    position: static;
+    position: relative;
     transform: none;
-    top: auto; 
+    top: auto;
     right: auto;
     margin-left: auto;
+    z-index: 201;
+  }
+
+  .settings-container.active {
+    position: absolute;
+    right: 0;
+    width: 240px;
   }
 }
 
