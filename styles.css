@@ -1070,12 +1070,13 @@ html.dark-mode .modal .close:hover { background-color: rgba(255, 100, 100, 0.25)
   padding: 0 4px 0 14px;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s ease 0.15s, visibility 0.2s ease 0.15s;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
 .settings-container.active .settings-content {
   opacity: 1;
   visibility: visible;
+  transition: opacity 0.2s ease 0.15s, visibility 0.2s ease 0.15s;
 }
 
 .settings-container .dark-mode-label {
@@ -1319,6 +1320,7 @@ html.dark-mode .modal .close:hover { background-color: rgba(255, 100, 100, 0.25)
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
+  transition-delay: 0s !important;
 }
 
 /* Page transitions are skipped entirely in JS when reduce-motion is on,
