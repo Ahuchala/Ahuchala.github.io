@@ -7,7 +7,7 @@ export function header() {
           </div>
         </header>
   
-        <nav class="navbar">
+        <nav class="navbar" aria-label="Main navigation">
           <button class="menu-button" aria-label="Toggle navigation" aria-expanded="false">
             <div class="hamburger">
               <div></div>

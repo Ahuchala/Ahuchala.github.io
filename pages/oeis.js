@@ -141,8 +141,11 @@ function populateSequences(containerId, sequences) {
   if (!container) return
 
   sequences.forEach(seq => {
-    const div = document.createElement('div')
-    div.className = 'oeis-sequence'
+    const a = document.createElement('a')
+    a.className = 'oeis-sequence'
+    a.href = `https://oeis.org/${seq.id}`
+    a.target = '_blank'
+    a.rel = 'noreferrer'
 
     const idEl = document.createElement('span')
     idEl.className = 'sequence-id'
@@ -152,10 +155,9 @@ function populateSequences(containerId, sequences) {
     nameEl.className = 'sequence-name'
     nameEl.innerHTML = seq.name
 
-    div.appendChild(idEl)
-    div.appendChild(nameEl)
-    div.addEventListener('click', () => window.open(`https://oeis.org/${seq.id}`, '_blank'))
-    container.appendChild(div)
+    a.appendChild(idEl)
+    a.appendChild(nameEl)
+    container.appendChild(a)
   })
 }
 

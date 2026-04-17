@@ -48,6 +48,8 @@ document.addEventListener('click', (e) => {
   if (href.startsWith('http') || href.startsWith('//') || href.startsWith('#') || href.startsWith('mailto:')) return
   // Skip file downloads
   if (href.match(/\.(pdf|png|jpg|webp|zip)$/i)) return
+  // Let browser handle modifier+click (new tab/window) and middle-click natively
+  if (e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return
   e.preventDefault()
   navigate(new URL(link.href, window.location.origin).pathname)
 })
@@ -63,6 +65,6 @@ navigate(window.location.pathname, false)
 // Register service worker for caching on repeat visits
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+    navigator.serviceWorker.register('/sw.js').catch(console.error)
   })
 }

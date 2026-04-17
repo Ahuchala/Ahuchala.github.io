@@ -55,15 +55,29 @@
     align-items: baseline;
     cursor: pointer;
     transition: background 0.15s;
+    text-decoration: none;
+}
+
+.oeis-sequence .sequence-name {
+    text-decoration: none;
 }
 
 .oeis-grid .oeis-sequence:last-child {
     border-bottom: none;
 }
 
-.oeis-sequence:hover {
+.oeis-sequence:hover,
+.oeis-sequence:focus-visible {
     background: rgba(30, 41, 59, 0.04); /* fallback for browsers without color-mix() */
     background: color-mix(in srgb, var(--border-color-1) 30%, transparent);
+    outline: 2px solid var(--link-color);
+    outline-offset: -2px;
+    text-decoration: none;
+}
+
+.oeis-sequence:hover .sequence-id,
+.oeis-sequence:focus-visible .sequence-id {
+    text-decoration: underline;
 }
 
 .sequence-id {

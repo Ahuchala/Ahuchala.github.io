@@ -146,6 +146,8 @@ export function init() {
         if (cell.contributors.length > 0) {
           contribStore.set(`${j},${i}`, cell.contributors);  // key "p,q"
           span.classList.add("has-contrib");
+          span.setAttribute("role", "button");
+          span.setAttribute("tabindex", "0");
         }
 
 
@@ -162,6 +164,13 @@ export function init() {
   // ======================================================
   // --- twisted-diamond click handler ---
   // ======================================================
+  diamond?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      const target = event.target.closest(".diamond-value.has-contrib");
+      if (target) { event.preventDefault(); target.click(); }
+    }
+  });
+
   diamond?.addEventListener("click", (event) => {
     const target = event.target.closest(".diamond-value");
     if (!target) return;

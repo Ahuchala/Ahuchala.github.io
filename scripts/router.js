@@ -347,7 +347,12 @@ export function prefetchRoute(path) {
   if (loader) loader().then(mod => mod.prefetch?.()).catch(console.error)
 }
 
+let navigating = false
+
 export async function navigate(path, pushState = true) {
+  if (navigating) return
+  navigating = true
+  try {
   path = normalizePath(path)
 
   const transitionType = getTransitionType(currentPath, path)
@@ -421,4 +426,7 @@ export async function navigate(path, pushState = true) {
   }
 
   window.scrollTo(0, 0)
+  } finally {
+    navigating = false
+  }
 }
