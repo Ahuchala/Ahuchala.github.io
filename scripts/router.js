@@ -1,3 +1,7 @@
+function removeMathTabIndex(el) {
+  el.querySelectorAll('mjx-container[tabindex]').forEach(m => m.removeAttribute('tabindex'))
+}
+
 const routes = {
   '/':          () => import('/pages/home.js'),
   '/gallery':   () => import('/pages/gallery.js'),
@@ -146,7 +150,7 @@ function setupModal() {
     const reduceMotion = document.documentElement.classList.contains('reduce-motion')
 
     const originalLink = item.original
-      ? `<p><a href="${item.original}" target="_blank" rel="noopener" class="original-link">↗ View full resolution</a></p>`
+      ? `<p><a href="${item.original}" target="_blank" rel="noopener noreferrer" class="original-link">↗ View full resolution</a></p>`
       : ''
 
     // Preload adjacent images at low priority after a brief delay
@@ -171,7 +175,7 @@ function setupModal() {
         modalImage.alt = item.title
         modalTitle.innerHTML = item.title
         modalDescription.innerHTML = linkifyDescRefs(item.description + originalLink)
-        if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).catch(console.error)
+        if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).then(() => removeMathTabIndex(modalDescription)).catch(console.error)
         modalImage.classList.add(enterCls)
         modalImage.addEventListener('animationend', () => modalImage.classList.remove(enterCls), { once: true })
         transitioning = false
@@ -181,7 +185,7 @@ function setupModal() {
       modalImage.alt = item.title
       modalTitle.innerHTML = item.title
       modalDescription.innerHTML = linkifyDescRefs(item.description + originalLink)
-      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).catch(console.error)
+      if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).then(() => removeMathTabIndex(modalDescription)).catch(console.error)
       transitioning = false
     }
   }
@@ -244,7 +248,7 @@ function setupModal() {
     modalDescription.innerHTML = description
     if (prevBtn) prevBtn.style.display = 'none'
     if (nextBtn) nextBtn.style.display = 'none'
-    if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).catch(console.error)
+    if (window.MathJax?.typesetPromise) MathJax.typesetPromise([modalDescription]).then(() => removeMathTabIndex(modalDescription)).catch(console.error)
     // Move focus into the modal for keyboard/screen-reader users.
     // Focusing the backdrop (not .close) avoids a visible focus ring on open.
     modal.focus()
@@ -411,9 +415,9 @@ export async function navigate(path, pushState = true) {
 
   // Re-typeset MathJax
   if (window.MathJax?.typesetPromise) {
-    MathJax.typesetPromise([app]).catch(console.error)
+    MathJax.typesetPromise([app]).then(() => removeMathTabIndex(app)).catch(console.error)
   } else {
-    window.addEventListener('mathjax-ready', () => MathJax.typesetPromise([app]).catch(console.error), { once: true })
+    window.addEventListener('mathjax-ready', () => MathJax.typesetPromise([app]).then(() => removeMathTabIndex(app)).catch(console.error), { once: true })
   }
 
   window.scrollTo(0, 0)

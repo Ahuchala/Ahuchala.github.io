@@ -22,13 +22,13 @@ export function render() {
         </span>
       </p>
       <div class="featured-item">
-        <img
-          src="/images/thumbnails/museum_small.webp"
-          alt="Museum Submission"
-          class="center-content"
-          style="cursor:pointer"
-          id="featured-img"
-        />
+        <button id="featured-btn" class="img-btn center-content">
+          <img
+            src="/images/thumbnails/museum_small.webp"
+            alt="Museum Submission"
+            fetchpriority="high"
+          />
+        </button>
         <p class="center-content">
           <em>Displayed in the Jordan Schnitzer Museum of Art in 2021 (and currently on display in the Eugene Airport!).</em>
         </p>
@@ -40,31 +40,31 @@ export function render() {
       <div class="grid-container">
         <div class="grid-item">
           <a href="/gallery" aria-label="Go to Gallery">
-            <img src="/images/thumbnails/cracked.webp" alt="">
+            <img src="/images/thumbnails/cracked.webp" alt="" loading="lazy">
             <p>Gallery</p>
           </a>
         </div>
         <div class="grid-item">
           <a href="/hodge" aria-label="Go to Hodge Diamond Calculator">
-            <img src="/images/thumbnails/theta_8.webp" alt="">
+            <img src="/images/thumbnails/theta_8.webp" alt="" loading="lazy">
             <p>Hodge Diamonds</p>
           </a>
         </div>
         <div class="grid-item">
           <a href="/research" aria-label="Go to Research">
-            <img src="/images/thumbnails/zetafunction.webp" alt="">
+            <img src="/images/thumbnails/zetafunction.webp" alt="" loading="lazy">
             <p>Research</p>
           </a>
         </div>
         <div class="grid-item">
           <a href="/teaching" aria-label="Go to Teaching">
-            <img src="/images/thumbnails/broken.webp" alt="">
+            <img src="/images/thumbnails/broken.webp" alt="" loading="lazy">
             <p>Teaching</p>
           </a>
         </div>
         <div class="grid-item">
           <a href="/oeis" aria-label="Go to OEIS">
-            <img src="/images/thumbnails/knight31.webp" alt="">
+            <img src="/images/thumbnails/knight31.webp" alt="" loading="lazy">
             <p>OEIS</p>
           </a>
         </div>
@@ -95,15 +95,15 @@ export function init() {
     document.removeEventListener('click', galleryLinkHandler, true)
   }
 
-  const featuredImg = document.getElementById('featured-img')
-  if (featuredImg) {
+  const featuredBtn = document.getElementById('featured-btn')
+  if (featuredBtn) {
     let preloaded = false
-    featuredImg.addEventListener('mouseenter', () => {
+    featuredBtn.addEventListener('mouseenter', () => {
       if (preloaded) return
       const t = setTimeout(() => { preloaded = true; const p = new Image(); p.fetchPriority = 'low'; p.src = '/images/gallery/museum_small.webp' }, 150)
-      featuredImg.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
+      featuredBtn.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
     })
-    featuredImg.addEventListener('click', () => {
+    featuredBtn.addEventListener('click', () => {
       window._openModal?.(
         '/images/gallery/museum_small.webp',
         'Museum Submission',

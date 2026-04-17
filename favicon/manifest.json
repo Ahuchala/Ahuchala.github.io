@@ -1,5 +1,11 @@
 {
-    "name": "App",
+    "name": "Andy Huchala",
+    "short_name": "Huchala",
+    "description": "Personal website of Andy Huchala — math, art, and interactive Hodge diamond calculator.",
+    "display": "standalone",
+    "start_url": "/",
+    "theme_color": "#3d7de8",
+    "background_color": "#ffffff",
     "icons": [
       {
         "src": "/favicon/android-icon-36x36.png",
@@ -39,4 +45,3 @@
       }
     ]
   }
-  

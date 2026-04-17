@@ -176,6 +176,21 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
+/* Clickable image button — resets button chrome so images look unchanged */
+.img-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: block;
+}
+
+.img-btn:focus-visible {
+  outline: 2px solid var(--secondary-light);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
 /* Utility classes */
 .body-text span {
   display: inline-block;
@@ -405,19 +420,24 @@ main {
   z-index: 20;
 }
 
-.featured img {
+.featured .img-btn {
   width: 20%;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06),
               0 6px 20px rgba(0, 0, 0, 0.1);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
-  cursor: pointer;
 }
 
-.featured img:hover {
+.featured .img-btn:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1),
               0 12px 28px rgba(0, 0, 0, 0.16);
+}
+
+.featured .img-btn img {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
 }
 
 
@@ -1201,7 +1221,7 @@ html.dark-mode .modal .close:hover { background-color: rgba(255, 100, 100, 0.25)
     font-size: 2rem;
   }
 
-  .featured img {
+  .featured .img-btn {
     width: 60%;
     max-width: 280px;
   }

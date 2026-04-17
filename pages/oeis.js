@@ -109,19 +109,23 @@ function populateGallery(containerId, items) {
       img.alt = item.label ?? item.title
       img.loading = 'lazy'
       img.decoding = 'async'
-      img.style.cursor = 'pointer'
       img.onerror = () => { img.style.display = 'none'; wrapper.classList.add('img-error') }
       const playlistIndex = playlist.indexOf(item)
+
+      const btn = document.createElement('button')
+      btn.className = 'img-btn'
+      btn.setAttribute('aria-label', `Open ${item.label ?? item.title}`)
       let preloaded = false
-      img.addEventListener('mouseenter', () => {
+      btn.addEventListener('mouseenter', () => {
         if (preloaded) return
         const t = setTimeout(() => { preloaded = true; const p = new Image(); p.fetchPriority = 'low'; p.src = item.full }, 150)
-        img.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
+        btn.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
       })
-      img.addEventListener('click', () =>
+      btn.addEventListener('click', () =>
         window._openGallery?.(playlist, playlistIndex)
       )
-      wrapper.appendChild(img)
+      btn.appendChild(img)
+      wrapper.appendChild(btn)
     } else {
       const placeholder = document.createElement('div')
       placeholder.className = 'placeholder'

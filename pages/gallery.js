@@ -33,18 +33,22 @@ export function init() {
     img.alt = alt
     img.loading = 'lazy'
     img.decoding = 'async'
-    img.style.cursor = 'pointer'
     img.onerror = () => { img.style.display = 'none'; wrapper.classList.add('img-error') }
+
+    const btn = document.createElement('button')
+    btn.className = 'img-btn'
+    btn.setAttribute('aria-label', `Open ${title}`)
     let preloaded = false
-    img.addEventListener('mouseenter', () => {
+    btn.addEventListener('mouseenter', () => {
       if (preloaded) return
       const t = setTimeout(() => { preloaded = true; const p = new Image(); p.fetchPriority = 'low'; p.src = images[index].full }, 150)
-      img.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
+      btn.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
     })
-    img.addEventListener('click', () => window._openGallery?.(images, index))
+    btn.addEventListener('click', () => window._openGallery?.(images, index))
+    btn.appendChild(img)
 
     wrapper.appendChild(titleEl)
-    wrapper.appendChild(img)
+    wrapper.appendChild(btn)
     gallery.appendChild(wrapper)
   })
 

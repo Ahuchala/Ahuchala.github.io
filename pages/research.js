@@ -91,11 +91,14 @@ export function init() {
   const img = document.createElement('img')
   img.src = zetaImage.thumbnail
   img.alt = zetaImage.alt
-  img.style.cursor = 'pointer'
   img.style.maxWidth = '300px'
   img.style.width = '100%'
+
+  const btn = document.createElement('button')
+  btn.className = 'img-btn'
+  btn.setAttribute('aria-label', `Open ${zetaImage.title}`)
   let preloaded = false
-  img.addEventListener('mouseenter', () => {
+  btn.addEventListener('mouseenter', () => {
     if (preloaded) return
     const t = setTimeout(() => {
       preloaded = true
@@ -104,12 +107,13 @@ export function init() {
       p.onerror = () => console.warn('Failed to preload featured image:', zetaImage.full)
       p.src = zetaImage.full
     }, 150)
-    img.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
+    btn.addEventListener('mouseleave', () => clearTimeout(t), { once: true })
   })
-  img.addEventListener('click', () =>
+  btn.addEventListener('click', () =>
     window._openModal?.(zetaImage.full, zetaImage.title, zetaImage.description)
   )
+  btn.appendChild(img)
 
-  wrapper.appendChild(img)
+  wrapper.appendChild(btn)
   gallery.appendChild(wrapper)
 }
