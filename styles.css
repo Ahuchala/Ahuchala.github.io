@@ -693,12 +693,9 @@ main {
 }
 
 .grid-item a {
+  display: block;
   text-decoration: none;
   color: inherit;
-}
-
-.grid-item a:hover p {
-  color: var(--secondary-text);
 }
 
 /*****************************************************
