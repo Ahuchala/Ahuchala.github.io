@@ -113,6 +113,7 @@ body {
 /* Display-mode MathJax equations scroll horizontally rather than overflow */
 mjx-container[display="true"] {
   overflow-x: auto;
+  overflow-y: hidden;
   max-width: 100%;
   display: block;
 }
@@ -1193,19 +1194,9 @@ html.dark-mode .modal .close:hover { background-color: rgba(255, 100, 100, 0.25)
     display: flex;
   }
 
+  /* Keep settings absolutely positioned on mobile (same as desktop) — no layout shift on toggle */
   .settings-container {
-    position: relative;
-    transform: none;
-    top: auto;
-    right: auto;
-    margin-left: auto;
     z-index: 201;
-  }
-
-  .settings-container.active {
-    position: absolute;
-    right: 0;
-    width: 240px;
   }
 }
 
