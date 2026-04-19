@@ -374,6 +374,11 @@ body.hide-top-half .is-top-half {
         margin-right: 0;
         margin-bottom: 4px;
     }
+
+    .how-does-it-work-div {
+        margin-left: 0;
+        margin-right: 0;
+    }
 }
 
 /* Greyed-out state while async Hodge data / math.js is loading.
