@@ -249,7 +249,9 @@ twistedHodgeGr = (k, n, t) -> (
     shift := for i from 0 to n - 1 list n - i;       -- (n, n-1, ..., 1)
     rho   := for i from 0 to n - 1 list n - i - 1;   -- (n-1, ..., 0)
 
-    candidates := if t >= n then boundedPartitions(nMinusK, k)
+    -- candidates are pairs (lambda, muSize); for t >= n every λ is a t-core
+    -- and lives entirely in H^0 (q = 0), so we record muSize = |λ|.
+    candidates := if t >= n then for lam in boundedPartitions(nMinusK, k) list (lam, sum lam)
         else (
             seen := new MutableHashTable;
             out := {};
@@ -266,7 +268,7 @@ twistedHodgeGr = (k, n, t) -> (
 
     results := {};
     for cand in candidates do (
-        (lambda, muSize) := if t >= n then (cand, 0) else cand;
+        (lambda, muSize) := cand;
         if #lambda > k then continue;
         if #lambda > 0 and max lambda > nMinusK then continue;
 
@@ -306,10 +308,11 @@ twistedHodgeNumbers(ZZ, ZZ, ZZ) := o -> (k, n, t) -> (
         key := (p, q);
         M#key = (if M#?key then M#key else 0) + d;
     );
-    -- r = 2N at the top (h^{N,N}), down to r = 0 at the bottom (h^{0,0}).
+    -- r = 2N at top (h^{N,N}); within each row, p decreases left-to-right
+    -- so the leftmost entry is h^{p_max, q_min} (standard convention).
     D := for r in reverse toList(0 .. 2*N) list (
-        for p from max(0, r - N) to min(r, N) list (
-            key := (p, r - p);
+        for q from max(0, r - N) to min(r, N) list (
+            key := (r - q, q);
             if M#?key then M#key else 0
         )
     );
