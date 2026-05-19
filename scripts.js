@@ -28,19 +28,26 @@ export function initMenuToggle() {
 ============================ */
 export function initSettings() {
   const settingsContainer = document.querySelector('.settings-container');
+  const settingsButton = settingsContainer?.querySelector('.settings-button');
   const darkModeToggle = document.getElementById('dark-mode-btn');
   const reduceMotionToggle = document.getElementById('reduce-motion-btn');
+
+  const syncAriaExpanded = () => {
+    settingsButton?.setAttribute('aria-expanded', String(settingsContainer.classList.contains('active')));
+  };
 
   // Toggle the settings panel
   settingsContainer.addEventListener('click', (event) => {
     event.stopPropagation();
     settingsContainer.classList.toggle('active');
+    syncAriaExpanded();
   });
 
   // Close settings when clicking outside
   document.addEventListener('click', (event) => {
     if (!settingsContainer.contains(event.target)) {
       settingsContainer.classList.remove('active');
+      syncAriaExpanded();
     }
   });
 

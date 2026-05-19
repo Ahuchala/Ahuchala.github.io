@@ -1068,9 +1068,6 @@ html.dark-mode .modal .close:hover { background-color: rgba(255, 100, 100, 0.25)
   border-radius: 50%;
 }
 
-.settings-container.active .settings-button {
-  transform: rotate(90deg);
-}
 
 .settings-content {
   flex: 1;
@@ -1201,13 +1198,14 @@ html.dark-mode .modal .close:hover { background-color: rgba(255, 100, 100, 0.25)
 }
 
 .settings-button svg.gear-icon {
+  width: 50px;
+  height: 50px;
   stroke: currentColor; /* Inherits from .settings-button color (white or dark) */
   vertical-align: middle; /* Keep it aligned nicely */
-  transition: transform 0.2s ease, stroke 0.2s ease;
+  transition: stroke 0.2s ease;
 }
 
 .settings-button:hover svg.gear-icon {
-  transform: scale(1.15);
   stroke: var(--secondary-light);
 }
 
