@@ -21,5 +21,8 @@
   text-align: center;
 }
 
-/* The gallery grid used by the research image is defined in gallery/styles.css,
-   which is loaded globally in index.html. No additional rules are needed there. */
+/* The gallery grid used by the research image is defined in gallery/styles.css.
+   Center the single-item zeta figure inside its grid track. */
+.research-page #research-gallery {
+  justify-items: center;
+}
