@@ -3,7 +3,7 @@
 My personal research website. I'm a mathematics grad student at the University of Oregon.
 Main features of the site include a suite of interactive Hodge diamond calculators and a math art gallery.
 
-**[ahuchala.github.io](https://ahuchala.github.io)**
+**[ahuchala.com](https://ahuchala.com)**
 
 ---
 

@@ -297,14 +297,15 @@ safe to fetch with `getElementById`.
 
 ## Service worker (`sw.js`)
 
-Cache name: `static-shell-v5` — increment to force cache invalidation on deploy.
+Caches: `static-v9` (shell + JS/CSS) and `images-v9` (gallery images), keyed off
+`CACHE_VERSION` — bump it to force cache invalidation on deploy.
 
 | Request | Strategy |
 |---|---|
 | HTML navigation | Cache-first (SPA shell) |
-| Images | Cache-first |
-| JS / CSS | Stale-while-revalidate |
-| Everything else | Network-first |
+| Images (`/images/*`) | Cache-first (never change once published) |
+| JS / CSS | Network-first (fresh code without a version bump; cache is the offline fallback) |
+| Everything else | Stale-while-revalidate |
 
 ---
 
