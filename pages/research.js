@@ -28,6 +28,10 @@ export function render() {
             I'm currently working on a paper with Arya Yae to construct an explicit Griffiths
             residue map for smooth hypersurfaces in Grassmannians.
           </p>
+          <p>
+            My PhD thesis is available
+            <a href="/files/thesis/Griffiths_Residues_Thesis.pdf" target="_blank" rel="noreferrer">here</a>.
+          </p>
         </section>
 
         <section class="sub-section">
