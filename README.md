@@ -1,6 +1,6 @@
 # Andy Huchala
 
-My personal research website. I'm a mathematics grad student at the University of Oregon.
+My personal research website. I'm a mathematician at ICERM.
 Main features of the site include a suite of interactive Hodge diamond calculators and a math art gallery.
 
 **[ahuchala.com](https://ahuchala.com)**

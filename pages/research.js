@@ -10,18 +10,17 @@ export function render() {
       <section class="section">
         <h2>Research</h2>
         <p>
-          I'm a math graduate student at the University of Oregon studying algebraic geometry
-          under the guidance of Nicolas Addington. My work focuses on computing Hasse-Weil zeta
-          functions of smooth hypersurfaces and complete intersections in Grassmannians using
-          $p$-adic cohomology.
+          I'm at ICERM for the fall 2026 semester program on Computations on K3 Surfaces and
+          Related Varieties. My work focuses on computing Hasse-Weil zeta functions of smooth
+          hypersurfaces and complete intersections in Grassmannians using $p$-adic cohomology.
         </p>
 
         <section class="publications sub-section">
           <h3>Publications and Preprints</h3>
           <p>
-            A preprint of my paper with Fern Gossow on bounded core partitions and the
-            Borel-Weil-Bott theorem is available
-            <a href="https://arxiv.org/pdf/2510.17239" target="_blank" rel="noreferrer">here</a>.
+            A preprint of my paper with Fern Gossow,
+            <a href="https://arxiv.org/pdf/2510.17239" target="_blank" rel="noreferrer">Bounded Core Partitions and Borel&ndash;Weil&ndash;Bott</a>,
+            is available on arXiv.
             An implementation of some results is under construction on my website.
           </p>
           <p>
@@ -29,8 +28,9 @@ export function render() {
             residue map for smooth hypersurfaces in Grassmannians.
           </p>
           <p>
-            My PhD thesis is available
-            <a href="/files/thesis/Griffiths_Residues_Thesis.pdf" target="_blank" rel="noreferrer">here</a>.
+            <a href="/files/thesis/Griffiths_Residues_Thesis.pdf" target="_blank" rel="noreferrer">My PhD thesis</a>,
+            on Griffiths residues and smooth hypersurfaces in Grassmannians, was written under
+            Nicolas Addington.
           </p>
         </section>
 

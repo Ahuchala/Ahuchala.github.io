@@ -82,7 +82,7 @@ export function render() {
 
     <section id="other-favorites" class="section">
       <h2>Other OEIS Sequences Near and Dear to My Heart</h2>
-      <p style="margin-bottom:8px">These are sequences related to <a href="/files/undergrad/Lie_Algebra_Representation_Thesis.pdf" target="_blank" rel="noreferrer">my undergrad thesis.</a></p>
+      <p style="margin-bottom:8px">These are sequences related to <a href="/files/undergrad/Lie_Algebra_Representation_Thesis.pdf" target="_blank" rel="noreferrer">my undergrad thesis</a>.</p>
       <div class="oeis-favorite oeis-grid" id="grid-favorites"></div>
     </section>
   `
