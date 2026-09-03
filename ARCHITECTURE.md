@@ -57,9 +57,8 @@ components/hodge/
 ├── abelianVarietyHodgeNumbers.js
 ├── twistedHodge.js
 ├── chiProductCI.js
-├── flagHodge.js                # Deferred with flag.js
-├── loadMath.js                 # Shared math utilities (deferred)
-└── flag-hodge/dims*.json       # Precomputed diamonds for specific flag types
+├── flagHodge.js                # Ambient flag diamonds (q-multinomial), deferred with flag.js
+└── flagChi.js                  # Borel–Weil–Bott engine for CIs in flags (deferred)
 ```
 
 ---
@@ -196,12 +195,24 @@ The most involved calculator. See [Math flow](#math-flow-for-calculator-3).
 
 ### Calculator 4 — Flag Varieties
 
-Uses precomputed JSON files in `components/hodge/flag-hodge/`. In-browser computation
-is too expensive for large flag varieties, so results were generated offline.
+Computes everything in-browser via Borel–Weil–Bott (`flagChi.js`) — no precomputed
+data. For X = Fl(m₁,…,m_{s−1}; n) (dims input = jumps [a₁,…,a_s]):
 
-The module (`flag.js` + `flagHodge.js`) is deferred: not imported until the user first
-clicks "Flag Varieties." On hover, `modulepreload` links are injected so the download
-starts before the click.
+1. Ω¹_X has T-weights {e_a − e_b : block(a) < block(b)}; the weights of Λʲ are
+   collected by a subset-sum DP that collapses by weight.
+2. χ(line bundle) by Bott: reverse the fiber weight, add ρ, zero on repeats, else
+   sign × Weyl dimension formula (exact BigInt).
+3. Hypersurfaces via the same Koszul/conormal recurrence as Calculator 3, with
+   multidegree twists in Pic(X) ≅ ℤ^{s−1} (ample ⟺ all components ≥ 1).
+4. Lefschetz assembly: off-middle rows are the ambient q-multinomial diagonal.
+
+Guard rails: `MAX_FLAG_DIM = 20` and a wedge-state cap; worst case ≈ 100 ms, so the
+computation runs synchronously (no worker). The ambient diamond (r = 0) uses the
+closed-form q-multinomial (`flagHodge.js`) with no dimension cap.
+
+The module (`flag.js` + `flagHodge.js` + `flagChi.js`) is deferred: not imported until
+the user first clicks "Flag Varieties." On hover, `modulepreload` links are injected so
+the download starts before the click.
 
 ### Calculator 5 — Twisted Hodge Numbers
 
@@ -324,6 +335,9 @@ values from the literature:
 - Grassmannians: $\operatorname{Gr}(2,4)$, $\operatorname{Gr}(2,5)$, $\operatorname{Gr}(3,6)$
 - Abelian varieties of genus 1–4
 - Flag varieties: $\operatorname{Fl}(1,2;3)$, $\operatorname{Fl}(1,2,3;4)$
+- CIs in flag varieties: cross-checked against the Grassmannian and product
+  calculators on overlapping cases, plus del Pezzo 6 and anticanonical K3 in
+  $\operatorname{Fl}(1,2;3)$, duality, and Serre-dual line-bundle χ values
 - Twisted Hodge numbers with positive and negative twist
 - Products of Grassmannians
 

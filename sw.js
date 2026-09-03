@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v9'
+const CACHE_VERSION = 'v10'
 const STATIC_CACHE = `static-${CACHE_VERSION}`
 const IMAGE_CACHE  = `images-${CACHE_VERSION}`
 
@@ -28,8 +28,8 @@ const SHELL_URLS = [
   '/components/hodge/chiProductCI.js',
   '/components/hodge/abelianVarietyHodgeNumbers.js',
   '/components/hodge/flagHodge.js',
+  '/components/hodge/flagChi.js',
   '/components/hodge/grassmannianHodge.js',
-  '/components/hodge/loadMath.js',
   '/components/hodge/twistedHodge.js',
   '/components/hodge/hodgeCIWorker.js',
   '/scripts/utils.js',

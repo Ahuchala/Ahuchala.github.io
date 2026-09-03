@@ -400,6 +400,11 @@ export function init() {
   initGrassmannian()
   initTwisted()
   initProduct()
+  // Deferred flag-calculator bootstrapping must be wired BEFORE
+  // initHodgeScripts(): its decodeState() (state restore from shared URLs)
+  // clicks the flag toggle and awaits window._flagInitPromise, so the click
+  // listener and the promise both have to exist by then.
+  initFlagDeferred()
   initHodgeScripts()
 
   // Allow the diamond to overflow its card and be scrollable via page scroll.
@@ -459,15 +464,18 @@ export function init() {
     document.removeEventListener('wheel', wheelGuard)
   }
 
-  // Flag variety calculator is deferred — preload modules on hover, init on first click.
-  // Create the ready-promise upfront so hodge/scripts.js decodeState() can await it
-  // when restoring flag calculator state from a shared URL.
+}
+
+// Flag variety calculator is deferred — preload modules on hover, init on first click.
+// Create the ready-promise upfront so hodge/scripts.js decodeState() can await it
+// when restoring flag calculator state from a shared URL.
+function initFlagDeferred() {
   const flagBtn = document.getElementById('toggle-flag')
   if (flagBtn) {
     const flagDeps = [
       '/components/hodge/flag.js',
       '/components/hodge/flagHodge.js',
-      '/components/hodge/loadMath.js',
+      '/components/hodge/flagChi.js',
     ]
     flagBtn.addEventListener('mouseover', () => {
       flagDeps.forEach(href => {

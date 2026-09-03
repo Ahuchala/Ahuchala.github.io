@@ -6,6 +6,7 @@ import { hodgeDiamondProduct } from "../components/hodge/chiProductCI.js";
 import { hodgeGrassmannian } from "../components/hodge/grassmannianHodge.js";
 import { hodgeAbelianVariety } from "../components/hodge/abelianVarietyHodgeNumbers.js";
 import { hodgeFlag } from "../components/hodge/flagHodge.js";
+import { hodgeDiamondFlagCI, chiOmegaFlag, qMultinomialCoeffs, flagDim } from "../components/hodge/flagChi.js";
 import { hodgeTwisted } from "../components/hodge/twistedHodge.js";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -1008,4 +1009,138 @@ test("Flag [1,1,1,1,1] = Fl(5): diagonal Hodge numbers (Mahonian distribution)",
   assert.equal(d[16][2],  9);   // h^{8,8}: pMin=6, colIndex=8-6=2
   assert.equal(d[18][1],  4);   // h^{9,9}: pMin=8, colIndex=9-8=1
   assert.equal(d[20][0],  1);   // h^{10,10}: pMin=10, colIndex=0
+});
+
+// ─── Hypersurfaces / CIs in partial flag varieties (flagChi.js) ───────────────
+//
+// The BWB-based engine is validated three independent ways:
+//  1. closed forms (χ of line bundles on Pⁿ, q-multinomial diagonals),
+//  2. agreement with the separately-tested Grassmannian and product
+//     calculators on overlapping cases,
+//  3. classical geometry (del Pezzo of degree 6, anticanonical K3).
+
+const flagNorm = D => D.map(row => row.map(String));
+
+test("flagChi: χ(Pⁿ, O(t)) = C(n+t, n) including negative twists", () => {
+  // P² = Fl([1,2]); χ(O(t)) for t = 0,1,3 and Serre-dual side t = -3, -4
+  assert.equal(chiOmegaFlag([1, 2], 0, [0]), 1n);
+  assert.equal(chiOmegaFlag([1, 2], 0, [1]), 3n);
+  assert.equal(chiOmegaFlag([1, 2], 0, [3]), 10n);
+  assert.equal(chiOmegaFlag([1, 2], 0, [-1]), 0n);
+  assert.equal(chiOmegaFlag([1, 2], 0, [-2]), 0n);
+  assert.equal(chiOmegaFlag([1, 2], 0, [-3]), 1n);
+  assert.equal(chiOmegaFlag([1, 2], 0, [-4]), 3n);
+  // P³ quadric count: χ(O(2)) = C(5,3) = 10
+  assert.equal(chiOmegaFlag([1, 3], 0, [2]), 10n);
+});
+
+test("flagChi: χ(Ω^j_X) = (−1)^j h^{j,j}(X) for several flag types", () => {
+  for (const dims of [[1, 1, 1], [2, 2], [1, 2, 1], [2, 1, 1], [1, 1, 1, 1]]) {
+    const a = qMultinomialCoeffs(dims);
+    const zero = new Array(dims.length - 1).fill(0);
+    for (let j = 0; j <= flagDim(dims); j++) {
+      const want = BigInt(j % 2 === 0 ? (a[j] ?? 0) : -(a[j] ?? 0));
+      assert.equal(chiOmegaFlag(dims, j, zero), want, `dims=[${dims}] j=${j}`);
+    }
+  }
+});
+
+test("flagChi: ambient diamond (r=0) matches hodgeFlag", () => {
+  for (const dims of [[1, 1, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1]]) {
+    assert.deepEqual(
+      flagNorm(hodgeDiamondFlagCI(dims, [])),
+      hodgeFlag(dims).map(row => row.map(String)),
+      `dims=[${dims}]`
+    );
+  }
+});
+
+test("flagChi: Grassmannian special cases agree with hodgeDiamondCI", () => {
+  const cases = [
+    [1, 3, [2]], [1, 4, [4]], [1, 4, [2, 2]], [1, 5, [3, 2]],
+    [2, 4, [1]], [2, 4, [2]], [2, 4, [3]], [2, 5, [2, 2]],
+    [2, 5, [1, 1, 2]], [3, 6, [2]], [2, 7, [3]],
+  ];
+  for (const [k, n, degs] of cases) {
+    assert.deepEqual(
+      flagNorm(hodgeDiamondFlagCI([k, n - k], degs.map(d => [d]))),
+      flagNorm(hodgeDiamondCI(k, n, degs).map(row => row.map(BigInt))),
+      `Gr(${k},${n}) degrees ${degs}`
+    );
+  }
+});
+
+test("flagChi: hypersurface (a,b) in Fl(1,2;3) = CI {(1,1),(a,b)} in P²×P²", () => {
+  for (const [a, b] of [[1, 1], [2, 1], [1, 2], [2, 2], [3, 1], [2, 3], [3, 3]]) {
+    assert.deepEqual(
+      flagNorm(hodgeDiamondFlagCI([1, 1, 1], [[a, b]])),
+      flagNorm(hodgeDiamondProduct([{ k: 1, n: 3 }, { k: 1, n: 3 }], [[1, 1], [a, b]])
+        .map(row => row.map(BigInt))),
+      `bidegree (${a},${b})`
+    );
+  }
+});
+
+test("flagChi: (1,1) in Fl(1,2;3) is the degree-6 del Pezzo surface", () => {
+  assert.deepEqual(flagNorm(hodgeDiamondFlagCI([1, 1, 1], [[1, 1]])), [
+    ["1"],
+    ["0", "0"],
+    ["0", "4", "0"],
+    ["0", "0"],
+    ["1"],
+  ]);
+});
+
+test("flagChi: (2,2) in Fl(1,2;3) is anticanonical — a K3 surface", () => {
+  assert.deepEqual(flagNorm(hodgeDiamondFlagCI([1, 1, 1], [[2, 2]])), [
+    ["1"],
+    ["0", "0"],
+    ["1", "20", "1"],
+    ["0", "0"],
+    ["1"],
+  ]);
+});
+
+test("flagChi: duality Fl(dims) ≅ Fl(reversed dims) with reversed degrees", () => {
+  const cases = [
+    [[2, 1, 1], [[2, 3]]],
+    [[3, 1, 1], [[1, 2]]],
+    [[2, 2, 1], [[2, 1], [1, 1]]],
+    [[1, 1, 1, 1], [[1, 2, 1]]],
+  ];
+  for (const [dims, degs] of cases) {
+    assert.deepEqual(
+      flagNorm(hodgeDiamondFlagCI(dims, degs)),
+      flagNorm(hodgeDiamondFlagCI([...dims].reverse(), degs.map(d => [...d].reverse()))),
+      `dims=[${dims}]`
+    );
+  }
+});
+
+test("flagChi: middle row is symmetric and non-negative (smooth ample CIs)", () => {
+  const cases = [
+    [[1, 1, 1, 1], [[1, 1, 1]]],
+    [[1, 1, 1, 1, 1], [[1, 1, 1, 1]]],
+    [[2, 2, 2], [[2, 2]]],
+    [[1, 2, 2], [[2, 3]]],
+    [[2, 2, 1, 1], [[1, 1, 1]]],
+  ];
+  for (const [dims, degs] of cases) {
+    const dimZ = flagDim(dims) - degs.length;
+    const mid = hodgeDiamondFlagCI(dims, degs)[dimZ];
+    assert.equal(mid.length, dimZ + 1);
+    for (let i = 0; i < mid.length; i++) {
+      assert.ok(mid[i] >= 0n, `dims=[${dims}] middle[${i}] = ${mid[i]} < 0`);
+      assert.equal(mid[i], mid[mid.length - 1 - i], `dims=[${dims}] middle row asymmetric`);
+    }
+  }
+});
+
+test("flagChi: rejects invalid input", () => {
+  assert.throws(() => hodgeDiamondFlagCI([1], []));                    // too few jumps
+  assert.throws(() => hodgeDiamondFlagCI([1, 0, 1], []));              // zero jump
+  assert.throws(() => hodgeDiamondFlagCI([1, 1, 1], [[1]]));           // wrong multidegree length
+  assert.throws(() => hodgeDiamondFlagCI([1, 1, 1], [[1, 0]]));        // non-ample degree
+  assert.throws(() => hodgeDiamondFlagCI([2, 2, 2, 2], [[1, 1, 1]]));  // dim 24 > cap
+  assert.throws(() => hodgeDiamondFlagCI([1, 1], [[1], [1], [1]]));    // r > dim X
 });

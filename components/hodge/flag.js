@@ -1,24 +1,14 @@
 // =======================================================
 // /components/hodge/flag.js — preset-safe, blank-friendly
+//
+// UI for complete intersections in type-A partial flag
+// varieties. All Hodge numbers are computed exactly in the
+// browser by flagChi.js (Borel–Weil–Bott); there is no
+// precomputed data and no external math library.
 // =======================================================
 
 import { hodgeFlag } from "/components/hodge/flagHodge.js";
-import { ensureMath } from "/components/hodge/loadMath.js";
-
-// Per-key in-memory cache: "[d1, d2, d3],r" → polynomial array
-const flagHodgeCache = new Map();
-
-async function fetchFlagKey(dims, r) {
-  const key = `[${dims.join(", ")}],${r}`;
-  if (flagHodgeCache.has(key)) return flagHodgeCache.get(key);
-  const dimsStr = dims.join("_");
-  const url = `/components/hodge/flag-hodge/dims${dimsStr}_r${r}.json`;
-  const resp = await fetch(url);
-  if (!resp.ok) throw new Error(`HTTP ${resp.status} for ${url}`);
-  const data = await resp.json();
-  flagHodgeCache.set(key, data);
-  return data;
-}
+import { hodgeDiamondFlagCI } from "/components/hodge/flagChi.js";
 
 export function init() {
   // DOM element selectors.
@@ -42,66 +32,10 @@ export function init() {
     return v;
   }
 
-  // --- BigInt-based polynomial evaluation ---
-  function evalASTBigInt(node, scope) {
-    if (node.isConstantNode) {
-      return BigInt(node.value);
-    } else if (node.isSymbolNode) {
-      if (scope[node.name] !== undefined) return scope[node.name];
-      throw new Error("Undefined symbol: " + node.name);
-    } else if (node.isOperatorNode) {
-      const op = node.op;
-      if (node.args.length === 1) {
-        const a = evalASTBigInt(node.args[0], scope);
-        if (op === "-") return -a;
-        if (op === "+") return a;
-        throw new Error("Unsupported unary operator: " + op);
-      } else if (node.args.length === 2) {
-        const L = evalASTBigInt(node.args[0], scope);
-        const R = evalASTBigInt(node.args[1], scope);
-        switch (op) {
-          case "+": return L + R;
-          case "-": return L - R;
-          case "*": return L * R;
-          case "/": return L / R;
-          case "^": return L ** BigInt(Number(R));
-          default: throw new Error("Unsupported operator: " + op);
-        }
-      } else {
-        throw new Error("Operator with unexpected arity: " + node.args.length);
-      }
-    } else if (node.isParenthesisNode) {
-      return evalASTBigInt(node.content, scope);
-    }
-    throw new Error("Unsupported node type: " + node.type);
-  }
   // Set default values.
   dimsInput.value = "1,1,1";
-  rValue.value = "2";
-  rSlider.value = "2";
-
-  function evaluatePolynomial(polynomial, flatDegrees) {
-    const fracRegex = /^\s*\(([-+]?\d+)\/(\d+)\)\s*\*\s*/;
-    const match = polynomial.match(fracRegex);
-    let constantNumerator = 1n;
-    let constantDenom = 1n;
-    let remainingStr = polynomial;
-    if (match) {
-      constantNumerator = BigInt(match[1]);
-      constantDenom = BigInt(match[2]);
-      remainingStr = polynomial.slice(match[0].length);
-    }
-    const ast = math.parse(remainingStr);
-    const scope = {};
-    for (let i = 0; i < flatDegrees.length; i += 2) {
-      scope[`d_${(i / 2) + 1}`] = BigInt(flatDegrees[i]);
-      scope[`e_${(i / 2) + 1}`] = BigInt(flatDegrees[i + 1]);
-    }
-    const prodValue = evalASTBigInt(ast, scope);
-    const finalValue = (prodValue * constantNumerator) / constantDenom;
-    return finalValue < 0n ? (-finalValue).toString() : finalValue.toString();
-  }
-  // --- End polynomial evaluation ---
+  rValue.value = "1";
+  rSlider.value = "1";
 
   // Preserve user/preset-entered multidegrees; only add/remove rows.
   function updateDegreeTogglesFlag(r, numComponents) {
@@ -146,25 +80,25 @@ export function init() {
     }
   }
 
-  function constructMiddleRow(expectedLength, halfRow) {
-    const isOdd = expectedLength % 2 === 1;
-    const L = isOdd ? Math.floor(expectedLength / 2) + 1 : expectedLength / 2;
-    const truncated = halfRow.slice(0, L);
-    const fullRow = truncated.slice();
-    if (isOdd) {
-      for (let i = L - 2; i >= 0; i--) fullRow.push(truncated[i]);
-    } else {
-      for (let i = L - 1; i >= 0; i--) fullRow.push(truncated[i]);
-    }
-    return fullRow;
+  function renderDiamond(rows) {
+    // Build all rows off-DOM first, then swap atomically.
+    const newRows = [];
+    rows.forEach(row => {
+      const rowDiv = document.createElement("div");
+      rowDiv.className = "diamond-row";
+      row.forEach(val => {
+        const cell = document.createElement("span");
+        cell.className = "diamond-value";
+        cell.innerText = val.toString();
+        rowDiv.appendChild(cell);
+      });
+      newRows.push(rowDiv);
+    });
+    diamondContainer.replaceChildren(...newRows);
   }
 
   // --- main render ---
-  // Generation counter: incremented on every call so stale async results are
-  // discarded if a newer call has already started.
-  let _renderGen = 0;
-  async function updateDiamondFlag() {
-    const thisGen = ++_renderGen;
+  function updateDiamondFlag() {
     const dimsRaw = (dimsInput?.value ?? "").trim();
 
     if (dimsRaw === "") {
@@ -182,12 +116,6 @@ export function init() {
       flagDescription.innerText = "Please enter at least two dimensions.";
       diamondContainer.innerHTML = "";
       return;
-    }
-
-    // dim of partial flag: sum_{i<j} dims[i]*dims[j]
-    let dimF = 0;
-    for (let i = 0; i < dims.length; i++) {
-      for (let j = i + 1; j < dims.length; j++) dimF += dims[i] * dims[j];
     }
 
     const r = intOrNull(rValue);
@@ -210,31 +138,15 @@ export function init() {
         `Hodge diamond for a complete intersection (r=${r}) in a partial flag of dimensions [${dims.join(", ")}] with multidegrees ${degreesDesc}`;
     }
 
-    const ambientDiamond = hodgeFlag(dims);
-
+    // Ambient flag variety (r = 0): cheap closed form, no dimension cap.
     if (r === null || r === 0) {
-      // Ambient only
-      const newRows = [];
-      ambientDiamond.forEach(row => {
-        const rowDiv = document.createElement("div");
-        rowDiv.className = "diamond-row";
-        row.forEach(val => {
-          const cell = document.createElement("span");
-          cell.className = "diamond-value";
-          cell.innerText = val.toString();
-          rowDiv.appendChild(cell);
-        });
-        newRows.push(rowDiv);
-      });
-      diamondContainer.replaceChildren(...newRows);
+      if (dims.some(a => a < 1)) {
+        diamondContainer.innerHTML = `<p class="error">Each dimension jump must be a positive integer.</p>`;
+        return;
+      }
+      renderDiamond(hodgeFlag(dims));
       return;
     }
-
-    // Complete intersection
-    let d = dimF - r;
-    if (d < 0) d = 0;
-    const rows = 2 * d + 1;
-    const truncatedAmbient = ambientDiamond.slice(0, d + 1);
 
     // Degrees
     const degreeInputs = Array.from(degreeToggles.children)
@@ -246,7 +158,7 @@ export function init() {
       return;
     }
 
-    const flatDegrees = [];
+    const degrees = [];
     let incomplete = false;
     for (const inp of degreeInputs) {
       const val = (inp.value ?? "").trim();
@@ -255,82 +167,20 @@ export function init() {
       if (parts.some(v => !Number.isFinite(v)) || parts.length !== numComponents) {
         incomplete = true; break;
       }
-      flatDegrees.push(...parts);
+      degrees.push(parts);
     }
     if (incomplete) {
       diamondContainer.innerHTML = `<p class="placeholder">Each multidegree must have exactly ${numComponents} integers.</p>`;
       return;
     }
 
-    // Simple ampleness check for bidegrees only (dims.length - 1 == 2)
-    if (numComponents === 2) {
-      for (let i = 0; i < flatDegrees.length; i += 2) {
-        const a = flatDegrees[i];
-        const b = flatDegrees[i + 1];
-        if (!(2 * a > b)) {
-          diamondContainer.innerHTML =
-            `<p class="error">Hypersurface ${i / 2 + 1} with bidegree (${a}, ${b}) is not ample (requires 2a > b).</p>`;
-          return;
-        }
-      }
-    }
-
-    // Lazy-load math.js and the per-key JSON in parallel, then render.
-    // Dim the existing diamond instead of replacing it with a "Loading…"
-    // placeholder — removed after the new diamond is fully built.
-    diamondContainer.classList.add("diamond-loading");
-    let polyArray;
+    // Compute exactly via Borel–Weil–Bott. Errors (non-ample degree,
+    // dimension cap, r > dim) surface as messages from flagChi.js.
     try {
-      [polyArray] = await Promise.all([fetchFlagKey(dims, r), ensureMath()]);
+      renderDiamond(hodgeDiamondFlagCI(dims, degrees));
     } catch (err) {
-      if (thisGen !== _renderGen) return; // superseded by a newer call
-      diamondContainer.classList.remove("diamond-loading");
-      diamondContainer.innerHTML =
-        `<p class="error">Error: No precomputed Hodge data for [${dims.join(", ")}] r=${r}.</p>`;
-      console.error(err);
-      return;
+      diamondContainer.innerHTML = `<p class="error">${err.message}</p>`;
     }
-    // Discard this result if a newer render call has already started.
-    if (thisGen !== _renderGen) return;
-
-    // Evaluate JSON polynomials → half middle row
-    const halfMiddleRow = polyArray.map(poly => {
-      try { return BigInt(evaluatePolynomial(poly, flatDegrees)); }
-      catch (e) { console.error("Error evaluating polynomial:", poly, e); return 0n; }
-    });
-
-    const primitiveMiddleRow = constructMiddleRow(d + 1, halfMiddleRow);
-    const ambientMiddleRow = truncatedAmbient[d].map(v => BigInt(v));
-    const combinedMiddle = ambientMiddleRow.map((v, i) => v + (primitiveMiddleRow[i] ?? 0n));
-
-    // Build final diamond
-    const finalDiamond = [];
-    for (let i = 0; i < rows; i++) {
-      if (i < d) {
-        finalDiamond.push(truncatedAmbient[i]);
-      } else if (i === d) {
-        finalDiamond.push(combinedMiddle.map(x => x.toString()));
-      } else {
-        finalDiamond.push(truncatedAmbient[rows - i - 1]);
-      }
-    }
-
-    // Render — build all rows off-DOM first, then swap atomically.
-    const newRows = [];
-    finalDiamond.forEach(row => {
-      const rowDiv = document.createElement("div");
-      rowDiv.className = "diamond-row";
-      row.forEach(val => {
-        const cell = document.createElement("span");
-        cell.className = "diamond-value";
-        cell.innerText = val.toString();
-        rowDiv.appendChild(cell);
-      });
-      newRows.push(rowDiv);
-    });
-    diamondContainer.replaceChildren(...newRows);
-    // New diamond is fully built — fade back to full opacity.
-    diamondContainer.classList.remove("diamond-loading");
   }
 
   // --- slider<->textbox link for r (blank-friendly) ---
@@ -400,6 +250,8 @@ export function init() {
   const flagContainer = document.getElementById("flag-container");
   if (flagContainer) flagContainer.updateCalculator = updateDiamondFlag;
 
-  // Initial update — return the promise so callers can await full initialization.
-  return updateDiamondFlag();
+  // Initial update — wrapped in a resolved promise so callers can await
+  // full initialization (state restore from shared URLs relies on this).
+  updateDiamondFlag();
+  return Promise.resolve();
 }
