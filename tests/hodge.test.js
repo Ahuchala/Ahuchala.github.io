@@ -2,7 +2,10 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import { chiCI, hodgeDiamondCI, hodgePrimitiveMiddleRow, applyBlowUp } from "../components/hodge/chiGrassmannianCI.js";
-import { hodgeDiamondProduct } from "../components/hodge/chiProductCI.js";
+import {
+  hodgeDiamondProduct, hodgeSquareSupportTree, squareToDiamond,
+  UnsupportedSupportError, EmptyIntersectionError,
+} from "../components/hodge/chiProductCI.js";
 import { hodgeGrassmannian } from "../components/hodge/grassmannianHodge.js";
 import { hodgeAbelianVariety } from "../components/hodge/abelianVarietyHodgeNumbers.js";
 import { hodgeFlag } from "../components/hodge/flagHodge.js";
@@ -846,6 +849,83 @@ test("hodgeDiamondProduct P¹×P¹×P¹ (r=0): diagonal Hodge numbers", () => {
   assert.deepEqual(d[3], [0, 0, 0, 0]); // middle row: purely off-diagonal = 0
   assert.deepEqual(d[4], [0, 3, 0]);
   assert.deepEqual(d[6], [1]);
+});
+
+
+// ─── Product Grassmannian CI: zero entries (support tree) ───────────────────
+// Examples from hodge-catalogue/NONAMPLE-SUPPORT-TREE-REPORT.md.
+
+const Pn = n => ({ k: 1, n: n + 1 });
+const bettiOf = h => {
+  const N = h.length - 1;
+  return Array.from({ length: 2 * N + 1 }, (_, k) =>
+    h.reduce((acc, row, p) => acc + (row[k - p] ?? 0), 0));
+};
+
+// (4,0),(1,1) on P²×P²: P¹-bundle over a plane quartic (genus 3).
+test("support tree: ruled surface over a plane quartic", () => {
+  assert.deepEqual(hodgeSquareSupportTree([Pn(2), Pn(2)], [[4, 0], [1, 1]]),
+    [[1, 3, 0], [3, 2, 3], [0, 3, 1]]);
+});
+
+// (3,0),(1,1) on P⁴×P²: Fano fourfold with h^{1,2}=5 below the middle.
+test("support tree: Fano fourfold with non-middle odd cohomology", () => {
+  const h = hodgeSquareSupportTree([Pn(4), Pn(2)], [[3, 0], [1, 1]]);
+  assert.deepEqual(bettiOf(h), [1, 0, 2, 10, 5, 10, 2, 0, 1]);
+  assert.equal(h[1][2], 5);
+  assert.deepEqual([0, 1, 2, 3, 4].map(p => h[p][4 - p]), [0, 0, 5, 0, 0]);
+});
+
+// Two plane cubics: E×E', an abelian surface.
+test("support tree: product of plane cubics is an abelian surface", () => {
+  assert.deepEqual(hodgeSquareSupportTree([Pn(2), Pn(2)], [[3, 0], [0, 3]]),
+    [[1, 2, 1], [2, 4, 2], [1, 2, 1]]);
+});
+
+// Quartic K3 × P¹.
+test("support tree: quartic K3 times P¹", () => {
+  const h = hodgeSquareSupportTree([Pn(3), Pn(1)], [[4, 0]]);
+  assert.deepEqual(bettiOf(h), [1, 0, 23, 0, 23, 0, 1]);
+  assert.equal(h[2][0], 1);
+});
+
+// Three points (cubic in P¹... use (3,0) on P¹×P¹) times P¹, then a (1,1) cut: 3 points.
+test("support tree: disconnected pieces keep h^{0,0} > 1", () => {
+  assert.deepEqual(hodgeSquareSupportTree([Pn(1), Pn(1)], [[3, 0]]), [[3, 0], [0, 3]]);
+  assert.deepEqual(hodgeSquareSupportTree([Pn(1), Pn(1)], [[3, 0], [1, 1]]), [[3]]);
+});
+
+// With all degrees positive the support tree agrees with the ample path.
+test("support tree agrees with hodgeDiamondProduct on ample inputs", () => {
+  const cases = [
+    [[Pn(1), Pn(1)], [[2, 2]]],
+    [[Pn(1), Pn(2)], [[2, 3]]],
+    [[Pn(2), Pn(2)], [[3, 3]]],
+    [[{ k: 2, n: 4 }, Pn(1)], [[1, 1], [2, 1]]],
+    [[Pn(1), Pn(1), Pn(1), Pn(1)], [[1, 1, 1, 1], [1, 1, 1, 1]]],
+  ];
+  for (const [f, d] of cases) {
+    assert.deepEqual(squareToDiamond(hodgeSquareSupportTree(f, d)), hodgeDiamondProduct(f, d));
+  }
+});
+
+test("hodgeDiamondProduct routes zero entries through the support tree", () => {
+  assert.deepEqual(hodgeDiamondProduct([Pn(2), Pn(2)], [[4, 0], [1, 1]]),
+    [[1], [3, 3], [0, 2, 0], [3, 3], [1]]);
+});
+
+test("support tree: equation order and factor order do not matter", () => {
+  const a = hodgeSquareSupportTree([Pn(4), Pn(2)], [[3, 0], [1, 1]]);
+  assert.deepEqual(hodgeSquareSupportTree([Pn(4), Pn(2)], [[1, 1], [3, 0]]), a);
+  assert.deepEqual(hodgeSquareSupportTree([Pn(2), Pn(4)], [[0, 3], [1, 1]]), a);
+});
+
+test("support tree rejects crossing, overdetermined, and all-zero inputs", () => {
+  assert.throws(() => hodgeSquareSupportTree([Pn(1), Pn(1), Pn(1)], [[1, 1, 0], [0, 1, 1]]),
+    UnsupportedSupportError);
+  assert.throws(() => hodgeSquareSupportTree([Pn(1), Pn(1)], [[1, 0], [2, 0]]),
+    EmptyIntersectionError);
+  assert.throws(() => hodgeSquareSupportTree([Pn(1), Pn(1)], [[0, 0]]));
 });
 
 

@@ -1,4 +1,4 @@
-import { hodgeDiamondProduct } from "./chiProductCI.js";
+import { hodgeDiamondProduct, UnsupportedSupportError, EmptyIntersectionError } from "./chiProductCI.js";
 
 export function init() {
   const factorInputsProduct    = document.getElementById("factor-inputs-product");
@@ -169,7 +169,7 @@ export function init() {
         }
         const inp = document.createElement("input");
         inp.type      = "number";
-        inp.min       = "1";
+        inp.min       = "0";
         inp.max       = "50";
         inp.value     = saved[i]?.[fi] ?? "1";
         inp.className = "hodge-input";
@@ -259,25 +259,35 @@ export function init() {
       return;
     }
 
-    // Each degree component must be ≥ 1 (ampleness requirement for Lefschetz).
-    // A component of 0 gives a non-ample divisor (e.g. O(0,d) pulls back from
-    // one factor only), so the Lefschetz hyperplane theorem fails and the
-    // formula for non-middle Hodge numbers is invalid.
-    if (degrees.some(tuple => tuple.some(d => d < 1))) {
-      diamondContainerProduct.innerHTML =
-        `<p class="error">Error: Every component of each multidegree must be \\(\\geq 1\\). ` +
-        `A component of 0 defines a non-ample divisor, so the Lefschetz hyperplane theorem ` +
-        `fails and the Hodge number formula is invalid.</p>`;
+    // Zero entries are allowed when the supports {i : d_i > 0} of the
+    // multidegrees are pairwise nested or disjoint (support-tree extension in
+    // chiProductCI.js). Crossing supports and overdetermined supports throw.
+    const showError = (html) => {
+      diamondContainerProduct.innerHTML = `<p class="error">Error: ${html}</p>`;
       if (window.MathJax?.typesetPromise) MathJax.typesetPromise([diamondContainerProduct]).catch(console.error);
+    };
+    if (degrees.some(tuple => tuple.some(d => d < 0))) {
+      showError("Every component of each multidegree must be \\(\\geq 0\\).");
+      return;
+    }
+    if (degrees.some(tuple => tuple.every(d => d === 0))) {
+      showError("A multidegree of all zeros cuts out the empty set.");
       return;
     }
 
     try {
       renderProductDiamond(hodgeDiamondProduct(validFactors, degrees));
     } catch (e) {
-      console.error("hodgeDiamondProduct error:", e);
-      diamondContainerProduct.innerHTML =
-        `<p class="placeholder">Unable to compute Hodge diamond for these parameters.</p>`;
+      if (e instanceof UnsupportedSupportError) {
+        showError("The factors on which two multidegrees are nonzero must be nested or disjoint. " +
+          `${e.message}; this case is not supported.`);
+      } else if (e instanceof EmptyIntersectionError) {
+        showError(`The general complete intersection is empty. ${e.message}.`);
+      } else {
+        console.error("hodgeDiamondProduct error:", e);
+        diamondContainerProduct.innerHTML =
+          `<p class="placeholder">Unable to compute Hodge diamond for these parameters.</p>`;
+      }
     }
   };
 

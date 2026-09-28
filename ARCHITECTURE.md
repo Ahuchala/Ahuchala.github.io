@@ -226,6 +226,16 @@ Handles $Z \subset \operatorname{Gr}(k_1,n_1) \times \cdots \times \operatorname
 Grassmannian factors are managed dynamically via "Add / Remove Factor" buttons.
 Degree inputs are vectors (one component per factor).
 
+Components may be 0. All-positive inputs use the original ample path in
+`hodgeDiamondProduct`. Inputs with a zero go through `hodgeSquareSupportTree`
+(`chiProductCI.js`). It requires the supports $\{i : d_i > 0\}$ to be pairwise
+nested or disjoint. It then builds the variety bottom-up: Künneth over the
+child supports, followed by an ample cut for each equation at a node. The middle
+row comes from χ(Ω^p) on that node's subproduct. Crossing supports throw
+`UnsupportedSupportError`; overdetermined supports throw `EmptyIntersectionError`.
+The source is `hodge-catalogue/NONAMPLE-SUPPORT-TREE-REPORT.md`. The JS port matches
+the Python `hodge_support_tree.py` on 1,248 enumerated configurations.
+
 ---
 
 ## Math flow for Calculator 3

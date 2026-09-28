@@ -16,7 +16,9 @@
 //
 // Export: hodgeDiamondProduct(factors, degrees)
 //   factors: [{k, n}, …]          one entry per Grassmannian factor
-//   degrees: [[d₁,…,dₛ], …]       one tuple per hypersurface
+//   degrees: [[d₁,…,dₛ], …]       one tuple per hypersurface; entries may be
+//                                 0 when supports are nested or disjoint
+//                                 (see hodgeSquareSupportTree below)
 //   Returns a 2D array (same shape as hodgeDiamondCI / hodgeGrassmannian):
 //   2*dim+1 rows, row i has min(i+1, 2*dim+1-i) entries.
 // ============================================================
@@ -120,6 +122,10 @@ export function hodgeDiamondProduct(factors, degrees) {
   const totalDim = factors.reduce((s, { k, n }) => s + k * (n - k), 0);
   const dim = totalDim - degrees.length;
   if (dim < 0) throw new Error("dim Z < 0: too many hypersurfaces");
+  // Zero entries make some cuts non-ample on X; use the support tree instead.
+  if (degrees.some(d => d.some(x => x === 0))) {
+    return squareToDiamond(hodgeSquareSupportTree(factors, degrees));
+  }
 
   const r  = degrees.length;
   const t0 = new Array(factors.length).fill(0);
@@ -165,6 +171,174 @@ export function hodgeDiamondProduct(factors, degrees) {
         if (colJ < rowSize) row[colJ] = a[colJ];
       }
     }
+    return row;
+  });
+}
+
+// ============================================================
+// Support-tree extension: multidegrees with zero entries.
+//
+// The support of an equation is the set of factors on which its degree is
+// positive. When every pair of supports is nested or disjoint, the CI is
+// built bottom-up: combine the varieties on child supports by Künneth, then
+// cut by each equation whose support is exactly the current node. That
+// equation is very ample on the node's subproduct, so Lefschetz and duality
+// give every entry of the cut except the middle row, and the middle row is
+// recovered from χ(Ω^p), computed by the Koszul recurrence on the node's
+// subproduct with all equations applied so far.
+// See hodge-catalogue/NONAMPLE-SUPPORT-TREE-REPORT.md.
+//
+// Squares here are full arrays h[p][q] = h^{p,q}.
+// ============================================================
+
+export class UnsupportedSupportError extends Error {}
+export class EmptyIntersectionError extends Error {}
+
+function productSquares(left, right) {
+  const n = left.length - 1, m = right.length - 1;
+  const out = Array.from({ length: n + m + 1 }, () => new Array(n + m + 1).fill(0));
+  for (let p = 0; p <= n; p++) for (let q = 0; q <= n; q++) {
+    const a = left[p][q];
+    if (!a) continue;
+    for (let r = 0; r <= m; r++) for (let s = 0; s <= m; s++) {
+      const b = right[r][s];
+      if (b) out[p + r][q + s] += a * b;
+    }
+  }
+  return out;
+}
+
+function eulerForms(h) {
+  return h.map(row => row.reduce((acc, x, q) => acc + (q % 2 ? -x : x), 0));
+}
+
+// Positivity, Hodge symmetry, Serre duality, hard Lefschetz injectivity.
+function checkSquare(h) {
+  const n = h.length - 1;
+  if (n < 0 || h.some(row => row.length !== n + 1)) throw new Error("Hodge array is not square");
+  for (let p = 0; p <= n; p++) for (let q = 0; q <= n; q++) {
+    const x = h[p][q];
+    if (!Number.isSafeInteger(x) || x < 0 || x !== h[q][p] || x !== h[n - p][n - q]) {
+      throw new Error("Hodge positivity, symmetry, or duality failed");
+    }
+    if (p && q && p + q <= n && x < h[p - 1][q - 1]) throw new Error("Hard Lefschetz injectivity failed");
+  }
+}
+
+function exactInt([num, den]) {
+  if (den !== 1n) throw new Error("Non-integral Euler characteristic");
+  return Number(num);
+}
+
+// Smooth ample divisor D ⊂ Y from h(Y) and chi[p] = χ(Ω^p_D).
+function ampleCut(h, chi) {
+  checkSquare(h);
+  const n = h.length - 2;
+  if (n < 0) throw new EmptyIntersectionError("A general section on a finite set of points is empty");
+  const out = Array.from({ length: n + 1 }, (_, p) =>
+    Array.from({ length: n + 1 }, (_, q) =>
+      p + q < n ? h[p][q] : p + q > n ? h[n - p][n - q] : 0));
+  for (let p = 0; p <= n; p++) {
+    const q = n - p;
+    let known = 0;
+    for (let j = 0; j <= n; j++) if (j !== q) known += (j % 2 ? -1 : 1) * out[p][j];
+    out[p][q] = q % 2 ? known - chi[p] : chi[p] - known;
+    if (out[p][q] < h[p][q]) throw new Error("Weak Lefschetz middle-degree injectivity failed");
+  }
+  checkSquare(out);
+  if (eulerForms(out).some((x, p) => x !== chi[p])) throw new Error("Euler-characteristic reconstruction failed");
+  return out;
+}
+
+function grassmannianSquare(k, n) {
+  const d = k * (n - k);
+  const h = Array.from({ length: d + 1 }, () => new Array(d + 1).fill(0));
+  for (let p = 0; p <= d; p++) {
+    let c = 0;
+    for (const _ of partitionsInBox(k, n - k, p)) c++;
+    h[p][p] = c;
+  }
+  return h;
+}
+
+// factors: [{k, n}, …]; degrees: [[d₁,…,dₛ], …] with entries ≥ 0.
+// Returns the square array h[p][q], or throws UnsupportedSupportError /
+// EmptyIntersectionError / Error.
+export function hodgeSquareSupportTree(factors, degrees) {
+  const s = factors.length;
+  if (degrees.some(d => d.length !== s || d.some(x => !Number.isInteger(x) || x < 0))) {
+    throw new Error("Each multidegree needs one nonnegative integer per factor");
+  }
+  if (degrees.some(d => d.every(x => x === 0))) {
+    throw new Error("An all-zero multidegree cuts out the empty set");
+  }
+
+  // Supports as sorted index lists, keyed by string.
+  const supports = degrees.map(d => d.flatMap((x, i) => (x > 0 ? [i] : [])));
+  const keyOf = a => a.join(",");
+  const distinct = [...new Map(supports.map(a => [keyOf(a), a])).values()];
+  const subset = (a, b) => a.every(i => b.includes(i));
+  const meets = (a, b) => a.some(i => b.includes(i));
+  for (const a of distinct) for (const b of distinct) {
+    if (meets(a, b) && !subset(a, b) && !subset(b, a)) {
+      throw new UnsupportedSupportError(`Supports {${a.map(i => i + 1)}} and {${b.map(i => i + 1)}} cross`);
+    }
+  }
+  const dims = factors.map(({ k, n }) => k * (n - k));
+  for (const a of distinct) {
+    const count = supports.filter(b => subset(b, a)).length;
+    if (count > a.reduce((acc, i) => acc + dims[i], 0)) {
+      throw new EmptyIntersectionError(`Too many equations supported on factors {${a.map(i => i + 1)}}`);
+    }
+  }
+
+  function build(a) {
+    const proper = distinct.filter(b => b.length < a.length && subset(b, a));
+    const children = proper.filter(b => !proper.some(c => c.length > b.length && subset(b, c)));
+    let h = [[1]];
+    const applied = [];
+    for (const b of children) {
+      const [child, used] = build(b);
+      h = productSquares(h, child);
+      applied.push(...used);
+    }
+    for (const i of a) {
+      if (!children.some(b => b.includes(i))) h = productSquares(h, grassmannianSquare(factors[i].k, factors[i].n));
+    }
+    const own = supports.flatMap((b, j) => (keyOf(b) === keyOf(a) ? [j] : []));
+    if (own.length) {
+      const subFactors = a.map(i => factors[i]);
+      const order = [...applied, ...own];
+      const chi = buildChiProductCI(subFactors, order.map(j => a.map(i => degrees[j][i])));
+      const t0 = new Array(a.length).fill(0);
+      for (let c = 0; c < own.length; c++) {
+        const cuts = applied.length + c + 1;
+        const nAfter = h.length - 2;
+        const chiVals = Array.from({ length: Math.max(nAfter + 1, 0) }, (_, p) => exactInt(chi(cuts, p, t0)));
+        h = ampleCut(h, chiVals);
+      }
+      applied.push(...own);
+    }
+    return [h, applied];
+  }
+
+  const root = factors.map((_, i) => i);
+  const [h, applied] = build(root);
+  if (applied.length !== degrees.length || new Set(applied).size !== degrees.length) {
+    throw new Error("Support tree did not apply every equation exactly once");
+  }
+  checkSquare(h);
+  return h;
+}
+
+// Square h[p][q] → diamond rows in the hodgeDiamondProduct convention
+// (row i has antidiagonal p+q = 2N−i, leftmost entry has the largest p).
+export function squareToDiamond(h) {
+  const N = h.length - 1;
+  return Array.from({ length: 2 * N + 1 }, (_, idx) => {
+    const r = 2 * N - idx;
+    const row = [];
+    for (let p = Math.min(r, N); p >= Math.max(0, r - N); p--) row.push(h[p][r - p]);
     return row;
   });
 }
